@@ -1,53 +1,57 @@
-# Logware — An AI-Powered Mental Health Journaling App
+# Emote — AI-Powered Journaling App
 
-🔍 ## Overview
+Emote is a secure, AI-powered journaling web application that helps you reflect, grow, and receive gentle mental health insights based on your writing. Using advanced natural language processing (NLP), Emote identifies emotional patterns, provides visualizations, and offers personalized support resources.
 
-Logware is a secure, AI-powered journaling web application that allows users to express their thoughts freely while receiving gentle, private mental health insights based on their writing. Using advanced natural language processing (NLP) models, the app identifies emotional patterns on a sentence-by-sentence basis and provides feedback to help users understand and manage their mental well-being.
 
-🎯 ## Goals
+## ✨ Features
 
-- Provide a safe space for users to journal regularly.
-- Analyze journal entries using pretrained NLP models to assess sentiment, emotion, and mental health signals.
-- Offer visualizations and trends of the user's emotional state over time.
-- Promote mental health self-awareness while respecting user privacy.
+- **Journal Entry System:** Clean, distraction-free interface for daily reflections.
+- **AI Emotional Analysis:** Each entry is analyzed for sentiment, emotions, and key themes using Google Gemini API.
+- **Weekly AI Summary:** Get a personalized summary of your week, including overall feeling, key themes, and gentle suggestions.
+- **Smart Resource Recommendations:** Resources are recommended based on the actual themes in your recent entries.
+- **Interactive Resource Library:** Click any resource card for AI-generated tips, exercises, and affirmations.
+- **Data Visualization:** View mood and sentiment trends, dot representation, and more in the Insights tab.
+- **Privacy First:** Your data is private and securely stored.
 
-🔑 ## Core Features
+## 🛠️ Tech Stack
 
-- **Journal Entry System**: A clean, distraction-free writing interface for daily reflections.
-- **Database Integration**: Journal entries are securely saved to a Supabase database.
-- **Sentence-by-Sentence AI Emotional Analysis**:
-  - The application processes each sentence individually to provide a nuanced emotional analysis.
-  - It identifies a range of emotions, including joy, sadness, anger, fear, love, and surprise.
-- **Data Visualization**:
-  - **Emotion Breakdown**: A pie chart visualizes the percentage of each emotion detected in the journal entry.
-  - **Detailed Analysis**: Each sentence is displayed with its corresponding emotion, allowing for a granular view of the user's text.
-- **Interpretive Summary**: A dynamically generated note provides a high-level summary of the emotional landscape of the journal entry.
+- **Frontend:** React, Tailwind CSS, Recharts
+- **Backend:** Firebase (Firestore, Auth)
+- **AI/NLP:** Google Gemini API
 
-🧠 ## AI/NLP Stack
+## 🚀 Getting Started
 
-- **Emotion Detection Model**: Utilizes the `j-hartmann/emotion-english-distilroberta-base` model from Hugging Face for high-quality emotion analysis.
-- **Sentence Tokenization**: The `nltk` (Natural Language Toolkit) library is used to split journal entries into individual sentences for more accurate processing.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/shreyahhh/Emote--A-journaling-app-with-emotional-analysis-and-support.git
+   cd Emote--A-journaling-app-with-emotional-analysis-and-support
+   ```
+2. **Install dependencies:**
+   ```bash
+   cd frontend-new
+   npm install
+   ```
+3. **Set up environment variables:**
+   - Add your Gemini API key in the relevant files (see `JournalView.jsx`, `ResourcesView.jsx`, etc.).
+   - Configure Firebase credentials in `frontend-new/src/firebase.js`.
+4. **Run the app:**
+   ```bash
+   npm start
+   ```
+5. **Open in your browser:**
+   - Visit [http://localhost:3000](http://localhost:3000)
 
-🏗️ ## Technical Stack
+## 📊 Key Screens
 
-| Layer          | Technology                               |
-|----------------|------------------------------------------|
-| **Frontend**   | React (with Vite), Tailwind CSS, Recharts |
-| **Backend**    | Python with FastAPI                      |
-| **Database**   | Supabase (PostgreSQL)                    |
-| **NLP**        | Hugging Face Transformers, NLTK, PyTorch |
-| **Deployment** | (Not yet deployed)                       |
+- **Journal:** Write and edit entries, see AI-powered tags for emotions and themes.
+- **Insights:** View mood/sentiment charts, dot representation, and generate a weekly AI summary.
+- **Resources:** Get personalized resource recommendations and interactive AI advice.
 
-💡 ## Stretch Goals
+## 🧠 Ethical Considerations
+- This app is not a diagnostic tool.
+- Provides crisis support links and encourages seeking professional help when needed.
+- User privacy and data security are prioritized.
 
-- Mobile version (React Native or Flutter).
-- AI therapist mode for journaling reflection.
-- Guided journaling tracks (e.g., anxiety, motivation, grief).
-- Integration with wearable data (e.g., stress from Fitbit).
+---
 
-🚨 ## Ethical Considerations
-
-- Include disclaimers: "This app is not a diagnostic tool."
-- Provide resources for mental health support (hotlines, referrals).
-- Ensure informed consent for emotional analysis.
-- Allow opt-out of AI features at any time. 
+For more details, see the [GitHub repo](https://github.com/shreyahhh/Emote--A-journaling-app-with-emotional-analysis-and-support). 
