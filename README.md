@@ -1,7 +1,19 @@
 # Emote — AI-Powered Journaling App
 
 Emote is a secure, AI-powered journaling web application that helps you reflect, grow, and receive gentle mental health insights based on your writing. Using advanced natural language processing (NLP), Emote identifies emotional patterns, provides visualizations, and offers personalized support resources.
-
+ERROR
+children is not a function
+TypeError: children is not a function
+    at Wordcloud (http://localhost:3000/main.d0f82b94b046597ad3c2.hot-update.js:124:6)
+    at react-stack-bottom-frame (http://localhost:3000/static/js/bundle.js:80594:18)
+    at renderWithHooks (http://localhost:3000/static/js/bundle.js:70804:20)
+    at updateFunctionComponent (http://localhost:3000/static/js/bundle.js:72497:17)
+    at beginWork (http://localhost:3000/static/js/bundle.js:73083:16)
+    at runWithFiberInDEV (http://localhost:3000/static/js/bundle.js:68575:68)
+    at performUnitOfWork (http://localhost:3000/static/js/bundle.js:75156:93)
+    at workLoopSync (http://localhost:3000/static/js/bundle.js:75049:38)
+    at renderRootSync (http://localhost:3000/static/js/bundle.js:75033:7)
+    at performWorkOnRoot (http://localhost:3000/static/js/bundle.js:74797:42)
 
 ## ✨ Features
 
