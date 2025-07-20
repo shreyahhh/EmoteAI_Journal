@@ -7,6 +7,8 @@ import InsightsDashboard from './InsightsDashboard';
 import ResourcesView from './ResourcesView';
 import GoalsView from './GoalsView';
 import SettingsModal from './SettingsModal';
+import TimelineView from './TimelineView';
+import ChatView from './ChatView';
 
 const Dashboard = ({ user }) => {
     const [entries, setEntries] = React.useState([]);
@@ -61,6 +63,8 @@ const Dashboard = ({ user }) => {
                     <button onClick={() => setActiveTab('insights')} className={`py-4 px-1 border-b-2 font-medium text-lg ${activeTab === 'insights' ? 'border-purple-500 text-purple-400' : 'border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-500'}`}>Insights</button>
                     <button onClick={() => setActiveTab('resources')} className={`py-4 px-1 border-b-2 font-medium text-lg ${activeTab === 'resources' ? 'border-purple-500 text-purple-400' : 'border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-500'}`}>Resources</button>
                     <button onClick={() => setActiveTab('goals')} className={`py-4 px-1 border-b-2 font-medium text-lg ${activeTab === 'goals' ? 'border-purple-500 text-purple-400' : 'border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-500'}`}>Goals</button>
+                    <button onClick={() => setActiveTab('timeline')} className={`py-4 px-1 border-b-2 font-medium text-lg ${activeTab === 'timeline' ? 'border-purple-500 text-purple-400' : 'border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-500'}`}>Timeline</button>
+                    <button onClick={() => setActiveTab('chat')} className={`py-4 px-1 border-b-2 font-medium text-lg ${activeTab === 'chat' ? 'border-purple-500 text-purple-400' : 'border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-500'}`}>Chat</button>
                 </nav>
             </div>
             <main>
@@ -72,8 +76,12 @@ const Dashboard = ({ user }) => {
                     <InsightsDashboard entries={entries} />
                 ) : activeTab === 'resources' ? (
                     <ResourcesView entries={entries} />
-                ) : (
+                ) : activeTab === 'goals' ? (
                     <GoalsView entries={entries} user={user} />
+                ) : activeTab === 'timeline' ? (
+                    <TimelineView entries={entries} />
+                ) : (
+                    <ChatView entries={entries} />
                 )}
             </main>
             {showSettingsModal && <SettingsModal onClose={() => setShowSettingsModal(false)} user={user} entries={entries} />}
