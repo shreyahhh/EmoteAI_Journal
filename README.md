@@ -1,28 +1,22 @@
 # Emote — AI-Powered Journaling App
 
-Emote is a secure, AI-powered journaling web application that helps you reflect, grow, and receive gentle mental health insights based on your writing. Using advanced natural language processing (NLP), Emote identifies emotional patterns, provides visualizations, and offers personalized support resources.
-ERROR
-children is not a function
-TypeError: children is not a function
-    at Wordcloud (http://localhost:3000/main.d0f82b94b046597ad3c2.hot-update.js:124:6)
-    at react-stack-bottom-frame (http://localhost:3000/static/js/bundle.js:80594:18)
-    at renderWithHooks (http://localhost:3000/static/js/bundle.js:70804:20)
-    at updateFunctionComponent (http://localhost:3000/static/js/bundle.js:72497:17)
-    at beginWork (http://localhost:3000/static/js/bundle.js:73083:16)
-    at runWithFiberInDEV (http://localhost:3000/static/js/bundle.js:68575:68)
-    at performUnitOfWork (http://localhost:3000/static/js/bundle.js:75156:93)
-    at workLoopSync (http://localhost:3000/static/js/bundle.js:75049:38)
-    at renderRootSync (http://localhost:3000/static/js/bundle.js:75033:7)
-    at performWorkOnRoot (http://localhost:3000/static/js/bundle.js:74797:42)
+Emote is a secure, AI-powered journaling web application that helps you reflect, grow, and receive gentle mental health insights based on your writing. Using advanced natural language processing (NLP), Emote identifies emotional patterns, provides visualizations, and offers personalized support resources. The app now includes a timeline of your entries, an AI chat assistant, activity tracking, word clouds, and more — all in a beautiful, privacy-first interface.
 
 ## ✨ Features
 
 - **Journal Entry System:** Clean, distraction-free interface for daily reflections.
 - **AI Emotional Analysis:** Each entry is analyzed for sentiment, emotions, and key themes using Google Gemini API.
+- **Activity Tagging:** Tag your daily activities (exercise, work, social, etc.) and see how they relate to your mood.
+- **Mood-Activity Insights:** Visualize which activities most often correlate with positive moods.
 - **Weekly AI Summary:** Get a personalized summary of your week, including overall feeling, key themes, and gentle suggestions.
+- **Word Cloud:** See a dynamic word cloud of your most-used words in journal entries.
+- **Timeline View:** Browse your journal history in a beautiful, chronological timeline grouped by month.
+- **Chat Assistant:** Ask questions about your journal history and get AI-powered, context-aware answers based on your own entries.
 - **Smart Resource Recommendations:** Resources are recommended based on the actual themes in your recent entries.
 - **Interactive Resource Library:** Click any resource card for AI-generated tips, exercises, and affirmations.
-- **Data Visualization:** View mood and sentiment trends, dot representation, and more in the Insights tab.
+- **Data Export:** Download all your journal entries as JSON, CSV, or TXT for backup or analysis.
+- **Settings Modal:** Manage notification preferences and daily journaling reminders.
+- **Modern UI:** Responsive, accessible, and visually appealing design with dark mode and smooth transitions.
 - **Privacy First:** Your data is private and securely stored.
 
 ## 🛠️ Tech Stack
@@ -44,7 +38,7 @@ TypeError: children is not a function
    npm install
    ```
 3. **Set up environment variables:**
-   - Add your Gemini API key in the relevant files (see `JournalView.jsx`, `ResourcesView.jsx`, etc.).
+   - Add your Gemini API key in the relevant files (see `JournalView.jsx`, `ResourcesView.jsx`, `ChatView.jsx`, etc.).
    - Configure Firebase credentials in `frontend-new/src/firebase.js`.
 4. **Run the app:**
    ```bash
@@ -55,9 +49,12 @@ TypeError: children is not a function
 
 ## 📊 Key Screens
 
-- **Journal:** Write and edit entries, see AI-powered tags for emotions and themes.
-- **Insights:** View mood/sentiment charts, dot representation, and generate a weekly AI summary.
+- **Journal:** Write and edit entries, see AI-powered tags for emotions, themes, and activities.
+- **Insights:** View mood/sentiment charts, word cloud, mood-activity insights, and generate a weekly AI summary.
+- **Timeline:** Browse your journal history by month and revisit memories.
+- **Chat:** Ask Emote questions about your journal and get AI-powered, context-aware answers.
 - **Resources:** Get personalized resource recommendations and interactive AI advice.
+- **Settings:** Manage reminders, notifications, and export your data.
 
 ## 🧠 Ethical Considerations
 - This app is not a diagnostic tool.
