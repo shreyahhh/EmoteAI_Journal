@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
-import DotRepresentation from './DotRepresentation';
-
+// Remove import DotRepresentation from './DotRepresentation';
+// Install with: npm install @visx/wordcloud d3-shape d3-scale
+import { Wordcloud } from '@visx/wordcloud';
 // --- New Helper function to get a weekly summary from Gemini API ---
 async function getWeeklySummaryWithAI(entriesText) {
     const apiKey = "AIzaSyA3lz7Bh3KuM2SbwwoDhvRQy5jhShrAxHc";
@@ -120,6 +121,146 @@ const getMoodColor = (mood) => {
     return colors[mood] || '#a0aec0';
 };
 
+// --- New Component: Activity-Mood Correlation Chart ---
+const ActivityMoodChart = ({ entries }) => {
+    const chartData = useMemo(() => {
+        const activityMoods = {};
+        entries.forEach(entry => {
+            const isPositive = entry.mood === 'happy' || (entry.sentimentScore && entry.sentimentScore > 2);
+            if (isPositive && entry.activities && entry.activities.length > 0) {
+                entry.activities.forEach(activityId => {
+                    activityMoods[activityId] = (activityMoods[activityId] || 0) + 1;
+                });
+            }
+        });
+        const activityNames = { exercise: 'Exercise', work: 'Work', social: 'Socialized', hobby: 'Hobby', rest: 'Rested', family: 'Family Time', chores: 'Chores', nature: 'Nature' };
+        return Object.entries(activityMoods)
+            .map(([activityId, count]) => ({
+                name: activityNames[activityId] || activityId,
+                count: count
+            }))
+            .sort((a, b) => b.count - a.count);
+    }, [entries]);
+    if (chartData.length === 0) {
+        return (
+             <div className="bg-gray-800 p-6 rounded-2xl shadow-lg">
+                <h3 className="text-xl font-bold mb-4">Mood-Boosting Activities</h3>
+                <p className="text-gray-400">Tag activities in your journal entries to see which ones correlate with positive moods!</p>
+            </div>
+        );
+    }
+    return (
+        <div className="bg-gray-800 p-6 rounded-2xl shadow-lg">
+            <h3 className="text-xl font-bold mb-4">Mood-Boosting Activities</h3>
+            <p className="text-gray-400 mb-4">These are activities you've most frequently tagged on positive days.</p>
+            <div className="space-y-2">
+                {chartData.map(item => (
+                    <div key={item.name} className="flex items-center gap-4">
+                        <span className="w-28 text-right text-gray-300">{item.name}</span>
+                        <div className="flex-1 bg-gray-700 rounded-full h-6">
+                            <div 
+                                className="bg-green-500 h-6 rounded-full flex items-center justify-end px-2"
+                                style={{ width: `${(item.count / Math.max(...chartData.map(d => d.count))) * 100}%` }}
+                            >
+                               <span className="font-bold text-white text-sm">{item.count}</span>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+// --- New and Improved Component: Word Cloud Chart ---
+// This version has an updated color palette and random word rotation for a more dynamic look.
+const WordCloudChart = ({ entries }) => {
+    const wordData = useMemo(() => {
+        // A list of common "stop words" to exclude from the cloud.
+        const stopWords = new Set([
+            'i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', 'your', 'yours', 
+            'he', 'him', 'his', 'himself', 'she', 'her', 'hers', 'herself', 'it', 'its', 'itself',
+            'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 
+            'this', 'that', 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 
+            'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 
+            'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 
+            'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 
+            'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 
+            'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 
+            'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 
+            'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 
+            'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', 'should', 'now', 've', 'll', 'm', 're'
+        ]);
+
+        const wordCounts = {};
+        const allText = entries.map(e => e.content).join(' ');
+        const words = allText.toLowerCase().split(/\s+/).map(word => word.replace(/[^a-z0-9]/g, ''));
+
+        words.forEach(word => {
+            if (word && !stopWords.has(word)) {
+                wordCounts[word] = (wordCounts[word] || 0) + 1;
+            }
+        });
+
+        return Object.entries(wordCounts)
+            .sort(([, a], [, b]) => b - a)
+            .slice(0, 50) // Increased to 50 for a denser cloud
+            .map(([text, value]) => ({ text, value }));
+
+    }, [entries]);
+
+    if (wordData.length < 5) {
+        return (
+             <div className="bg-gray-800 p-6 rounded-2xl shadow-lg">
+                <h3 className="text-xl font-bold mb-4">Word Cloud</h3>
+                <p className="text-gray-400">Write more entries to generate a cloud of your most-used words!</p>
+            </div>
+        );
+    }
+
+    const maxCount = Math.max(...wordData.map(d => d.value));
+    const minCount = Math.min(...wordData.map(d => d.value));
+
+    const getFontSize = (count) => {
+        const minFontSize = 16;
+        const maxFontSize = 64; // Increased max size for more impact
+        if (maxCount === minCount) return minFontSize;
+        const scale = (count - minCount) / (maxCount - minCount);
+        return minFontSize + (scale * (maxFontSize - minFontSize));
+    };
+    
+    // --- New, warmer color palette inspired by the image ---
+    const colors = ['#84cc16', '#f97316', '#a16207', '#4d7c0f', '#ea580c', '#ca8a04', '#65a30d'];
+
+    return (
+        <div className="bg-gray-800 p-6 rounded-2xl shadow-lg">
+            <h3 className="text-xl font-bold mb-4">Word Cloud</h3>
+            <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 p-4">
+                {wordData.map((word, index) => {
+                    // --- New: Randomly decide to rotate the word ---
+                    const shouldRotate = Math.random() > 0.8; // Rotate about 20% of words
+                    const rotationClass = shouldRotate ? 'transform -rotate-90' : '';
+                    
+                    return (
+                        <span 
+                            key={word.text}
+                            style={{ 
+                                fontSize: `${getFontSize(word.value)}px`,
+                                color: colors[index % colors.length],
+                                lineHeight: '1', // Tighter line height
+                                padding: '4px 0' // Add padding for rotated words
+                            }}
+                            className={`font-bold transition-all duration-300 ${rotationClass}`}
+                        >
+                            {word.text}
+                        </span>
+                    );
+                })}
+            </div>
+        </div>
+    );
+};
+
 const InsightsDashboard = ({ entries }) => {
     const moodDistribution = useMemo(() => {
         const counts = { happy: 0, sad: 0, angry: 0, anxious: 0, neutral: 0 };
@@ -151,6 +292,7 @@ const InsightsDashboard = ({ entries }) => {
     }
     return (
         <div className="space-y-8">
+            <WordCloudChart entries={entries} />
             <WeeklySummary entries={entries} />
             <div className="bg-gray-800 p-6 rounded-2xl shadow-lg">
                 <h3 className="text-xl font-bold mb-4">Mood Distribution</h3>
@@ -177,10 +319,8 @@ const InsightsDashboard = ({ entries }) => {
                     </LineChart>
                 </ResponsiveContainer>
             </div>
-            <div className="bg-gray-800 p-6 rounded-2xl shadow-lg">
-                <h3 className="text-xl font-bold mb-4">Dot Representation of Entries</h3>
-                <DotRepresentation entries={entries} />
-            </div>
+            <ActivityMoodChart entries={entries} />
+            {/* Remove the DotRepresentation component and any references to it from the JSX */}
         </div>
     );
 };

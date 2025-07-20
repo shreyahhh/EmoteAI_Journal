@@ -3,11 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@visx/wordcloud": "^3.12.0",
     "cra-template-pwa": "2.0.0",
+    "d3": "^7.9.0",
+    "d3-scale": "^4.0.2",
+    "d3-shape": "^3.2.0",
     "firebase": "^12.0.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-scripts": "5.0.1",
+    "react-wordcloud": "^1.2.7",
     "recharts": "^3.1.0"
   },
   "scripts": {
