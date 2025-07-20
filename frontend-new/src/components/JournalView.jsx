@@ -1,8 +1,6 @@
-import React, { useState, useMemo } from 'react';
-import { getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
-import MoodSelector from './MoodSelector';
-import Modal from './Modal';
-import JournalEntryCard from './JournalEntryCard';
+import React, { useState } from 'react';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../firebase';
 
 // --- Helper function to call the Gemini API for analysis ---
 async function analyzeEntryWithAI(text) {
@@ -49,265 +47,87 @@ async function analyzeEntryWithAI(text) {
 }
 
 const JournalView = ({ entries, user }) => {
-    const [currentEntry, setCurrentEntry] = useState({ title: '', content: '', mood: 'neutral' });
-    const [editingEntryId, setEditingEntryId] = useState(null);
+    const [currentEntry, setCurrentEntry] = useState({ title: '', content: ''});
     const [isSaving, setIsSaving] = useState(false);
     const [statusMessage, setStatusMessage] = useState('');
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [entryToDelete, setEntryToDelete] = useState(null);
-    const [exploringTheme, setExploringTheme] = useState(null); // New state for theme explorer
-    const [searchQuery, setSearchQuery] = useState(''); // New state for search
     const [selectedActivities, setSelectedActivities] = useState([]);
-    const db = getFirestore();
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setCurrentEntry(prev => ({ ...prev, [name]: value }));
-    };
+    const activityOptions = [
+        { key: 'exercise', label: 'Exercise' },
+        { key: 'work', label: 'Work' },
+        { key: 'social', label: 'Social' },
+        { key: 'hobby', label: 'Hobby' },
+        { key: 'rest', label: 'Rest' },
+        { key: 'family', label: 'Family' },
+        { key: 'chores', label: 'Chores' },
+        { key: 'nature', label: 'Nature' },
+    ];
 
-    const handleMoodChange = (mood) => {
-        setCurrentEntry(prev => ({ ...prev, mood }));
+    const handleToggleActivity = (activity) => {
+        setSelectedActivities((prev) =>
+            prev.includes(activity)
+                ? prev.filter((a) => a !== activity)
+                : [...prev, activity]
+        );
     };
 
     const handleSaveEntry = async (e) => {
         e.preventDefault();
         if (!currentEntry.content.trim()) return;
         setIsSaving(true);
-        setStatusMessage('Analyzing your entry...');
+        setStatusMessage('Analyzing...');
         const analysis = await analyzeEntryWithAI(currentEntry.content);
         setStatusMessage('Saving...');
-        const entryData = {
+        await addDoc(collection(db, 'journal_entries'), {
             ...currentEntry,
-            sentimentScore: analysis.sentimentScore,
-            emotions: analysis.emotions || [],
-            themes: analysis.themes || [],
+            ...analysis,
             activities: selectedActivities,
-        };
-        try {
-            if (editingEntryId) {
-                const entryRef = doc(db, 'journal_entries', editingEntryId);
-                await updateDoc(entryRef, { ...entryData, updatedAt: serverTimestamp() });
-            } else {
-                await addDoc(collection(db, 'journal_entries'), { ...entryData, userId: user.uid, createdAt: serverTimestamp() });
-            }
-            resetForm();
-        } catch (error) {
-            console.error("Error saving entry: ", error);
-            setStatusMessage('Error saving entry.');
-        } finally {
-            setIsSaving(false);
-            setStatusMessage('');
-        }
-    };
-    
-    const confirmDelete = (id) => {
-        setEntryToDelete(id);
-        setShowDeleteModal(true);
-    };
-
-    const handleDeleteEntry = async () => {
-        if (!entryToDelete) return;
-        try {
-            await deleteDoc(doc(db, 'journal_entries', entryToDelete));
-        } catch (error) {
-            console.error("Error deleting entry: ", error);
-        } finally {
-            setShowDeleteModal(false);
-            setEntryToDelete(null);
-        }
-    };
-
-    const startEditing = (entry) => {
-        setEditingEntryId(entry.id);
-        setCurrentEntry({ title: entry.title, content: entry.content, mood: entry.mood });
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
-    const resetForm = () => {
-        setCurrentEntry({ title: '', content: '', mood: 'neutral' });
-        setEditingEntryId(null);
-        setSelectedActivities([]);
-    };
-
-    const filteredEntries = useMemo(() => {
-        if (!searchQuery) return entries;
-        const query = searchQuery.toLowerCase();
-        return entries.filter(entry => {
-            const titleMatch = entry.title?.toLowerCase().includes(query);
-            const contentMatch = entry.content?.toLowerCase().includes(query);
-            return titleMatch || contentMatch;
+            userId: user.uid,
+            createdAt: serverTimestamp()
         });
-    }, [entries, searchQuery]);
+        setCurrentEntry({ title: '', content: ''});
+        setSelectedActivities([]);
+        setIsSaving(false);
+        setStatusMessage('');
+    };
 
     return (
-        <>
-            <Modal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)} onConfirm={handleDeleteEntry} title="Delete Entry" message="Are you sure you want to delete this entry? This action cannot be undone." />
-            {/* Theme Explorer Modal */}
-            {exploringTheme && (
-                <ThemeExplorerModal
-                    theme={exploringTheme}
-                    entries={entries}
-                    onClose={() => setExploringTheme(null)}
-                    onEntryClick={(entry) => {
-                        // Optional: clicking an entry in the modal could scroll you to it
-                        // or open it for editing. For now, we just log it.
-                        console.log("Clicked on entry:", entry.id);
-                    }}
-                />
-            )}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-1">
-                    <div className="bg-gray-800 p-6 rounded-2xl shadow-lg sticky top-8">
-                        <h2 className="text-2xl font-bold mb-4">{editingEntryId ? 'Edit Entry' : 'New Entry'}</h2>
-                        <form onSubmit={handleSaveEntry}>
-                            <input type="text" name="title" value={currentEntry.title} onChange={handleInputChange} placeholder="Entry Title (Optional)" className="w-full p-3 bg-gray-700 rounded-lg border border-gray-600 mb-4 focus:outline-none focus:ring-2 focus:ring-purple-500" />
-                            <textarea name="content" value={currentEntry.content} onChange={handleInputChange} placeholder="What's on your mind?" rows="8" className="w-full p-3 bg-gray-700 rounded-lg border border-gray-600 mb-4 focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
-                            <div className="mt-4">
-                                <ActivitySelector
-                                    selectedActivities={selectedActivities}
-                                    onSelectionChange={setSelectedActivities}
-                                />
-                            </div>
-                            <MoodSelector selectedMood={currentEntry.mood} onMoodChange={handleMoodChange} />
-                            <div className="flex items-center gap-4 mt-6">
-                                <button type="submit" disabled={isSaving} className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition disabled:bg-gray-500 flex justify-center items-center">
-                                    {isSaving ? statusMessage : (editingEntryId ? 'Update Entry' : 'Save Entry')}
+         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-1">
+                <div className="card sticky top-8 bg-white border border-orange-100">
+                    <h2 className="text-2xl font-bold mb-4">New Entry</h2>
+                    <form onSubmit={handleSaveEntry} className="space-y-4">
+                        <input type="text" value={currentEntry.title} onChange={e => setCurrentEntry({...currentEntry, title: e.target.value})} placeholder="Title of your entry" className="w-full p-3 bg-orange-50 rounded-lg border border-orange-200 focus:outline-none focus:ring-2 focus:ring-orange-400" />
+                        <textarea value={currentEntry.content} onChange={e => setCurrentEntry({...currentEntry, content: e.target.value})} placeholder="What's on your mind?" rows="10" className="w-full p-3 bg-orange-50 rounded-lg border border-orange-200 focus:outline-none focus:ring-2 focus:ring-orange-400"></textarea>
+                        <div className="flex flex-wrap gap-2 mb-2">
+                            {activityOptions.map((activity) => (
+                                <button
+                                    type="button"
+                                    key={activity.key}
+                                    onClick={() => handleToggleActivity(activity.key)}
+                                    className={`px-3 py-1 rounded-full border text-sm font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#2563eb] ${selectedActivities.includes(activity.key)
+                                        ? 'bg-gradient-to-r from-[#2563eb] to-[#0ea5e9] text-white border-[#2563eb] shadow-md scale-105'
+                                        : 'bg-[#e0f2fe] text-[#2563eb] border-[#bae6fd] hover:bg-[#dbeafe] hover:text-[#f59e42]'}`}
+                                >
+                                    {activity.label}
                                 </button>
-                                {(editingEntryId || currentEntry.content) && (<button type="button" onClick={resetForm} className="bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 px-4 rounded-lg transition">Cancel</button>)}
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <div className="lg:col-span-2">
-                    <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-2xl font-bold">Your Journal</h2>
-                        <div className="w-full max-w-xs">
-                            <input
-                                type="text"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                placeholder="Search entries..."
-                                className="w-full p-2 bg-gray-700 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
-                            />
-                        </div>
-                    </div>
-                    {filteredEntries.length > 0 ? (
-                        <div className="space-y-6">
-                            {filteredEntries.map(entry => (
-                                <JournalEntryCard
-                                    key={entry.id}
-                                    entry={entry}
-                                    onEdit={() => startEditing(entry)}
-                                    onDelete={() => confirmDelete(entry.id)}
-                                    onThemeClick={(theme) => setExploringTheme(theme)}
-                                />
                             ))}
                         </div>
-                    ) : (
-                        <div className="text-center bg-gray-800 p-8 rounded-2xl">
-                            <h3 className="text-xl font-semibold">No entries found.</h3>
-                            <p className="text-gray-400 mt-2">{searchQuery ? `Your search for "${searchQuery}" did not match any entries.` : "Use the form to write your first journal entry!"}</p>
+                        <button type="submit" disabled={isSaving} className="w-full btn-gradient">{isSaving ? statusMessage : 'Save Entry'}</button>
+                    </form>
+                </div>
+            </div>
+            <div className="lg:col-span-2 space-y-6">
+                {entries.map(entry => (
+                    <div key={entry.id} className="card card-accent bg-white border border-orange-100">
+                        <h3 className="font-bold text-xl mb-1 text-gray-800">{entry.title || 'Untitled'}</h3>
+                        <p className="text-sm text-gray-500 mb-3">{entry.createdAt?.toDate().toLocaleString()}</p>
+                        <p className="whitespace-pre-wrap mb-4 text-gray-700">{entry.content}</p>
+                        <div className="flex flex-wrap gap-2 pt-3 border-t border-orange-100">
+                             {entry.emotions?.map((e, i) => <span key={i} className="tag">{e}</span>)}
+                             {entry.themes?.map((t, i) => <span key={i} className="tag">{t}</span>)}
                         </div>
-                    )}
-                </div>
-            </div>
-        </>
-    );
-};
-
-// --- Theme Explorer Modal with Accordion ---
-const ThemeExplorerModal = ({ theme, entries, onClose }) => {
-    // New state to track which entry is currently expanded. `null` means none are.
-    const [expandedEntryId, setExpandedEntryId] = useState(null);
-
-    // Filter the entries to find all that include the selected theme.
-    const filteredEntries = entries.filter(entry => 
-        entry.themes && entry.themes.some(t => t.toLowerCase() === theme.toLowerCase())
-    );
-
-    // This function handles expanding or collapsing an entry.
-    const handleEntryClick = (entryId) => {
-        // If the clicked entry is already expanded, collapse it. Otherwise, expand it.
-        setExpandedEntryId(currentId => (currentId === entryId ? null : entryId));
-    };
-
-    return (
-        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
-            <div className="bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] flex flex-col">
-                <div className="flex justify-between items-center mb-4 flex-shrink-0">
-                    <h2 className="text-2xl font-bold text-white">
-                        Entries about: <span className="text-purple-400">{theme}</span>
-                    </h2>
-                    <button onClick={onClose} className="text-gray-400 hover:text-white text-3xl font-bold">&times;</button>
-                </div>
-                <div className="overflow-y-auto space-y-2">
-                    {filteredEntries.length > 0 ? (
-                        filteredEntries.map(entry => (
-                            <div key={entry.id} className="bg-gray-700/50 rounded-lg transition-all">
-                                <button 
-                                    onClick={() => handleEntryClick(entry.id)}
-                                    className="w-full text-left p-4 flex justify-between items-center hover:bg-gray-700 rounded-lg focus:outline-none"
-                                >
-                                    <div>
-                                        <p className="font-semibold text-white">{entry.title || "Untitled Entry"}</p>
-                                        <p className="text-sm text-gray-400">
-                                            {entry.createdAt?.toDate ? entry.createdAt.toDate().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Recent'}
-                                        </p>
-                                    </div>
-                                    <span className={`transform transition-transform duration-300 ${expandedEntryId === entry.id ? 'rotate-180' : ''}`}>▼</span>
-                                </button>
-                                {expandedEntryId === entry.id && (
-                                    <div className="p-4 border-t border-gray-600">
-                                        <p className="text-gray-300 whitespace-pre-wrap">{entry.content}</p>
-                                    </div>
-                                )}
-                            </div>
-                        ))
-                    ) : (
-                        <p className="text-gray-400 p-4">No other entries found for this theme.</p>
-                    )}
-                </div>
-            </div>
-        </div>
-    );
-};
-
-// --- New Component: Activity Selector ---
-const ActivitySelector = ({ selectedActivities, onSelectionChange }) => {
-    const allActivities = [
-        { id: 'exercise', name: 'Exercise', icon: '🏃' },
-        { id: 'work', name: 'Work', icon: '💼' },
-        { id: 'social', name: 'Socialized', icon: '💬' },
-        { id: 'hobby', name: 'Hobby', icon: '🎨' },
-        { id: 'rest', name: 'Rested', icon: '😴' },
-        { id: 'family', name: 'Family Time', icon: '👨‍👩‍👧' },
-        { id: 'chores', name: 'Chores', icon: '🧹' },
-        { id: 'nature', name: 'Nature', icon: '🌳' },
-    ];
-    const handleToggleActivity = (activityId) => {
-        const newSelection = selectedActivities.includes(activityId)
-            ? selectedActivities.filter(id => id !== activityId)
-            : [...selectedActivities, activityId];
-        onSelectionChange(newSelection);
-    };
-    return (
-        <div>
-            <label className="block text-gray-400 mb-2">What did you do today?</label>
-            <div className="flex flex-wrap gap-2">
-                {allActivities.map(activity => (
-                    <button
-                        key={activity.id}
-                        type="button"
-                        onClick={() => handleToggleActivity(activity.id)}
-                        className={`px-3 py-1.5 text-sm font-semibold rounded-full transition-colors flex items-center gap-1.5 ${
-                            selectedActivities.includes(activity.id)
-                                ? 'bg-purple-500 text-white ring-2 ring-purple-300'
-                                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                        }`}
-                    >
-                        <span>{activity.icon}</span>
-                        <span>{activity.name}</span>
-                    </button>
+                    </div>
                 ))}
             </div>
         </div>

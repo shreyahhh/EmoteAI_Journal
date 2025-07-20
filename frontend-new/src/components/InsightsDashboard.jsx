@@ -72,9 +72,9 @@ const WeeklySummary = ({ entries }) => {
         setIsLoading(false);
     };
     return (
-        <div className="bg-gray-800 p-6 rounded-2xl shadow-lg">
-            <h3 className="text-xl font-bold mb-4">Your Weekly AI Summary</h3>
-            <p className="text-gray-400 mb-4">Get a personalized summary of your thoughts and feelings from the last 7 days.</p>
+        <div className="bg-white p-6 rounded-2xl shadow-lg">
+            <h3 className="text-xl font-bold mb-4 text-orange-600">Your Weekly AI Summary</h3>
+            <p className="text-gray-600 mb-4">Get a personalized summary of your thoughts and feelings from the last 7 days.</p>
             <button 
                 onClick={handleGenerateSummary}
                 disabled={isLoading}
@@ -87,28 +87,28 @@ const WeeklySummary = ({ entries }) => {
                     </>
                 ) : "Generate My Weekly Summary"}
             </button>
-            {error && <p className="text-red-400 mt-4 text-center">{error}</p>}
+            {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
             {summary && (
-                <div className="mt-6 border-t border-gray-700 pt-6 space-y-6">
+                <div className="mt-6 border-t border-gray-200 pt-6 space-y-6">
                     <div>
-                        <h4 className="font-semibold text-purple-400 mb-2">Overall Feeling</h4>
-                        <p className="text-gray-300">{summary.overallFeeling}</p>
+                        <h4 className="font-semibold text-orange-500 mb-2">Overall Feeling</h4>
+                        <p className="text-gray-700">{summary.overallFeeling}</p>
                     </div>
                      <div>
                         <h4 className="font-semibold text-purple-400 mb-2">Key Themes This Week</h4>
                         <div className="flex flex-wrap gap-2">
                             {summary.keyThemes?.map((theme, index) => (
-                                <span key={index} className="px-3 py-1 text-sm font-semibold rounded-full bg-teal-500/20 text-teal-300">{theme}</span>
+                                <span key={index} className="px-3 py-1 text-sm font-semibold rounded-full bg-teal-100 text-teal-700">{theme}</span>
                             ))}
                         </div>
                     </div>
                     <div>
                         <h4 className="font-semibold text-purple-400 mb-2">A Positive Moment</h4>
-                        <p className="text-gray-300 italic">"{summary.positiveMoment}"</p>
+                        <p className="text-gray-700 italic">"{summary.positiveMoment}"</p>
                     </div>
                     <div>
                         <h4 className="font-semibold text-purple-400 mb-2">A Gentle Suggestion For You</h4>
-                        <p className="text-gray-300">{summary.gentleSuggestion}</p>
+                        <p className="text-gray-700">{summary.gentleSuggestion}</p>
                     </div>
                 </div>
             )}
@@ -143,14 +143,14 @@ const ActivityMoodChart = ({ entries }) => {
     }, [entries]);
     if (chartData.length === 0) {
         return (
-             <div className="bg-gray-800 p-6 rounded-2xl shadow-lg">
+             <div className="bg-white p-6 rounded-2xl shadow-lg">
                 <h3 className="text-xl font-bold mb-4">Mood-Boosting Activities</h3>
                 <p className="text-gray-400">Tag activities in your journal entries to see which ones correlate with positive moods!</p>
             </div>
         );
     }
     return (
-        <div className="bg-gray-800 p-6 rounded-2xl shadow-lg">
+        <div className="bg-white p-6 rounded-2xl shadow-lg">
             <h3 className="text-xl font-bold mb-4">Mood-Boosting Activities</h3>
             <p className="text-gray-400 mb-4">These are activities you've most frequently tagged on positive days.</p>
             <div className="space-y-2">
@@ -211,7 +211,7 @@ const WordCloudChart = ({ entries }) => {
 
     if (wordData.length < 5) {
         return (
-             <div className="bg-gray-800 p-6 rounded-2xl shadow-lg">
+             <div className="bg-white p-6 rounded-2xl shadow-lg">
                 <h3 className="text-xl font-bold mb-4">Word Cloud</h3>
                 <p className="text-gray-400">Write more entries to generate a cloud of your most-used words!</p>
             </div>
@@ -233,7 +233,7 @@ const WordCloudChart = ({ entries }) => {
     const colors = ['#84cc16', '#f97316', '#a16207', '#4d7c0f', '#ea580c', '#ca8a04', '#65a30d'];
 
     return (
-        <div className="bg-gray-800 p-6 rounded-2xl shadow-lg">
+        <div className="bg-white p-6 rounded-2xl shadow-lg">
             <h3 className="text-xl font-bold mb-4">Word Cloud</h3>
             <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 p-4">
                 {wordData.map((word, index) => {
@@ -284,9 +284,9 @@ const InsightsDashboard = ({ entries }) => {
     }, [entries]);
     if (entries.length === 0) {
         return (
-            <div className="text-center bg-gray-800 p-8 rounded-2xl">
-                <h3 className="text-xl font-semibold">Not enough data for insights.</h3>
-                <p className="text-gray-400 mt-2">Write a few journal entries to see your emotional trends here!</p>
+            <div className="text-center bg-white p-8 rounded-2xl border border-orange-100">
+                <h3 className="text-xl font-semibold text-orange-900">Not enough data for insights.</h3>
+                <p className="text-orange-400 mt-2">Write a few journal entries to see your emotional trends here!</p>
             </div>
         );
     }
@@ -294,7 +294,7 @@ const InsightsDashboard = ({ entries }) => {
         <div className="space-y-8">
             <WordCloudChart entries={entries} />
             <WeeklySummary entries={entries} />
-            <div className="bg-gray-800 p-6 rounded-2xl shadow-lg">
+            <div className="bg-white p-6 rounded-2xl shadow-lg">
                 <h3 className="text-xl font-bold mb-4">Mood Distribution</h3>
                 <ResponsiveContainer width="100%" height={300}>
                     <BarChart data={moodDistribution} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
@@ -306,7 +306,7 @@ const InsightsDashboard = ({ entries }) => {
                     </BarChart>
                 </ResponsiveContainer>
             </div>
-            <div className="bg-gray-800 p-6 rounded-2xl shadow-lg">
+            <div className="bg-white p-6 rounded-2xl shadow-lg">
                 <h3 className="text-xl font-bold mb-4">Sentiment Trend (Last 30 Days)</h3>
                 <ResponsiveContainer width="100%" height={300}>
                     <LineChart data={sentimentOverTime} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>

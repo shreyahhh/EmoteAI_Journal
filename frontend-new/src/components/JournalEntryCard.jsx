@@ -9,14 +9,14 @@ const JournalEntryCard = ({ entry, onEdit, onDelete, onThemeClick }) => {
     const formattedDate = entry.createdAt?.toDate ? entry.createdAt.toDate().toLocaleDateString('en-US', {
         year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
     }) : 'Just now';
-    const tagColors = ["bg-blue-500/20 text-blue-300", "bg-purple-500/20 text-purple-300", "bg-teal-500/20 text-teal-300", "bg-pink-500/20 text-pink-300", "bg-orange-500/20 text-orange-300"];
-    const themeTagColors = ["bg-purple-700/30 text-purple-200 border border-purple-400", "bg-pink-700/30 text-pink-200 border border-pink-400", "bg-orange-700/30 text-orange-200 border border-orange-400", "bg-green-700/30 text-green-200 border border-green-400", "bg-blue-700/30 text-blue-200 border border-blue-400"];
+    const tagColors = ["bg-orange-100 text-orange-600", "bg-purple-100 text-purple-600", "bg-teal-100 text-teal-600", "bg-pink-100 text-pink-600", "bg-blue-100 text-blue-600"];
+    const themeTagColors = ["bg-purple-200 text-purple-700 border border-purple-300", "bg-pink-200 text-pink-700 border border-pink-300", "bg-orange-200 text-orange-700 border border-orange-300", "bg-green-200 text-green-700 border border-green-300", "bg-blue-200 text-blue-700 border border-blue-300"];
     return (
-        <div className="bg-gray-800 p-6 rounded-2xl shadow-lg transition-all hover:shadow-purple-500/20">
+        <div className="bg-white p-6 rounded-2xl shadow-lg transition-all hover:shadow-orange-200">
             <div className="flex justify-between items-start">
                 <div>
-                    <h3 className="text-xl font-bold text-white">{entry.title || 'Untitled Entry'}</h3>
-                    <p className="text-sm text-gray-400 mb-4">{formattedDate}</p>
+                    <h3 className="text-xl font-bold text-gray-800">{entry.title || 'Untitled Entry'}</h3>
+                    <p className="text-sm text-gray-500 mb-4">{formattedDate}</p>
                 </div>
                 <div className="flex items-center gap-2">
                     <span className="text-2xl">{moodEmojis[entry.mood] || '😐'}</span>
@@ -26,9 +26,9 @@ const JournalEntryCard = ({ entry, onEdit, onDelete, onThemeClick }) => {
                     </div>
                 </div>
             </div>
-            <p className="text-gray-300 whitespace-pre-wrap mb-4">{entry.content}</p>
+            <p className="text-gray-700 whitespace-pre-wrap mb-4">{entry.content}</p>
             {(entry.emotions?.length > 0 || entry.themes?.length > 0) && (
-                <div className="border-t border-gray-700 pt-4 flex flex-wrap gap-2">
+                <div className="border-t border-gray-200 pt-4 flex flex-wrap gap-2">
                     {entry.emotions?.map((emotion, index) => (
                         <span key={`emo-${index}`} className={`px-2 py-1 text-xs font-semibold rounded-full ${tagColors[index % tagColors.length]}`}>{emotion}</span>
                     ))}

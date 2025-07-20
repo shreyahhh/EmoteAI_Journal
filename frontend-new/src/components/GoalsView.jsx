@@ -57,10 +57,10 @@ const GoalsView = ({ entries, user }) => {
     return (
         <div className="space-y-8">
             <AIGoalSuggestions entries={entries} onAddGoal={handleAddGoal} />
-            <div className="bg-gray-800 p-6 rounded-2xl shadow-lg">
-                <h3 className="text-xl font-bold mb-4">Your Active Goals</h3>
+            <div className="bg-white p-6 rounded-2xl shadow-lg">
+                <h3 className="text-xl font-bold mb-4 text-orange-600">Your Active Goals</h3>
                 {isLoading ? (
-                    <p className="text-gray-400">Loading goals...</p>
+                    <p className="text-gray-600">Loading goals...</p>
                 ) : goals.length > 0 ? (
                     <div className="space-y-4">
                         {goals.map(goal => (
@@ -68,7 +68,7 @@ const GoalsView = ({ entries, user }) => {
                         ))}
                     </div>
                 ) : (
-                    <p className="text-gray-400">You haven't set any goals yet. Try adding one from the suggestions above or create your own!</p>
+                    <p className="text-gray-600">You haven't set any goals yet. Try adding one from the suggestions above or create your own!</p>
                 )}
             </div>
              <NewGoalForm onAddGoal={handleAddGoal} />
@@ -131,11 +131,11 @@ const GoalCard = ({ goal, onToggleCompletion }) => {
     const isCompletedToday = goal.completions && goal.completions[today];
 
     return (
-        <div className={`p-4 rounded-lg flex items-center justify-between transition-colors ${isCompletedToday ? 'bg-green-500/20' : 'bg-gray-700/50'}`}>
-            <p className={`text-lg ${isCompletedToday ? 'text-green-300 line-through' : 'text-white'}`}>{goal.title}</p>
+        <div className={`p-4 rounded-lg flex items-center justify-between transition-colors ${isCompletedToday ? 'bg-green-100' : 'bg-orange-50'}`}>
+            <p className={`text-lg ${isCompletedToday ? 'text-green-700 line-through' : 'text-gray-800'}`}>{goal.title}</p>
             <button 
                 onClick={() => onToggleCompletion(goal.id, today)}
-                className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all ${isCompletedToday ? 'bg-green-500 border-green-400' : 'border-gray-500 hover:border-green-500'}`}
+                className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all ${isCompletedToday ? 'bg-green-200 border-green-400' : 'border-gray-300 hover:border-green-500'}`}
                 title="Mark as complete for today"
             >
                 {isCompletedToday && <span className="text-white text-xl">✓</span>}
@@ -156,17 +156,17 @@ const NewGoalForm = ({ onAddGoal }) => {
     };
 
     return (
-        <div className="bg-gray-800 p-6 rounded-2xl shadow-lg">
-            <h3 className="text-xl font-bold mb-4">Create a New Goal</h3>
+        <div className="bg-white p-6 rounded-2xl shadow-lg">
+            <h3 className="text-xl font-bold mb-4 text-orange-600">Create a New Goal</h3>
             <form onSubmit={handleSubmit} className="flex gap-4">
                 <input
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="e.g., Meditate for 10 minutes"
-                    className="flex-grow p-3 bg-gray-700 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500 transition"
+                    className="flex-grow p-3 bg-orange-50 rounded-lg border border-orange-200 focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
                 />
-                <button type="submit" className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition">Add</button>
+                <button type="submit" className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition">Add</button>
             </form>
         </div>
     );

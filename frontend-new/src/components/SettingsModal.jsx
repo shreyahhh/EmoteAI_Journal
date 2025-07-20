@@ -97,46 +97,44 @@ const SettingsModal = ({ onClose, user, entries }) => { // Pass 'entries' as a p
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
-            <div className="bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-md w-full mx-4">
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
+            <div className="bg-[#f8fafc] rounded-2xl shadow-2xl p-6 max-w-md w-full mx-4 border border-blue-200">
                 <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-bold text-white">Settings</h2>
-                    <button onClick={onClose} className="text-gray-400 hover:text-white text-3xl font-bold">&times;</button>
+                    <h2 className="text-2xl font-bold text-blue-700">Settings</h2>
+                    <button onClick={onClose} className="text-blue-400 hover:text-blue-700 text-3xl font-bold">&times;</button>
                 </div>
 
                 <div className="space-y-6">
                     {/* Reminders Section */}
                     <div className="space-y-4">
-                        <h3 className="text-lg font-semibold text-purple-400">Daily Journaling Reminders</h3>
+                        <h3 className="text-lg font-semibold text-blue-500">Daily Journaling Reminders</h3>
                         {notificationPermission !== 'granted' ? (
-                            <div className="bg-yellow-500/20 p-4 rounded-lg text-yellow-300">
+                            <div className="bg-blue-100 p-4 rounded-lg text-blue-600">
                                 <p className="font-semibold mb-2">Enable Notifications</p>
                                 <p className="text-sm mb-3">To use reminders, you need to allow EMOTE to send notifications in your browser.</p>
-                                <button onClick={handleRequestPermission} className="bg-yellow-500 text-gray-900 font-bold py-2 px-4 rounded-lg w-full">
-                                    Allow Notifications
-                                </button>
+                                <button onClick={handleRequestPermission} className="bg-blue-400 text-white font-bold py-2 px-4 rounded-lg w-full">Allow Notifications</button>
                             </div>
                         ) : (
-                            <div className="bg-gray-700/50 p-4 rounded-lg">
+                            <div className="bg-blue-50 p-4 rounded-lg">
                                 <div className="flex justify-between items-center">
-                                    <label htmlFor="reminder-toggle" className="text-white font-medium">Enable Daily Reminder</label>
+                                    <label htmlFor="reminder-toggle" className="text-blue-700 font-medium">Enable Daily Reminder</label>
                                     <button
                                         id="reminder-toggle"
                                         onClick={handleToggleReminders}
-                                        className={`w-12 h-6 rounded-full flex items-center transition-colors ${remindersEnabled ? 'bg-green-500' : 'bg-gray-600'}`}
+                                        className={`w-12 h-6 rounded-full flex items-center transition-colors ${remindersEnabled ? 'bg-blue-400' : 'bg-blue-200'}`}
                                     >
                                         <span className={`block w-5 h-5 bg-white rounded-full transform transition-transform ${remindersEnabled ? 'translate-x-6' : 'translate-x-1'}`}></span>
                                     </button>
                                 </div>
                                 {remindersEnabled && (
                                     <div className="mt-4">
-                                        <label htmlFor="reminder-time" className="block text-sm font-medium text-gray-400 mb-1">Reminder Time</label>
+                                        <label htmlFor="reminder-time" className="block text-sm font-medium text-blue-500 mb-1">Reminder Time</label>
                                         <input
                                             type="time"
                                             id="reminder-time"
                                             value={reminderTime}
                                             onChange={handleTimeChange}
-                                            className="w-full p-2 bg-gray-600 rounded-lg border border-gray-500 text-white"
+                                            className="w-full p-2 bg-blue-100 rounded-lg border border-blue-200 text-blue-700"
                                         />
                                     </div>
                                 )}
@@ -146,16 +144,16 @@ const SettingsModal = ({ onClose, user, entries }) => { // Pass 'entries' as a p
 
                     {/* --- New Data Export Section --- */}
                     <div>
-                        <h3 className="text-lg font-semibold text-purple-400 mb-2">Data Export</h3>
-                        <div className="bg-gray-700/50 p-4 rounded-lg space-y-3">
-                            <p className="text-sm text-gray-400">Download a complete copy of your journal entries.</p>
+                        <h3 className="text-lg font-semibold text-blue-500 mb-2">Data Export</h3>
+                        <div className="bg-blue-50 p-4 rounded-lg space-y-3">
+                            <p className="text-sm text-blue-400">Download a complete copy of your journal entries.</p>
                             <div className="flex flex-col sm:flex-row gap-3">
-                                <button onClick={() => handleExport('json')} disabled={isExporting} className="flex-1 bg-gray-600 hover:bg-gray-500 text-white font-semibold py-2 px-4 rounded-lg transition disabled:opacity-50">Export as JSON</button>
-                                <button onClick={() => handleExport('txt')} disabled={isExporting} className="flex-1 bg-gray-600 hover:bg-gray-500 text-white font-semibold py-2 px-4 rounded-lg transition disabled:opacity-50">Export as TXT</button>
-                                <button onClick={() => handleExport('csv')} disabled={isExporting} className="flex-1 bg-gray-600 hover:bg-gray-500 text-white font-semibold py-2 px-4 rounded-lg transition disabled:opacity-50">Export as CSV</button>
+                                <button onClick={() => handleExport('json')} disabled={isExporting} className="flex-1 bg-blue-400 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg transition disabled:opacity-50">Export as JSON</button>
+                                <button onClick={() => handleExport('txt')} disabled={isExporting} className="flex-1 bg-blue-400 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg transition disabled:opacity-50">Export as TXT</button>
+                                <button onClick={() => handleExport('csv')} disabled={isExporting} className="flex-1 bg-blue-400 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg transition disabled:opacity-50">Export as CSV</button>
                             </div>
                             {exportMessage && (
-                                <p className="text-center text-green-400 text-sm mt-3">{exportMessage}</p>
+                                <p className="text-center text-green-500 text-sm mt-3">{exportMessage}</p>
                             )}
                         </div>
                     </div>

@@ -90,13 +90,13 @@ const ChatView = ({ entries }) => {
     };
 
     return (
-        <div className="max-w-4xl mx-auto h-[75vh] flex flex-col bg-gray-800 rounded-2xl shadow-lg">
+        <div className="max-w-4xl mx-auto h-[75vh] flex flex-col bg-white rounded-2xl shadow-lg border border-orange-100">
             {/* Message Display Area */}
             <div className="flex-1 p-6 overflow-y-auto space-y-4">
                 {messages.map((msg, index) => (
                     <div key={index} className={`flex items-end gap-3 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                        {msg.sender === 'ai' && <div className="w-8 h-8 rounded-full bg-purple-500 flex-shrink-0"></div>}
-                        <div className={`max-w-lg px-4 py-3 rounded-2xl ${msg.sender === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300'}`}>
+                        {msg.sender === 'ai' && <div className="w-8 h-8 rounded-full bg-orange-300 flex-shrink-0"></div>}
+                        <div className={`max-w-lg px-4 py-3 rounded-2xl ${msg.sender === 'user' ? 'bg-orange-100 text-orange-900' : 'bg-orange-50 text-orange-800 border border-orange-200'}`}>
                             <p className="whitespace-pre-wrap">{msg.text}</p>
                         </div>
                     </div>
@@ -117,7 +117,7 @@ const ChatView = ({ entries }) => {
             </div>
 
             {/* Message Input Form */}
-            <div className="p-4 border-t border-gray-700">
+            <div className="p-4 border-t border-orange-100">
                 <form onSubmit={handleSendMessage} className="flex items-center gap-4">
                     <input
                         type="text"
@@ -125,9 +125,9 @@ const ChatView = ({ entries }) => {
                         onChange={(e) => setInput(e.target.value)}
                         placeholder="Ask about your journal..."
                         disabled={isLoading}
-                        className="flex-grow p-3 bg-gray-700 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-500 transition text-white"
+                        className="flex-grow p-3 bg-orange-50 rounded-lg border border-orange-200 focus:outline-none focus:ring-2 focus:ring-orange-400 transition text-orange-900"
                     />
-                    <button type="submit" disabled={isLoading} className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition disabled:bg-gray-500">
+                    <button type="submit" disabled={isLoading} className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg transition disabled:bg-orange-200">
                         Send
                     </button>
                 </form>

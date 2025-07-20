@@ -36,7 +36,7 @@ const AuthPage = ({ isLogin, navigateTo }) => {
         <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-4">
             <div className="w-full max-w-md">
                 <div className="text-center mb-8">
-                    <h1 className="text-5xl font-bold text-white">EMOTE</h1>
+                    <h1 className="text-5xl font-emote text-[#2563eb] drop-shadow-lg tracking-wide select-none">Emote</h1>
                     <p className="text-purple-300 mt-2">Your private space to reflect and grow.</p>
                 </div>
                 <div className="bg-gray-800 p-8 rounded-2xl shadow-2xl shadow-purple-500/10">
