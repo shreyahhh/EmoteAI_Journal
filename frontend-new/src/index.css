@@ -1,12 +1,13 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Pacifico&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Pacifico&family=Caveat:wght@700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 .font-emote {
-  font-family: 'Pacifico', cursive;
+  font-family: 'Caveat', 'Pacifico', cursive;
+  color: #f59e42;
   letter-spacing: 0.08em;
-  text-shadow: 0 2px 12px rgba(37,99,235,0.10), 0 1px 0 #fff;
+  text-shadow: 0 2px 12px rgba(245,158,66,0.10), 0 1px 0 #fff;
   font-weight: 700;
 }
 

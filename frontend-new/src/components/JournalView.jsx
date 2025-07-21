@@ -93,7 +93,7 @@ const JournalView = ({ entries, user }) => {
 
     return (
          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-1">
+            <div className="lg:col-span-1 xl:col-span-2">
                 <div className="card sticky top-8 bg-white border border-orange-100">
                     <h2 className="text-2xl font-bold mb-4">New Entry</h2>
                     <form onSubmit={handleSaveEntry} className="space-y-4">
@@ -117,7 +117,7 @@ const JournalView = ({ entries, user }) => {
                     </form>
                 </div>
             </div>
-            <div className="lg:col-span-2 space-y-6">
+            <div className="lg:col-span-2 xl:col-span-1 space-y-6">
                 {entries.map(entry => (
                     <div key={entry.id} className="card card-accent bg-white border border-orange-100">
                         <h3 className="font-bold text-xl mb-1 text-gray-800">{entry.title || 'Untitled'}</h3>

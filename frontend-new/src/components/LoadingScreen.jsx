@@ -1,5 +1,5 @@
 const LoadingScreen = () => (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center text-white">
+    <div className="min-h-screen bg-neutral-950 flex items-center justify-center text-white">
         <div className="flex flex-col items-center gap-4">
             <svg className="animate-spin h-10 w-10 text-purple-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
