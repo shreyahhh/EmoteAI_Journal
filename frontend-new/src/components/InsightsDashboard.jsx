@@ -1,12 +1,10 @@
 import React, { useMemo, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
-// Remove import DotRepresentation from './DotRepresentation';
-// Install with: npm install @visx/wordcloud d3-shape d3-scale
-import { Wordcloud } from '@visx/wordcloud';
-// --- New Helper function to get a weekly summary from Gemini API ---
+
+// --- Helper function to get a weekly summary from Gemini API ---
 async function getWeeklySummaryWithAI(entriesText) {
-    const apiKey = "AIzaSyA3lz7Bh3KuM2SbwwoDhvRQy5jhShrAxHc";
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+    const apiKey = process.env.REACT_APP_GEMINI_API_KEY; // Use Gemini API key from environment variables
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
     const prompt = `
         As a compassionate psychologist, you are reviewing a client's journal entries from the past week.
         Please provide a gentle and insightful summary based on the text provided.
@@ -49,7 +47,7 @@ async function getWeeklySummaryWithAI(entriesText) {
     }
 }
 
-// --- New Component: Weekly Summary ---
+// --- Component: Weekly Summary ---
 const WeeklySummary = ({ entries }) => {
     const [summary, setSummary] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -72,13 +70,13 @@ const WeeklySummary = ({ entries }) => {
         setIsLoading(false);
     };
     return (
-        <div className="bg-white p-6 rounded-2xl shadow-lg">
-            <h3 className="text-xl font-bold mb-4 text-orange-600">Your Weekly AI Summary</h3>
-            <p className="text-gray-600 mb-4">Get a personalized summary of your thoughts and feelings from the last 7 days.</p>
+        <div className="bg-gray-800/50 p-6 rounded-2xl shadow-lg border border-gray-700 backdrop-blur-sm">
+            <h3 className="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-teal-300">Your Weekly AI Summary</h3>
+            <p className="text-gray-400 mb-6">Get a personalized summary of your thoughts and feelings from the last 7 days.</p>
             <button 
                 onClick={handleGenerateSummary}
                 disabled={isLoading}
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-lg transition disabled:bg-gray-500 flex items-center justify-center"
+                className="w-full bg-gradient-to-r from-purple-500 to-teal-500 text-white font-bold py-3 px-5 rounded-full shadow-lg shadow-purple-500/20 transition-all duration-300 hover:scale-105 hover:shadow-teal-500/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-teal-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100 flex items-center justify-center"
             >
                 {isLoading ? (
                     <>
@@ -87,28 +85,28 @@ const WeeklySummary = ({ entries }) => {
                     </>
                 ) : "Generate My Weekly Summary"}
             </button>
-            {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
+            {error && <p className="text-red-400 mt-4 text-center font-semibold">{error}</p>}
             {summary && (
-                <div className="mt-6 border-t border-gray-200 pt-6 space-y-6">
+                <div className="mt-6 border-t border-gray-700 pt-6 space-y-6 animate-fade-in">
                     <div>
-                        <h4 className="font-semibold text-orange-500 mb-2">Overall Feeling</h4>
-                        <p className="text-gray-700">{summary.overallFeeling}</p>
+                        <h4 className="font-semibold text-purple-300 mb-2">Overall Feeling</h4>
+                        <p className="text-gray-300">{summary.overallFeeling}</p>
                     </div>
                      <div>
-                        <h4 className="font-semibold text-purple-400 mb-2">Key Themes This Week</h4>
+                        <h4 className="font-semibold text-purple-300 mb-2">Key Themes This Week</h4>
                         <div className="flex flex-wrap gap-2">
                             {summary.keyThemes?.map((theme, index) => (
-                                <span key={index} className="px-3 py-1 text-sm font-semibold rounded-full bg-teal-100 text-teal-700">{theme}</span>
+                                <span key={index} className="px-3 py-1 text-sm font-semibold rounded-full bg-teal-400/20 text-teal-200 border border-teal-400/30">{theme}</span>
                             ))}
                         </div>
                     </div>
                     <div>
-                        <h4 className="font-semibold text-purple-400 mb-2">A Positive Moment</h4>
-                        <p className="text-gray-700 italic">"{summary.positiveMoment}"</p>
+                        <h4 className="font-semibold text-purple-300 mb-2">A Positive Moment</h4>
+                        <p className="text-gray-300 italic">"{summary.positiveMoment}"</p>
                     </div>
                     <div>
-                        <h4 className="font-semibold text-purple-400 mb-2">A Gentle Suggestion For You</h4>
-                        <p className="text-gray-700">{summary.gentleSuggestion}</p>
+                        <h4 className="font-semibold text-purple-300 mb-2">A Gentle Suggestion For You</h4>
+                        <p className="text-gray-300">{summary.gentleSuggestion}</p>
                     </div>
                 </div>
             )}
@@ -117,11 +115,23 @@ const WeeklySummary = ({ entries }) => {
 };
 
 const getMoodColor = (mood) => {
-    const colors = { happy: '#48bb78', sad: '#4299e1', angry: '#f56565', anxious: '#9f7aea', neutral: '#a0aec0' };
-    return colors[mood] || '#a0aec0';
+    const colors = { happy: '#34d399', sad: '#60a5fa', angry: '#f87171', anxious: '#a78bfa', neutral: '#9ca3af' };
+    return colors[mood] || '#9ca3af';
 };
 
-// --- New Component: Activity-Mood Correlation Chart ---
+const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="p-4 bg-gray-800/80 border border-gray-700 rounded-lg shadow-lg backdrop-blur-sm">
+          <p className="label text-gray-200 font-semibold">{`${label}`}</p>
+          <p className="intro text-teal-300">{`${payload[0].name}: ${payload[0].value}`}</p>
+        </div>
+      );
+    }
+    return null;
+};
+
+// --- Component: Activity-Mood Correlation Chart ---
 const ActivityMoodChart = ({ entries }) => {
     const chartData = useMemo(() => {
         const activityMoods = {};
@@ -139,123 +149,100 @@ const ActivityMoodChart = ({ entries }) => {
                 name: activityNames[activityId] || activityId,
                 count: count
             }))
-            .sort((a, b) => b.count - a.count);
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 5); // Show top 5
     }, [entries]);
+
     if (chartData.length === 0) {
         return (
-             <div className="bg-white p-6 rounded-2xl shadow-lg">
-                <h3 className="text-xl font-bold mb-4">Mood-Boosting Activities</h3>
+             <div className="bg-gray-800/50 p-6 rounded-2xl shadow-lg border border-gray-700 backdrop-blur-sm">
+                <h3 className="text-xl font-bold mb-2 text-white">Mood-Boosting Activities</h3>
                 <p className="text-gray-400">Tag activities in your journal entries to see which ones correlate with positive moods!</p>
             </div>
         );
     }
     return (
-        <div className="bg-white p-6 rounded-2xl shadow-lg">
-            <h3 className="text-xl font-bold mb-4">Mood-Boosting Activities</h3>
-            <p className="text-gray-400 mb-4">These are activities you've most frequently tagged on positive days.</p>
-            <div className="space-y-2">
-                {chartData.map(item => (
-                    <div key={item.name} className="flex items-center gap-4">
-                        <span className="w-28 text-right text-gray-300">{item.name}</span>
-                        <div className="flex-1 bg-gray-700 rounded-full h-6">
-                            <div 
-                                className="bg-green-500 h-6 rounded-full flex items-center justify-end px-2"
-                                style={{ width: `${(item.count / Math.max(...chartData.map(d => d.count))) * 100}%` }}
-                            >
-                               <span className="font-bold text-white text-sm">{item.count}</span>
+        <div className="bg-gray-800/50 p-6 rounded-2xl shadow-lg border border-gray-700 backdrop-blur-sm">
+            <h3 className="text-xl font-bold mb-4 text-white">Mood-Boosting Activities</h3>
+            <p className="text-gray-400 mb-6">These are activities you've most frequently tagged on positive days.</p>
+            <div className="space-y-3">
+                {chartData.map(item => {
+                    const barWidth = `${(item.count / Math.max(...chartData.map(d => d.count))) * 100}%`;
+                    return (
+                        <div key={item.name} className="flex items-center gap-4 text-sm">
+                            <span className="w-28 text-right text-gray-300 font-medium">{item.name}</span>
+                            <div className="flex-1 bg-gray-700/50 rounded-full h-6">
+                                <div 
+                                    className="bg-gradient-to-r from-purple-500 to-teal-400 h-6 rounded-full flex items-center justify-end px-2 transition-all duration-500 ease-out"
+                                    style={{ width: barWidth }}
+                                >
+                                   <span className="font-bold text-white text-xs">{item.count}</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
         </div>
     );
 };
 
-// --- New and Improved Component: Word Cloud Chart ---
-// This version has an updated color palette and random word rotation for a more dynamic look.
+// --- Component: Word Cloud Chart ---
 const WordCloudChart = ({ entries }) => {
     const wordData = useMemo(() => {
-        // A list of common "stop words" to exclude from the cloud.
-        const stopWords = new Set([
-            'i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', 'your', 'yours', 
-            'he', 'him', 'his', 'himself', 'she', 'her', 'hers', 'herself', 'it', 'its', 'itself',
-            'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 
-            'this', 'that', 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 
-            'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 
-            'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 
-            'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 
-            'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 
-            'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 
-            'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 
-            'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 
-            'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', 'should', 'now', 've', 'll', 'm', 're'
-        ]);
-
+        const stopWords = new Set(['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', 'your', 'yours', 'he', 'him', 'his', 'himself', 'she', 'her', 'hers', 'herself', 'it', 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', 'should', 'now', 've', 'll', 'm', 're']);
         const wordCounts = {};
         const allText = entries.map(e => e.content).join(' ');
         const words = allText.toLowerCase().split(/\s+/).map(word => word.replace(/[^a-z0-9]/g, ''));
-
         words.forEach(word => {
             if (word && !stopWords.has(word)) {
                 wordCounts[word] = (wordCounts[word] || 0) + 1;
             }
         });
-
         return Object.entries(wordCounts)
             .sort(([, a], [, b]) => b - a)
-            .slice(0, 50) // Increased to 50 for a denser cloud
+            .slice(0, 40)
             .map(([text, value]) => ({ text, value }));
-
     }, [entries]);
 
     if (wordData.length < 5) {
         return (
-             <div className="bg-white p-6 rounded-2xl shadow-lg">
-                <h3 className="text-xl font-bold mb-4">Word Cloud</h3>
+             <div className="bg-gray-800/50 p-6 rounded-2xl shadow-lg border border-gray-700 backdrop-blur-sm">
+                <h3 className="text-xl font-bold mb-2 text-white">Word Cloud</h3>
                 <p className="text-gray-400">Write more entries to generate a cloud of your most-used words!</p>
             </div>
         );
     }
 
-    const maxCount = Math.max(...wordData.map(d => d.value));
+    const maxCount = Math.max(...wordData.map(d => d.value), 1);
     const minCount = Math.min(...wordData.map(d => d.value));
-
     const getFontSize = (count) => {
-        const minFontSize = 16;
-        const maxFontSize = 64; // Increased max size for more impact
+        const minFontSize = 14;
+        const maxFontSize = 48;
         if (maxCount === minCount) return minFontSize;
         const scale = (count - minCount) / (maxCount - minCount);
         return minFontSize + (scale * (maxFontSize - minFontSize));
     };
     
-    // --- New, warmer color palette inspired by the image ---
-    const colors = ['#84cc16', '#f97316', '#a16207', '#4d7c0f', '#ea580c', '#ca8a04', '#65a30d'];
+    const colors = ['#a78bfa', '#818cf8', '#60a5fa', '#38bdf8', '#22d3ee', '#6ee7b7', '#a3e635'];
 
     return (
-        <div className="bg-white p-6 rounded-2xl shadow-lg">
-            <h3 className="text-xl font-bold mb-4">Word Cloud</h3>
-            <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-2 p-4">
-                {wordData.map((word, index) => {
-                    // --- New: Randomly decide to rotate the word ---
-                    const shouldRotate = Math.random() > 0.8; // Rotate about 20% of words
-                    const rotationClass = shouldRotate ? 'transform -rotate-90' : '';
-                    
-                    return (
-                        <span 
-                            key={word.text}
-                            style={{ 
-                                fontSize: `${getFontSize(word.value)}px`,
-                                color: colors[index % colors.length],
-                                lineHeight: '1', // Tighter line height
-                                padding: '4px 0' // Add padding for rotated words
-                            }}
-                            className={`font-bold transition-all duration-300 ${rotationClass}`}
-                        >
-                            {word.text}
-                        </span>
-                    );
-                })}
+        <div className="bg-gray-800/50 p-6 rounded-2xl shadow-lg border border-gray-700 backdrop-blur-sm">
+            <h3 className="text-xl font-bold mb-4 text-white">Word Cloud</h3>
+            <div className="flex flex-wrap justify-center items-center gap-x-4 gap-y-1 p-4">
+                {wordData.map((word, index) => (
+                    <span 
+                        key={word.text}
+                        style={{ 
+                            fontSize: `${getFontSize(word.value)}px`,
+                            color: colors[index % colors.length],
+                            lineHeight: '1.2',
+                        }}
+                        className={`font-bold transition-all duration-300 hover:text-white hover:scale-110`}
+                    >
+                        {word.text}
+                    </span>
+                ))}
             </div>
         </div>
     );
@@ -271,6 +258,7 @@ const InsightsDashboard = ({ entries }) => {
         });
         return Object.keys(counts).map(key => ({ name: key.charAt(0).toUpperCase() + key.slice(1), count: counts[key], fill: getMoodColor(key) }));
     }, [entries]);
+
     const sentimentOverTime = useMemo(() => {
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -282,47 +270,54 @@ const InsightsDashboard = ({ entries }) => {
             }))
             .reverse();
     }, [entries]);
+
     if (entries.length === 0) {
         return (
-            <div className="text-center bg-white p-8 rounded-2xl border border-orange-100">
-                <h3 className="text-xl font-semibold text-orange-900">Not enough data for insights.</h3>
-                <p className="text-orange-400 mt-2">Write a few journal entries to see your emotional trends here!</p>
+            <div className="text-center bg-gray-800/50 p-8 rounded-2xl border border-gray-700 backdrop-blur-sm">
+                <h3 className="text-xl font-semibold text-white">Not enough data for insights.</h3>
+                <p className="text-gray-400 mt-2">Write a few journal entries to see your emotional trends here!</p>
             </div>
         );
     }
+
     return (
-        <div className="space-y-8">
-            <WordCloudChart entries={entries} />
+        <div className="space-y-8 animate-fade-in">
             <WeeklySummary entries={entries} />
-            <div className="bg-white p-6 rounded-2xl shadow-lg">
-                <h3 className="text-xl font-bold mb-4">Mood Distribution</h3>
-                <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={moodDistribution} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#4a5568" />
-                        <XAxis dataKey="name" stroke="#a0aec0" />
-                        <YAxis stroke="#a0aec0" allowDecimals={false} />
-                        <Tooltip contentStyle={{ backgroundColor: '#2d3748', border: 'none', color: '#e2e8f0' }} />
-                        <Bar dataKey="count" barSize={40} />
-                    </BarChart>
-                </ResponsiveContainer>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="bg-gray-800/50 p-6 rounded-2xl shadow-lg border border-gray-700 backdrop-blur-sm">
+                    <h3 className="text-xl font-bold mb-4 text-white">Mood Distribution</h3>
+                    <ResponsiveContainer width="100%" height={300}>
+                        <BarChart data={moodDistribution} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#4a5568" />
+                            <XAxis dataKey="name" stroke="#a0aec0" tick={{ fill: '#a0aec0' }} />
+                            <YAxis stroke="#a0aec0" tick={{ fill: '#a0aec0' }} />
+                            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(167, 139, 250, 0.1)' }}/>
+                            <Bar dataKey="count" name="Entries" >
+                                {moodDistribution.map((entry, index) => (
+                                    <div key={`cell-${index}`} fill={entry.fill} />
+                                ))}
+                            </Bar>
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
+                <div className="bg-gray-800/50 p-6 rounded-2xl shadow-lg border border-gray-700 backdrop-blur-sm">
+                    <h3 className="text-xl font-bold mb-4 text-white">Sentiment Over Time (Last 30 Days)</h3>
+                    <ResponsiveContainer width="100%" height={300}>
+                        <LineChart data={sentimentOverTime} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#4a5568" />
+                            <XAxis dataKey="date" stroke="#a0aec0" tick={{ fill: '#a0aec0' }} />
+                            <YAxis stroke="#a0aec0" domain={[-5, 5]} tick={{ fill: '#a0aec0' }} />
+                            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(167, 139, 250, 0.1)' }}/>
+                            <Legend wrapperStyle={{ color: '#e2e8f0' }} />
+                            <Line type="monotone" dataKey="score" stroke="#34d399" strokeWidth={2} dot={{ r: 4, fill: '#34d399' }} activeDot={{ r: 8, fill: '#34d399' }} />
+                        </LineChart>
+                    </ResponsiveContainer>
+                </div>
             </div>
-            <div className="bg-white p-6 rounded-2xl shadow-lg">
-                <h3 className="text-xl font-bold mb-4">Sentiment Trend (Last 30 Days)</h3>
-                <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={sentimentOverTime} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#4a5568" />
-                        <XAxis dataKey="date" stroke="#a0aec0" />
-                        <YAxis stroke="#a0aec0" />
-                        <Tooltip contentStyle={{ backgroundColor: '#2d3748', border: 'none' }} />
-                        <Legend />
-                        <Line type="monotone" dataKey="score" stroke="#8b5cf6" strokeWidth={2} name="Sentiment Score" />
-                    </LineChart>
-                </ResponsiveContainer>
-            </div>
+            <WordCloudChart entries={entries} />
             <ActivityMoodChart entries={entries} />
-            {/* Remove the DotRepresentation component and any references to it from the JSX */}
         </div>
     );
 };
 
-export default InsightsDashboard; 
+export default InsightsDashboard;

@@ -4,38 +4,47 @@ import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'fire
 
 const features = [
   {
-    icon: '💡',
+    icon: (
+      <svg className="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+    ),
     title: 'AI Insights',
     desc: 'Instant mood & theme analysis on every entry to uncover patterns in your thoughts and feelings.',
-    bg: 'from-purple-900/50 to-purple-800/40',
   },
   {
-    icon: '📈',
+    icon: (
+      <svg className="w-8 h-8 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+    ),
     title: 'Timeline & Trends',
     desc: 'Visualize your growth and emotional journey over time with interactive charts and a beautiful timeline.',
-    bg: 'from-orange-900/50 to-orange-800/40',
   },
   {
-    icon: '🎯',
+    icon: (
+      <svg className="w-8 h-8 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v11.494m-9-5.747h18"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 18a6 6 0 100-12 6 6 0 000 12z"></path></svg>
+    ),
     title: 'Goal Setting',
     desc: 'Set, track, and celebrate your personal wellness goals, with smart suggestions from your AI companion.',
-    bg: 'from-teal-900/50 to-teal-800/40',
   },
 ];
 
 const steps = [
   {
-    icon: '✍️',
+    icon: (
+      <svg className="step-icon text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+    ),
     title: '1. Journal',
     desc: 'Write your thoughts, feelings, and moments. Use text or your voice, whenever inspiration strikes.',
   },
   {
-    icon: '🔍',
+    icon: (
+      <svg className="step-icon text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+    ),
     title: '2. Get Insights',
     desc: 'Our AI analyzes your mood, themes, and trends, providing a deeper understanding of your inner world.',
   },
   {
-    icon: '🌱',
+    icon: (
+      <svg className="step-icon text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    ),
     title: '3. Grow',
     desc: 'Set goals, track progress, and use personalized resources to thrive and build a healthier mindset.',
   },
@@ -100,8 +109,8 @@ const AuthPage = ({ isLogin, navigateTo }) => {
           </div>
           {/* Right Column: Login Form */}
           <div>
-            <div className="card p-8 max-w-md mx-auto">
-              <h3 className="text-2xl font-bold text-center mb-6 text-white">{isLogin ? 'Welcome Back' : 'Create Your Account'}</h3>
+            <div className="auth-card-animated p-8 max-w-md mx-auto">
+              <h1 className="welcome-heading text-center mb-6">{isLogin ? 'Welcome Back' : 'Welcome'}</h1>
               {error && <p className="bg-red-500/20 text-red-300 p-3 rounded-lg mb-4 text-center">{error}</p>}
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
@@ -152,11 +161,11 @@ const AuthPage = ({ isLogin, navigateTo }) => {
           <p className="text-gray-400 mb-12 max-w-2xl mx-auto">Emote goes beyond a simple diary, offering powerful tools to help you understand yourself.</p>
           <div className="grid md:grid-cols-3 gap-8">
             {features.map((f, i) => (
-              <div key={i} className={`card p-8 text-left`}>
-                <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${f.bg} flex items-center justify-center mb-4`}>
-                  <span className="text-2xl">{f.icon}</span>
+              <div key={i} className="feature-card">
+                <div className="w-12 h-12 rounded-lg bg-gray-800 flex items-center justify-center mb-4">
+                  {f.icon}
                 </div>
-                <h3 className="text-xl font-bold mb-2 text-white">{f.title}</h3>
+                <h3 className="feature-title-gradient mb-2">{f.title}</h3>
                 <p className="text-gray-400">{f.desc}</p>
               </div>
             ))}
@@ -171,9 +180,7 @@ const AuthPage = ({ isLogin, navigateTo }) => {
           <div className="relative grid md:grid-cols-3 gap-8 items-start">
             {steps.map((s, i) => (
               <div key={i} className="text-center">
-                <div className="w-20 h-20 rounded-full bg-gray-800 shadow-lg border border-gray-700 flex items-center justify-center mx-auto mb-4">
-                  <span className="text-4xl">{s.icon}</span>
-                </div>
+                {s.icon}
                 <h3 className="text-xl font-bold text-white">{s.title}</h3>
                 <p className="text-gray-400 mt-2">{s.desc}</p>
               </div>
@@ -187,9 +194,9 @@ const AuthPage = ({ isLogin, navigateTo }) => {
         <div className="container mx-auto text-center text-gray-500">
           <p>&copy; 2024 Emote. All Rights Reserved.</p>
           <div className="mt-4 space-x-6">
-            <a href="#" className="hover:text-[#a78bfa]">Privacy Policy</a>
-            <a href="#" className="hover:text-[#a78bfa]">Terms of Service</a>
-            <a href="#" className="hover:text-[#a78bfa]">Contact</a>
+            <a href="/privacy" className="hover:text-[#a78bfa]">Privacy Policy</a>
+            <a href="/terms" className="hover:text-[#a78bfa]">Terms of Service</a>
+            <a href="/contact" className="hover:text-[#a78bfa]">Contact</a>
           </div>
         </div>
       </footer>

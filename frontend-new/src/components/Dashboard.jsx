@@ -51,33 +51,33 @@ const Dashboard = ({ user }) => {
     };
 
     return (
-        <div className="min-h-screen w-full bg-neutral-950">
+        <div className="min-h-screen w-full bg-gray-900 text-white bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]">
             <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-                <header className="flex justify-between items-center pb-6 border-b border-transparent mb-6 bg-transparent">
-                    <h1 className="text-5xl font-extrabold font-emote text-[#2563eb] drop-shadow-lg tracking-wide select-none">Emote</h1>
+                <header className="flex justify-between items-center pb-6 border-b border-gray-800 mb-6">
+                    <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-orange-400 bg-clip-text text-transparent">Emote</h1>
                     <div className="flex items-center gap-4">
-                        <span className="text-gray-500 hidden sm:block font-medium animate-fade-in">{user.email}</span>
-                        <button onClick={() => setShowSettingsModal(true)} className="p-2 rounded-full hover:bg-[#e0f2fe] transition-transform duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[#2563eb]" title="Settings">
-                            <FiSettings className="w-7 h-7 text-[#2563eb]" />
+                        <span className="text-gray-400 hidden sm:block font-medium animate-fade-in">{user.email}</span>
+                        <button onClick={() => setShowSettingsModal(true)} className="p-2 rounded-full text-gray-400 hover:bg-gray-800 hover:text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-[#a78bfa]" title="Settings">
+                            <FiSettings className="w-6 h-6" />
                         </button>
-                        <button onClick={() => signOut(auth)} className="bg-gradient-to-r from-[#0ea5e9] to-[#2563eb] hover:from-[#2563eb] hover:to-[#0ea5e9] text-[#1e293b] font-bold py-2 px-5 rounded-full shadow-md transition-transform duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#2563eb]">Log Out</button>
+                        <button onClick={handleLogout} className="bg-gradient-to-r from-[#a78bfa] to-[#f5eafe] text-black font-bold py-2 px-5 rounded-full shadow-lg shadow-[#a78bfa]/20 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-[#f5eafe]">Log Out</button>
                     </div>
                 </header>
                 {showSettingsModal && <SettingsModal onClose={() => setShowSettingsModal(false)} user={user} />}
                 <div className="mt-6">
-                    <nav className="flex space-x-2 sm:space-x-4 border-b border-[#bae6fd] bg-white/60 rounded-xl shadow-sm px-2 py-1 animate-fade-in">
+                    <nav className="flex space-x-1 sm:space-x-2">
                         {tabs.map(tab => (
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
-                                className={`py-3 px-2 sm:px-4 font-semibold text-sm sm:text-base rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#2563eb] ${activeTab === tab.id ? 'bg-gradient-to-r from-[#2563eb] to-[#0ea5e9] text-white shadow-md scale-105' : 'text-[#2563eb] hover:bg-[#e0f2fe] hover:text-[#f59e42]'}`}
+                                className={`py-2 px-3 sm:px-4 font-semibold text-sm sm:text-base transition-colors duration-200 focus:outline-none rounded-t-lg ${activeTab === tab.id ? 'bg-gray-800/50 text-white' : 'text-gray-500 hover:bg-gray-800/30 hover:text-gray-300'}`}
                             >
                                 {tab.label}
                             </button>
                         ))}
                     </nav>
                 </div>
-                <main className="mt-8 animate-fade-in">
+                <main className="mt-0 p-6 sm:p-8 bg-gray-800/50 rounded-b-lg rounded-tr-lg animate-fade-in">
                     {isLoading ? <LoadingScreen /> : (
                         <>
                             {activeTab === 'journal' && <JournalView entries={entries} user={user} />}
@@ -94,4 +94,4 @@ const Dashboard = ({ user }) => {
     );
 };
 
-export default Dashboard; 
+export default Dashboard;

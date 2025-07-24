@@ -3,13 +3,13 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAlhqFoCB6VMd5SXWDzGLKxxxkM_E5nk4c",
-  authDomain: "emote-d7938.firebaseapp.com",
-  projectId: "emote-d7938",
-  storageBucket: "emote-d7938.appspot.com",
-  messagingSenderId: "976883957692",
-  appId: "1:976883957692:web:cac3cf9d7076afe673b5b9",
-  measurementId: "G-2S83EGLKM5"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
+  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
 };
 
 let app;

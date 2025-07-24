@@ -4,7 +4,7 @@ import { db } from '../firebase';
 
 // --- Helper function to call the Gemini API for analysis ---
 async function analyzeEntryWithAI(text) {
-    const apiKey = "AIzaSyA3lz7Bh3KuM2SbwwoDhvRQy5jhShrAxHc"; // Inserted user-provided Gemini API key
+    const apiKey = process.env.REACT_APP_GEMINI_API_KEY; // Use Gemini API key from environment variables
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
     const prompt = `
         As a compassionate psychologist, analyze the following journal entry.
@@ -92,40 +92,70 @@ const JournalView = ({ entries, user }) => {
     };
 
     return (
-         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-1 xl:col-span-2">
-                <div className="card sticky top-8 bg-white border border-orange-100">
-                    <h2 className="text-2xl font-bold mb-4">New Entry</h2>
+         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            {/* New Entry Form Column */}
+            <div className="lg:col-span-1 sticky top-8">
+                <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 backdrop-blur-sm">
+                    <h2 className="text-2xl font-bold mb-4 text-white">New Entry</h2>
                     <form onSubmit={handleSaveEntry} className="space-y-4">
-                        <input type="text" value={currentEntry.title} onChange={e => setCurrentEntry({...currentEntry, title: e.target.value})} placeholder="Title of your entry" className="w-full p-3 bg-orange-50 rounded-lg border border-orange-200 focus:outline-none focus:ring-2 focus:ring-orange-400" />
-                        <textarea value={currentEntry.content} onChange={e => setCurrentEntry({...currentEntry, content: e.target.value})} placeholder="What's on your mind?" rows="10" className="w-full p-3 bg-orange-50 rounded-lg border border-orange-200 focus:outline-none focus:ring-2 focus:ring-orange-400"></textarea>
-                        <div className="flex flex-wrap gap-2 mb-2">
-                            {activityOptions.map((activity) => (
-                                <button
-                                    type="button"
-                                    key={activity.key}
-                                    onClick={() => handleToggleActivity(activity.key)}
-                                    className={`px-3 py-1 rounded-full border text-sm font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#2563eb] ${selectedActivities.includes(activity.key)
-                                        ? 'bg-gradient-to-r from-[#2563eb] to-[#0ea5e9] text-white border-[#2563eb] shadow-md scale-105'
-                                        : 'bg-[#e0f2fe] text-[#2563eb] border-[#bae6fd] hover:bg-[#dbeafe] hover:text-[#f59e42]'}`}
-                                >
-                                    {activity.label}
-                                </button>
-                            ))}
+                        <input 
+                            type="text" 
+                            value={currentEntry.title} 
+                            onChange={e => setCurrentEntry({...currentEntry, title: e.target.value})} 
+                            placeholder="Title of your entry" 
+                            className="w-full p-3 bg-gray-800 rounded-lg border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-[#a78bfa] focus:border-[#a78bfa] transition"
+                        />
+                        <textarea 
+                            value={currentEntry.content} 
+                            onChange={e => setCurrentEntry({...currentEntry, content: e.target.value})} 
+                            placeholder="What's on your mind?" 
+                            rows="8" 
+                            className="w-full p-3 bg-gray-800 rounded-lg border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-[#a78bfa] focus:border-[#a78bfa] transition"
+                        ></textarea>
+                        <div className="pt-2">
+                            <p className="text-sm font-semibold text-gray-400 mb-3">Tag Activities</p>
+                            <div className="flex flex-wrap gap-2">
+                                {activityOptions.map((activity) => (
+                                    <button
+                                        type="button"
+                                        key={activity.key}
+                                        onClick={() => handleToggleActivity(activity.key)}
+                                        className={`px-3 py-1 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-[#a78bfa] ${selectedActivities.includes(activity.key)
+                                            ? 'bg-[#a78bfa] text-black shadow-lg shadow-[#a78bfa]/20'
+                                            : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'}`}
+                                    >
+                                        {activity.label}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
-                        <button type="submit" disabled={isSaving} className="w-full btn-gradient">{isSaving ? statusMessage : 'Save Entry'}</button>
+                        <button 
+                            type="submit" 
+                            disabled={isSaving || !currentEntry.content.trim()} 
+                            className="w-full bg-gradient-to-r from-[#a78bfa] to-[#f5eafe] text-black font-bold py-3 px-5 rounded-full shadow-lg shadow-[#a78bfa]/20 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-[#f5eafe] disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100 flex items-center justify-center"
+                        >
+                            {isSaving ? (
+                                <>
+                                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                    {statusMessage}
+                                </>    
+                            ) : 'Save Entry'}
+                        </button>
                     </form>
                 </div>
             </div>
-            <div className="lg:col-span-2 xl:col-span-1 space-y-6">
+
+            {/* Entries List Column */}
+            <div className="lg:col-span-2 space-y-6">
                 {entries.map(entry => (
-                    <div key={entry.id} className="card card-accent bg-white border border-orange-100">
-                        <h3 className="font-bold text-xl mb-1 text-gray-800">{entry.title || 'Untitled'}</h3>
+                    <div key={entry.id} className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 backdrop-blur-sm">
+                        <h3 className="font-bold text-xl mb-1 text-white">{entry.title || 'Untitled'}</h3>
                         <p className="text-sm text-gray-500 mb-3">{entry.createdAt?.toDate().toLocaleString()}</p>
-                        <p className="whitespace-pre-wrap mb-4 text-gray-700">{entry.content}</p>
-                        <div className="flex flex-wrap gap-2 pt-3 border-t border-orange-100">
-                             {entry.emotions?.map((e, i) => <span key={i} className="tag">{e}</span>)}
-                             {entry.themes?.map((t, i) => <span key={i} className="tag">{t}</span>)}
+                        <p className="whitespace-pre-wrap mb-4 text-gray-300 leading-relaxed">{entry.content}</p>
+                        <div className="flex flex-wrap gap-2 pt-4 border-t border-gray-800">
+                             {entry.emotions?.map((e, i) => <span key={i} className="px-3 py-1 text-sm font-semibold rounded-full bg-purple-500/20 text-purple-300">{e}</span>)}
+                             {entry.themes?.map((t, i) => <span key={i} className="px-3 py-1 text-sm font-semibold rounded-full bg-gray-700 text-gray-300">{t}</span>)}
+                             {entry.activities?.map((a, i) => <span key={i} className="px-3 py-1 text-sm font-semibold rounded-full bg-teal-500/20 text-teal-300">{a}</span>)}
                         </div>
                     </div>
                 ))}
