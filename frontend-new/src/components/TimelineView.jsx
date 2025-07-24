@@ -1,6 +1,8 @@
 import React, { useState, useMemo } from 'react';
 
-const MoodTag = ({ mood }) => {
+const MoodTag = ({ mood, emotions }) => {
+    const displayMood = (mood || (emotions && emotions[0]) || 'neutral').toLowerCase();
+
     const moodStyles = {
         happy: 'bg-green-400/20 text-green-300 border-green-400/30',
         sad: 'bg-blue-400/20 text-blue-300 border-blue-400/30',
@@ -9,8 +11,8 @@ const MoodTag = ({ mood }) => {
         neutral: 'bg-gray-400/20 text-gray-300 border-gray-400/30',
     };
     return (
-        <span className={`px-3 py-1 text-sm font-semibold rounded-full border ${moodStyles[mood] || moodStyles.neutral}`}>
-            {mood.charAt(0).toUpperCase() + mood.slice(1)}
+        <span className={`px-3 py-1 text-sm font-semibold rounded-full border ${moodStyles[displayMood] || moodStyles.neutral}`}>
+            {displayMood.charAt(0).toUpperCase() + displayMood.slice(1)}
         </span>
     );
 };
@@ -78,7 +80,7 @@ const TimelineEntryCard = ({ entry, onClick }) => {
                 <p className="text-sm text-gray-400">Click to read this memory</p>
             </div>
             <div className="flex-shrink-0">
-                 <MoodTag mood={entry.mood} />
+                 <MoodTag mood={entry.mood} emotions={entry.emotions} />
             </div>
         </button>
     );
@@ -86,9 +88,16 @@ const TimelineEntryCard = ({ entry, onClick }) => {
 
 // --- Component: A Modal to Display the Full Entry ---
 const FullEntryModal = ({ entry, onClose }) => {
-    const formattedDate = entry.createdAt?.toDate ? 
-        entry.createdAt.toDate().toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' }) :
-        'Unknown Date';
+    const formattedDate = useMemo(() => {
+        if (!entry.createdAt?.toDate) {
+            return null; // Return null if date is missing
+        }
+        const date = entry.createdAt.toDate();
+        const day = date.getDate();
+        const month = date.toLocaleString('default', { month: 'long' }).toUpperCase();
+        const year = date.getFullYear();
+        return `${day} ${month} ${year}`;
+    }, [entry.createdAt]);
 
     return (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
@@ -96,20 +105,15 @@ const FullEntryModal = ({ entry, onClose }) => {
                 <div className="flex justify-between items-start mb-4 flex-shrink-0">
                     <div>
                         <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-teal-300">{entry.title || "Untitled Entry"}</h2>
-                        <p className="text-sm text-gray-400">{formattedDate}</p>
+                        {/* Conditionally render the date so it doesn't show if it's missing */}
+                        {formattedDate && <p className="text-sm text-gray-400">{formattedDate}</p>}
                     </div>
-                    <button onClick={onClose} className="text-gray-400 hover:text-white text-4xl font-light transition-colors">&times;</button>
+                    <button onClick={onClose} className="p-2 rounded-full text-gray-500 hover:bg-gray-700 hover:text-white transition-all duration-200 focus:outline-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
                 </div>
-                <div className="overflow-y-auto text-gray-300 space-y-4 pr-2 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
-                    <p className="whitespace-pre-wrap leading-relaxed">{entry.content}</p>
-                    {(entry.activities?.length > 0 || entry.mood) && (
-                        <div className="border-t border-gray-700 pt-4 flex flex-wrap items-center gap-2">
-                            {entry.mood && <MoodTag mood={entry.mood} />}
-                            {entry.activities?.map((activity, index) => (
-                                <span key={`act-${index}`} className={`px-3 py-1 text-sm font-semibold rounded-full bg-teal-400/20 text-teal-200 border border-teal-400/30`}>{activity}</span>
-                            ))}
-                        </div>
-                    )}
+                <div className="overflow-y-auto pr-2 -mr-2 flex-grow">
+                    <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">{entry.content}</p>
                 </div>
             </div>
         </div>
