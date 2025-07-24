@@ -90,25 +90,25 @@ const ChatView = ({ entries }) => {
     };
 
     return (
-        <div className="max-w-4xl mx-auto h-[75vh] flex flex-col bg-white rounded-2xl shadow-lg border border-orange-100">
+        <div className="max-w-4xl mx-auto h-[75vh] flex flex-col bg-black/20 backdrop-blur-sm border border-gray-800 rounded-2xl shadow-lg animate-fade-in">
             {/* Message Display Area */}
-            <div className="flex-1 p-6 overflow-y-auto space-y-4">
+            <div className="flex-1 p-6 overflow-y-auto space-y-4 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800/50">
                 {messages.map((msg, index) => (
                     <div key={index} className={`flex items-end gap-3 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                        {msg.sender === 'ai' && <div className="w-8 h-8 rounded-full bg-orange-300 flex-shrink-0"></div>}
-                        <div className={`max-w-lg px-4 py-3 rounded-2xl ${msg.sender === 'user' ? 'bg-orange-100 text-orange-900' : 'bg-orange-50 text-orange-800 border border-orange-200'}`}>
+                        {msg.sender === 'ai' && <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-600 to-teal-500 flex-shrink-0"></div>}
+                        <div className={`max-w-lg px-4 py-3 rounded-2xl shadow-md ${msg.sender === 'user' ? 'bg-gradient-to-br from-purple-600 to-teal-600 text-white' : 'bg-gray-800/50 text-gray-200'}`}>
                             <p className="whitespace-pre-wrap">{msg.text}</p>
                         </div>
                     </div>
                 ))}
                 {isLoading && (
                     <div className="flex items-end gap-3 justify-start">
-                        <div className="w-8 h-8 rounded-full bg-purple-500 flex-shrink-0"></div>
-                        <div className="max-w-lg px-4 py-3 rounded-2xl bg-gray-700 text-gray-300">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-600 to-teal-500 flex-shrink-0"></div>
+                        <div className="max-w-lg px-4 py-3 rounded-2xl bg-gray-800/50 text-gray-300">
                             <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
-                                <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse [animation-delay:0.2s]"></div>
-                                <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse [animation-delay:0.4s]"></div>
+                                <div className="w-2 h-2 bg-teal-400 rounded-full animate-pulse"></div>
+                                <div className="w-2 h-2 bg-teal-400 rounded-full animate-pulse [animation-delay:0.2s]"></div>
+                                <div className="w-2 h-2 bg-teal-400 rounded-full animate-pulse [animation-delay:0.4s]"></div>
                             </div>
                         </div>
                     </div>
@@ -117,7 +117,7 @@ const ChatView = ({ entries }) => {
             </div>
 
             {/* Message Input Form */}
-            <div className="p-4 border-t border-orange-100">
+            <div className="p-4 border-t border-gray-800">
                 <form onSubmit={handleSendMessage} className="flex items-center gap-4">
                     <input
                         type="text"
@@ -125,9 +125,9 @@ const ChatView = ({ entries }) => {
                         onChange={(e) => setInput(e.target.value)}
                         placeholder="Ask about your journal..."
                         disabled={isLoading}
-                        className="flex-grow p-3 bg-orange-50 rounded-lg border border-orange-200 focus:outline-none focus:ring-2 focus:ring-orange-400 transition text-orange-900"
+                        className="flex-grow p-3 bg-gray-800/50 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-shadow shadow-sm disabled:opacity-50"
                     />
-                    <button type="submit" disabled={isLoading} className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg transition disabled:bg-orange-200">
+                    <button type="submit" disabled={isLoading} className="bg-gradient-to-r from-purple-600 to-teal-500 text-white font-bold py-3 px-6 rounded-lg transition-transform transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:scale-100">
                         Send
                     </button>
                 </form>
@@ -136,4 +136,4 @@ const ChatView = ({ entries }) => {
     );
 };
 
-export default ChatView; 
+export default ChatView;

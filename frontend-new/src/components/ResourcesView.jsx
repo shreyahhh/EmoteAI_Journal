@@ -55,12 +55,12 @@ const ResourcesView = ({ entries }) => {
     return (
         <>
             {selectedResource && <ResourceDetailModal resource={selectedResource} onClose={() => setSelectedResource(null)} />}
-            <div>
-                <div className="bg-red-500/20 border border-red-500 text-red-300 px-4 py-3 rounded-lg mb-6" role="alert">
+            <div className="animate-fade-in">
+                <div className="bg-red-900/40 border border-red-600 text-red-200 px-4 py-3 rounded-lg mb-6 shadow-lg" role="alert">
                     <strong className="font-bold">Crisis Support: </strong>
                     <span className="block sm:inline">If you are in a crisis or any other person may be in danger, please don't use this site. Contact a local crisis hotline.</span>
                 </div>
-                <h2 className="text-2xl font-bold mb-2">Recommended For You</h2>
+                <h2 className="text-2xl font-bold mb-2 bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent">Recommended For You</h2>
                 <p className="text-gray-400 mb-6">Based on the themes in your recent entries, here are some resources you might find helpful.</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {recommendations.map(key => (
@@ -68,7 +68,7 @@ const ResourcesView = ({ entries }) => {
                     ))}
                 </div>
                 <hr className="my-8 border-gray-700" />
-                <h2 className="text-2xl font-bold mb-6">Full Resource Library</h2>
+                <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent">Full Resource Library</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {Object.values(allResources).map(resource => (
                         <ResourceCard key={resource.id} resource={resource} onClick={() => setSelectedResource(resource)} />

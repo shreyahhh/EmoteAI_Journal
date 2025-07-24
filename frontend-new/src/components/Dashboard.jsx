@@ -51,7 +51,7 @@ const Dashboard = ({ user }) => {
     };
 
     return (
-        <div className="min-h-screen w-full bg-gray-900 text-white bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]">
+        <div className="min-h-screen w-full bg-black text-white">
             <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
                 <header className="flex justify-between items-center pb-6 border-b border-gray-800 mb-6">
                     <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-orange-400 bg-clip-text text-transparent">Emote</h1>
@@ -65,19 +65,20 @@ const Dashboard = ({ user }) => {
                 </header>
                 {showSettingsModal && <SettingsModal onClose={() => setShowSettingsModal(false)} user={user} />}
                 <div className="mt-6">
-                    <nav className="flex space-x-1 sm:space-x-2">
+                    <nav className="flex space-x-2 sm:space-x-4 border-b border-gray-800">
                         {tabs.map(tab => (
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
-                                className={`py-2 px-3 sm:px-4 font-semibold text-sm sm:text-base transition-colors duration-200 focus:outline-none rounded-t-lg ${activeTab === tab.id ? 'bg-gray-800/50 text-white' : 'text-gray-500 hover:bg-gray-800/30 hover:text-gray-300'}`}
+                                className={`py-3 px-2 sm:px-4 font-semibold text-sm sm:text-base transition-all duration-300 focus:outline-none relative ${activeTab === tab.id ? 'text-white' : 'text-gray-500 hover:text-white'}`}
                             >
                                 {tab.label}
+                                {activeTab === tab.id && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#a78bfa] to-[#f5eafe] rounded-full"></span>}
                             </button>
                         ))}
                     </nav>
                 </div>
-                <main className="mt-0 p-6 sm:p-8 bg-gray-800/50 rounded-b-lg rounded-tr-lg animate-fade-in">
+                <main className="mt-8 animate-fade-in">
                     {isLoading ? <LoadingScreen /> : (
                         <>
                             {activeTab === 'journal' && <JournalView entries={entries} user={user} />}

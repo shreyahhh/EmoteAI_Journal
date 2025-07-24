@@ -55,12 +55,12 @@ const GoalsView = ({ entries, user }) => {
     };
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-8 animate-fade-in">
             <AIGoalSuggestions entries={entries} onAddGoal={handleAddGoal} />
-            <div className="bg-white p-6 rounded-2xl shadow-lg">
-                <h3 className="text-xl font-bold mb-4 text-orange-600">Your Active Goals</h3>
+            <div className="bg-black/20 backdrop-blur-sm border border-gray-800 p-6 rounded-2xl shadow-lg">
+                <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent">Your Active Goals</h3>
                 {isLoading ? (
-                    <p className="text-gray-600">Loading goals...</p>
+                    <p className="text-gray-400">Loading goals...</p>
                 ) : goals.length > 0 ? (
                     <div className="space-y-4">
                         {goals.map(goal => (
@@ -68,7 +68,7 @@ const GoalsView = ({ entries, user }) => {
                         ))}
                     </div>
                 ) : (
-                    <p className="text-gray-600">You haven't set any goals yet. Try adding one from the suggestions above or create your own!</p>
+                    <p className="text-gray-400">You haven't set any goals yet. Try adding one from the suggestions above or create your own!</p>
                 )}
             </div>
              <NewGoalForm onAddGoal={handleAddGoal} />
@@ -110,14 +110,14 @@ const AIGoalSuggestions = ({ entries, onAddGoal }) => {
     if (suggestedGoals.length === 0) return null;
 
     return (
-        <div className="bg-gray-800 p-6 rounded-2xl shadow-lg">
-            <h3 className="text-xl font-bold mb-2">Suggestions For You</h3>
+        <div className="bg-black/20 backdrop-blur-sm border border-gray-800 p-6 rounded-2xl shadow-lg">
+            <h3 className="text-2xl font-bold mb-2 bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent">Suggestions For You</h3>
             <p className="text-gray-400 mb-4">Based on your recent entries, you might find these goals helpful:</p>
             <div className="space-y-3">
                 {suggestedGoals.map((suggestion, index) => (
-                    <div key={index} className="bg-gray-700/50 p-3 rounded-lg flex justify-between items-center">
-                        <p className="text-gray-300">{suggestion}</p>
-                        <button onClick={() => onAddGoal(suggestion)} className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-1 px-3 rounded-lg text-sm transition">Add Goal</button>
+                    <div key={index} className="bg-gray-800/50 p-3 rounded-lg flex justify-between items-center">
+                        <p className="text-gray-300 flex-1 mr-4">{suggestion}</p>
+                        <button onClick={() => onAddGoal(suggestion)} className="bg-gradient-to-r from-purple-600 to-teal-500 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-transform transform hover:scale-105 shadow-md">Add Goal</button>
                     </div>
                 ))}
             </div>
@@ -131,11 +131,11 @@ const GoalCard = ({ goal, onToggleCompletion }) => {
     const isCompletedToday = goal.completions && goal.completions[today];
 
     return (
-        <div className={`p-4 rounded-lg flex items-center justify-between transition-colors ${isCompletedToday ? 'bg-green-100' : 'bg-orange-50'}`}>
-            <p className={`text-lg ${isCompletedToday ? 'text-green-700 line-through' : 'text-gray-800'}`}>{goal.title}</p>
+        <div className={`p-4 rounded-lg flex items-center justify-between transition-all duration-300 ${isCompletedToday ? 'bg-green-500/10 border-l-4 border-green-400' : 'bg-gray-800/50 border-l-4 border-purple-500'}`}>
+            <p className={`text-lg ${isCompletedToday ? 'text-gray-400 line-through' : 'text-gray-200'}`}>{goal.title}</p>
             <button 
                 onClick={() => onToggleCompletion(goal.id, today)}
-                className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all ${isCompletedToday ? 'bg-green-200 border-green-400' : 'border-gray-300 hover:border-green-500'}`}
+                className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 transform hover:scale-110 ${isCompletedToday ? 'bg-green-400 border-green-300' : 'border-gray-600 hover:border-green-400'}`}
                 title="Mark as complete for today"
             >
                 {isCompletedToday && <span className="text-white text-xl">✓</span>}
@@ -156,20 +156,20 @@ const NewGoalForm = ({ onAddGoal }) => {
     };
 
     return (
-        <div className="bg-white p-6 rounded-2xl shadow-lg">
-            <h3 className="text-xl font-bold mb-4 text-orange-600">Create a New Goal</h3>
-            <form onSubmit={handleSubmit} className="flex gap-4">
+        <div className="bg-black/20 backdrop-blur-sm border border-gray-800 p-6 rounded-2xl shadow-lg">
+            <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent">Create a New Goal</h3>
+            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4">
                 <input
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="e.g., Meditate for 10 minutes"
-                    className="flex-grow p-3 bg-orange-50 rounded-lg border border-orange-200 focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
+                    className="flex-grow p-3 bg-gray-800/50 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-shadow shadow-sm"
                 />
-                <button type="submit" className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition">Add</button>
+                <button type="submit" className="bg-gradient-to-r from-purple-600 to-teal-500 text-white font-bold py-3 px-6 rounded-lg transition-transform transform hover:scale-105 shadow-lg">Add Goal</button>
             </form>
         </div>
     );
 };
 
-export default GoalsView; 
+export default GoalsView;
