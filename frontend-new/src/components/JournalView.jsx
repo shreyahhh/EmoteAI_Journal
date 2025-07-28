@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
+import JournalEntryCard from './JournalEntryCard';
 
 // --- Helper function to call the Gemini API for analysis ---
 async function analyzeEntryWithAI(text) {
@@ -46,7 +47,7 @@ async function analyzeEntryWithAI(text) {
     }
 }
 
-const JournalView = ({ entries, user }) => {
+const JournalView = ({ entries, user, onEditEntry, onDeleteEntry }) => {
     const [currentEntry, setCurrentEntry] = useState({ title: '', content: ''});
     const [isSaving, setIsSaving] = useState(false);
     const [statusMessage, setStatusMessage] = useState('');
@@ -148,20 +149,16 @@ const JournalView = ({ entries, user }) => {
             {/* Entries List Column */}
             <div className="lg:col-span-2 space-y-6">
                 {entries.map(entry => (
-                    <div key={entry.id} className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 backdrop-blur-sm">
-                        <h3 className="font-bold text-xl mb-1 text-white">{entry.title || 'Untitled'}</h3>
-                        <p className="text-sm text-gray-500 mb-3">{entry.createdAt?.toDate().toLocaleString()}</p>
-                        <p className="whitespace-pre-wrap mb-4 text-gray-300 leading-relaxed">{entry.content}</p>
-                        <div className="flex flex-wrap gap-2 pt-4 border-t border-gray-800">
-                             {entry.emotions?.map((e, i) => <span key={i} className="px-3 py-1 text-sm font-semibold rounded-full bg-purple-500/20 text-purple-300">{e}</span>)}
-                             {entry.themes?.map((t, i) => <span key={i} className="px-3 py-1 text-sm font-semibold rounded-full bg-gray-700 text-gray-300">{t}</span>)}
-                             {entry.activities?.map((a, i) => <span key={i} className="px-3 py-1 text-sm font-semibold rounded-full bg-teal-500/20 text-teal-300">{a}</span>)}
-                        </div>
-                    </div>
+                    <JournalEntryCard 
+                        key={entry.id} 
+                        entry={entry} 
+                        onEdit={() => onEditEntry(entry)} 
+                        onDelete={() => onDeleteEntry(entry.id)} 
+                    />
                 ))}
             </div>
         </div>
     );
 };
 
-export default JournalView; 
+export default JournalView;

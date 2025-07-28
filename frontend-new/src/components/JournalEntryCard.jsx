@@ -14,11 +14,13 @@ const JournalEntryCard = ({ entry, onEdit, onDelete, onThemeClick }) => {
     return (
         <div className="bg-white p-6 rounded-2xl shadow-lg transition-all hover:shadow-orange-200">
             <div className="flex justify-between items-start">
-                <div>
-                    <h3 className="text-xl font-bold text-gray-800">{entry.title || 'Untitled Entry'}</h3>
-                    <p className="text-sm text-gray-500 mb-4">{formattedDate}</p>
+                <div className="flex-grow">
+                    <div className="flex items-center gap-4 mb-2">
+                        <p className="text-sm font-semibold text-purple-600 bg-purple-100 px-3 py-1 rounded-full">{formattedDate}</p>
+                        <h3 className="text-xl font-bold text-gray-800">{entry.title || 'Untitled Entry'}</h3>
+                    </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-shrink-0 ml-4">
                     <span className="text-2xl">{moodEmojis[entry.mood] || '😐'}</span>
                     <div className="flex gap-2">
                        <button onClick={onEdit} className="text-gray-400 hover:text-green-400 p-1 rounded-full"><PencilIcon /></button>
