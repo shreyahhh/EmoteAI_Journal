@@ -4,6 +4,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import LoadingScreen from './components/LoadingScreen';
 import AuthPage from './components/AuthPage';
 import Dashboard from './components/Dashboard';
+import ErrorBoundary from './components/ErrorBoundary';
 
 export default function App() {
     const [user, setUser] = React.useState(null);
@@ -28,16 +29,26 @@ export default function App() {
     };
     
     if (loading) {
-        return <LoadingScreen />;
+        return (
+            <ErrorBoundary>
+                <LoadingScreen />
+            </ErrorBoundary>
+        );
     }
 
-    switch (page) {
-        case 'signup':
-            return <AuthPage isLogin={false} navigateTo={navigateTo} />;
-        case 'dashboard':
-            return user ? <Dashboard user={user} /> : <AuthPage isLogin={true} navigateTo={navigateTo} />;
-        case 'login':
-        default:
-            return <AuthPage isLogin={true} navigateTo={navigateTo} />;
-    }
+    return (
+        <ErrorBoundary>
+            {(() => {
+                switch (page) {
+                    case 'signup':
+                        return <AuthPage isLogin={false} navigateTo={navigateTo} />;
+                    case 'dashboard':
+                        return user ? <Dashboard user={user} /> : <AuthPage isLogin={true} navigateTo={navigateTo} />;
+                    case 'login':
+                    default:
+                        return <AuthPage isLogin={true} navigateTo={navigateTo} />;
+                }
+            })()}
+        </ErrorBoundary>
+    );
 } 
