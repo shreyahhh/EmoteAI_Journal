@@ -2,7 +2,7 @@
 
 Emote is a modern, AI-driven journaling application designed to be your personal companion for emotional wellness. It provides a private and secure space to articulate your thoughts and feelings, track your moods, set personal goals, and gain valuable insights into your emotional patterns. With the power of Google's Gemini API, Emote offers intelligent chat support, helping you navigate your feelings and providing a supportive conversational partner whenever you need it.
 
-## Features
+## ✨ Features
 
 -   **Secure User Authentication:** Sign up and log in securely using Firebase Authentication, ensuring your journal remains private and personal.
 -   **Daily Journaling:** A rich text editor to write, edit, and save your daily journal entries.
@@ -10,53 +10,76 @@ Emote is a modern, AI-driven journaling application designed to be your personal
 -   **Mood Tracking:** Select and record your mood for each journal entry, creating a visual timeline of your emotional state.
 -   **Goal Setting & Tracking:** Define, manage, and track your personal wellness goals directly within the app.
 -   **Insights Dashboard:** Visualize your emotional trends, mood patterns, and journaling habits over time with intuitive charts and graphs.
--   ** timeline View:** See a chronological view of your journal entries and moods.
+-   **Timeline View:** See a chronological view of your journal entries and moods.
 -   **Curated Resources:** Access a collection of articles, videos, and other resources to support your mental and emotional well-being.
 -   **User Settings:** Customize your experience and manage your account details.
 
-## Tech Stack
+## 🚀 Recent Improvements
+
+### Performance & User Experience
+- **Error Boundaries:** Added comprehensive error handling to prevent app crashes
+- **React.memo Optimization:** Improved performance with memoized components
+- **Enhanced Loading States:** Better visual feedback during app initialization
+- **Accessibility Improvements:** Added ARIA labels, keyboard navigation, and focus management
+- **Toast Notifications:** Real-time user feedback system
+
+### Code Quality & Reliability
+- **API Rate Limiting:** Intelligent request queuing and retry logic for Gemini API
+- **Input Validation:** Comprehensive validation and sanitization
+- **TypeScript-ready Structure:** Organized utils and improved type safety
+- **Keyboard Shortcuts:** Power user features for efficient navigation
+- **Mobile-first Design:** Enhanced responsive design patterns
+
+### Developer Experience
+- **Fixed Build Issues:** Resolved ESLint errors and React 19 compatibility
+- **Better Testing Setup:** Mocked Firebase for reliable testing
+- **Enhanced Tailwind Config:** Custom animations and design tokens
+- **Component Library:** Reusable UI components (ConfirmDialog, ErrorBoundary)
+
+## 🛠 Tech Stack
 
 -   **Frontend:**
-    -   [React](https://reactjs.org/) - A JavaScript library for building user interfaces.
-    -   [React Router](https://reactrouter.com/) - For declarative routing in the application.
-    -   CSS3 - For styling and a responsive user experience.
+    -   [React 19](https://reactjs.org/) - Latest React with concurrent features
+    -   [React Router](https://reactrouter.com/) - For declarative routing
+    -   [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
 
 -   **Backend & Database:**
     -   [Firebase](https://firebase.google.com/) - Used for:
-        -   **Authentication:** Manages user sign-up and login.
-        -   **Firestore:** A NoSQL database for storing journal entries, user data, and goals.
+        -   **Authentication:** Manages user sign-up and login
+        -   **Firestore:** A NoSQL database for storing journal entries, user data, and goals
 
 -   **Artificial Intelligence:**
-    -   [Google Gemini API](https://ai.google.dev/) - Powers the intelligent chat feature for emotional analysis and support.
+    -   [Google Gemini API](https://ai.google.dev/) - Powers intelligent chat and emotional analysis
 
-## Getting Started
+## 📋 Getting Started
 
-To get a local copy up and running, follow these simple steps.
+To get a local copy up and running, follow these steps.
 
 ### Prerequisites
 
-Make sure you have Node.js and npm installed on your machine.
-
--   [Node.js](https://nodejs.org/)
--   [npm](https://www.npmjs.com/get-npm)
+- [Node.js](https://nodejs.org/) (version 16 or higher)
+- [npm](https://www.npmjs.com/get-npm) or [yarn](https://yarnpkg.com/)
+- Firebase project with Firestore and Authentication enabled
+- Google Gemini API key
 
 ### Installation
 
 1.  **Clone the repository:**
-    ```sh
-    git clone https://github.com/your-username/your-repo-name.git
-    cd your-repo-name/frontend-new
+    ```bash
+    git clone https://github.com/shreyahhh/Emote--A-journaling-app-with-emotional-analysis-and-support.git
+    cd Emote--A-journaling-app-with-emotional-analysis-and-support/frontend-new
     ```
 
-2.  **Install NPM packages:**
-    ```sh
-    npm install
+2.  **Install dependencies:**
+    ```bash
+    npm install --legacy-peer-deps
     ```
+    
+    > **Note:** The `--legacy-peer-deps` flag is required due to React 19 compatibility with some packages.
 
 3.  **Set up environment variables:**
-    -   Create a `.env.local` file in the `frontend-new` directory.
-    -   Add the following environment variables with your Firebase and Gemini API keys. You can get these from the [Firebase Console](https://console.firebase.google.com/) and [Google AI Studio](https://aistudio.google.com/app/apikey).
-
+    
+    Create a `.env.local` file in the `frontend-new` directory:
     ```env
     REACT_APP_FIREBASE_API_KEY=your_firebase_api_key
     REACT_APP_FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain
@@ -66,28 +89,91 @@ Make sure you have Node.js and npm installed on your machine.
     REACT_APP_FIREBASE_APP_ID=your_firebase_app_id
     REACT_APP_GEMINI_API_KEY=your_gemini_api_key
     ```
+    
+    **Get your keys:**
+    - **Firebase:** [Firebase Console](https://console.firebase.google.com/)
+    - **Gemini API:** [Google AI Studio](https://aistudio.google.com/app/apikey)
 
 4.  **Run the application:**
-    ```sh
+    ```bash
     npm start
     ```
-
+    
     The application will be available at `http://localhost:3000`.
 
+### Building for Production
 
+```bash
+npm run build
+```
 
-## Key Screens
+The optimized build will be in the `build` folder, ready for deployment.
 
-- **Journal:** Write and edit entries, see AI-powered tags for emotions, themes, and activities.
-- **Insights:** View mood/sentiment charts, word cloud, mood-activity insights, and generate a weekly AI summary.
-- **Timeline:** Browse your journal history by month and revisit memories.
-- **Chat:** Ask Emote questions about your journal and get AI-powered, context-aware answers.
-- **Resources:** Get personalized resource recommendations and interactive AI advice.
-- **Settings:** Manage reminders, notifications, and export your data.
+### Running Tests
 
-## Ethical Considerations
-- This app is not a diagnostic tool.
-- Provides crisis support links and encourages seeking professional help when needed.
-- User privacy and data security are prioritized.
+```bash
+npm test
+```
+
+## ⌨️ Keyboard Shortcuts
+
+- `Ctrl + N` - New journal entry
+- `Ctrl + S` - Save entry
+- `Ctrl + 1-6` - Navigate between tabs
+- `?` - Show keyboard shortcuts help
+- `Escape` - Close modals/dialogs
+
+## 🎯 Key Screens
+
+- **Journal:** Write and edit entries with AI-powered emotional analysis
+- **Insights:** View mood/sentiment charts, word clouds, and AI-generated summaries
+- **Timeline:** Browse your journal history by month and revisit memories
+- **Chat:** Ask Emote questions about your journal and get context-aware answers
+- **Resources:** Get personalized resource recommendations and interactive AI advice
+- **Settings:** Manage reminders, notifications, and export your data
+
+## 🔒 Privacy & Ethics
+
+- **Not a diagnostic tool:** This app is for wellness support, not medical diagnosis
+- **Privacy first:** Your data stays private and secure
+- **Crisis support:** Provides links to professional help when needed
+- **Ethical AI:** Responsible use of AI for emotional support
+
+## 🚀 Deployment
+
+### Using Docker (Recommended)
+
+```bash
+docker build -t emote-app .
+docker run -p 3000:80 emote-app
+```
+
+### Using Static Hosting
+
+The built application can be deployed to any static hosting service:
+- Netlify
+- Vercel
+- Firebase Hosting
+- AWS S3 + CloudFront
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Google Gemini AI for emotional analysis capabilities
+- Firebase for reliable backend infrastructure
+- The React and open-source community for excellent tools and libraries
 
 ---
+
+*Made with ❤️ for emotional wellness and mental health support*
