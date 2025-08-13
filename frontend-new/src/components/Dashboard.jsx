@@ -3,12 +3,7 @@ import { db, auth } from '../firebase';
 import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore';
 import { signOut } from 'firebase/auth';
 import JournalView from './JournalView';
-import InsightsDashboard from './InsightsDashboard';
-import ResourcesView from './ResourcesView';
-import GoalsView from './GoalsView';
 import SettingsModal from './SettingsModal';
-import TimelineView from './TimelineView';
-import ChatView from './ChatView';
 import LoadingScreen from './LoadingScreen';
 import { FiSettings } from 'react-icons/fi';
 
@@ -21,7 +16,7 @@ const tabs = [
   { id: 'resources', label: 'Resources' },
 ];
 
-const Dashboard = ({ user }) => {
+const Dashboard = ({ user, onNavigateToResources, onNavigateToInsights, onNavigateToTimeline, onNavigateToGoals, onNavigateToChat }) => {
     const [entries, setEntries] = React.useState([]);
     const [isLoading, setIsLoading] = React.useState(true);
     const [activeTab, setActiveTab] = React.useState('journal');
@@ -29,6 +24,24 @@ const Dashboard = ({ user }) => {
 
     React.useEffect(() => {
         if (!user) return;
+        if (!db) {
+            console.error("Firebase database is not initialized. Using demo data.");
+            // Use demo data for testing
+            const demoEntries = [
+                {
+                    id: 'demo-1',
+                    content: 'This is a demo journal entry for testing purposes.',
+                    mood: 'happy',
+                    themes: ['general'],
+                    createdAt: new Date(),
+                    userId: user.uid
+                }
+            ];
+            setEntries(demoEntries);
+            setIsLoading(false);
+            return;
+        }
+        
         setIsLoading(true);
         const entriesCollection = collection(db, 'journal_entries');
         const q = query(entriesCollection, where('userId', '==', user.uid), orderBy('createdAt', 'desc'));
@@ -47,6 +60,10 @@ const Dashboard = ({ user }) => {
     }, [user]);
 
     const handleLogout = async () => {
+        if (!auth) {
+            console.error("Firebase auth is not initialized. Cannot logout.");
+            return;
+        }
         await signOut(auth);
     };
 
@@ -69,7 +86,21 @@ const Dashboard = ({ user }) => {
                         {tabs.map(tab => (
                             <button
                                 key={tab.id}
-                                onClick={() => setActiveTab(tab.id)}
+                                onClick={() => {
+                                    if (tab.id === 'resources') {
+                                        onNavigateToResources(entries);
+                                    } else if (tab.id === 'insights') {
+                                        onNavigateToInsights(entries);
+                                    } else if (tab.id === 'timeline') {
+                                        onNavigateToTimeline(entries);
+                                    } else if (tab.id === 'goals') {
+                                        onNavigateToGoals(entries);
+                                    } else if (tab.id === 'chat') {
+                                        onNavigateToChat(entries);
+                                    } else {
+                                        setActiveTab(tab.id);
+                                    }
+                                }}
                                 className={`py-3 px-2 sm:px-4 font-semibold text-sm sm:text-base transition-all duration-300 focus:outline-none relative ${activeTab === tab.id ? 'text-white' : 'text-gray-500 hover:text-white'}`}
                             >
                                 {tab.label}
@@ -82,11 +113,6 @@ const Dashboard = ({ user }) => {
                     {isLoading ? <LoadingScreen /> : (
                         <>
                             {activeTab === 'journal' && <JournalView entries={entries} user={user} />}
-                            {activeTab === 'insights' && <InsightsDashboard entries={entries} />}
-                            {activeTab === 'timeline' && <TimelineView entries={entries} />}
-                            {activeTab === 'goals' && <GoalsView entries={entries} user={user} />}
-                            {activeTab === 'chat' && <ChatView entries={entries} />}
-                            {activeTab === 'resources' && <ResourcesView entries={entries} />}
                         </>
                     )}
                 </main>
