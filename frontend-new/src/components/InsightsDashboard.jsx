@@ -188,65 +188,6 @@ const ActivityMoodChart = ({ entries }) => {
 };
 
 // --- Component: Word Cloud Chart ---
-const WordCloudChart = ({ entries }) => {
-    const wordData = useMemo(() => {
-        const stopWords = new Set(['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', 'your', 'yours', 'he', 'him', 'his', 'himself', 'she', 'her', 'hers', 'herself', 'it', 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', 'should', 'now', 've', 'll', 'm', 're']);
-        const wordCounts = {};
-        const allText = entries.map(e => e.content).join(' ');
-        const words = allText.toLowerCase().split(/\s+/).map(word => word.replace(/[^a-z0-9]/g, ''));
-        words.forEach(word => {
-            if (word && !stopWords.has(word)) {
-                wordCounts[word] = (wordCounts[word] || 0) + 1;
-            }
-        });
-        return Object.entries(wordCounts)
-            .sort(([, a], [, b]) => b - a)
-            .slice(0, 40)
-            .map(([text, value]) => ({ text, value }));
-    }, [entries]);
-
-    if (wordData.length < 5) {
-        return (
-             <div className="bg-gray-800/50 p-6 rounded-2xl shadow-lg border border-gray-700 backdrop-blur-sm">
-                <h3 className="text-xl font-bold mb-2 text-white">Word Cloud</h3>
-                <p className="text-gray-400">Write more entries to generate a cloud of your most-used words!</p>
-            </div>
-        );
-    }
-
-    const maxCount = Math.max(...wordData.map(d => d.value), 1);
-    const minCount = Math.min(...wordData.map(d => d.value));
-    const getFontSize = (count) => {
-        const minFontSize = 14;
-        const maxFontSize = 48;
-        if (maxCount === minCount) return minFontSize;
-        const scale = (count - minCount) / (maxCount - minCount);
-        return minFontSize + (scale * (maxFontSize - minFontSize));
-    };
-    
-    const colors = ['#a78bfa', '#818cf8', '#60a5fa', '#38bdf8', '#22d3ee', '#6ee7b7', '#a3e635'];
-
-    return (
-        <div className="bg-gray-800/50 p-6 rounded-2xl shadow-lg border border-gray-700 backdrop-blur-sm">
-            <h3 className="text-xl font-bold mb-4 text-white">Word Cloud</h3>
-            <div className="flex flex-wrap justify-center items-center gap-x-4 gap-y-1 p-4">
-                {wordData.map((word, index) => (
-                    <span 
-                        key={word.text}
-                        style={{ 
-                            fontSize: `${getFontSize(word.value)}px`,
-                            color: colors[index % colors.length],
-                            lineHeight: '1.2',
-                        }}
-                        className={`font-bold transition-all duration-300 hover:text-white hover:scale-110`}
-                    >
-                        {word.text}
-                    </span>
-                ))}
-            </div>
-        </div>
-    );
-};
 
 const InsightsDashboard = ({ entries }) => {
     const moodDistribution = useMemo(() => {
@@ -314,7 +255,7 @@ const InsightsDashboard = ({ entries }) => {
                     </ResponsiveContainer>
                 </div>
             </div>
-            <WordCloudChart entries={entries} />
+            {/* WordCloudChart removed */}
             <ActivityMoodChart entries={entries} />
         </div>
     );
