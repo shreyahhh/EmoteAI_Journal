@@ -8,7 +8,7 @@ import reportWebVitals from './reportWebVitals';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-emote-canvas font-sans text-emote-body antialiased">
       <App />
     </div>
   </React.StrictMode>

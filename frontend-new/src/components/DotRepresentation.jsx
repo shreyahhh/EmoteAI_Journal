@@ -1,4 +1,5 @@
 import React from 'react';
+import { getCreatedAtDate } from '../lib/entryDates';
 
 const getMoodColor = (mood) => {
     const colors = { happy: '#48bb78', sad: '#4299e1', angry: '#f56565', anxious: '#9f7aea', neutral: '#a0aec0' };
@@ -18,7 +19,9 @@ const DotRepresentation = ({ entries }) => {
     return (
         <div className="overflow-x-auto">
             <svg width={width} height={80} style={{ minWidth: 300 }}>
-                {entries.map((entry, idx) => (
+                {entries.map((entry, idx) => {
+                    const created = getCreatedAtDate(entry);
+                    return (
                     <g key={entry.id}>
                         <circle
                             cx={24 * idx + 20}
@@ -29,13 +32,14 @@ const DotRepresentation = ({ entries }) => {
                             strokeWidth={2}
                         >
                             <title>
-                                {entry.createdAt?.toDate ? entry.createdAt.toDate().toLocaleDateString() : ''}
+                                {created ? created.toLocaleDateString() : ''}
                                 {`\nMood: ${entry.mood || 'neutral'}`}
                                 {`\nSentiment: ${entry.sentimentScore || 0}`}
                             </title>
                         </circle>
                     </g>
-                ))}
+                    );
+                })}
                 {/* Axis line */}
                 <line x1={10} y1={60} x2={width-10} y2={60} stroke="#a0aec0" strokeDasharray="4 2" />
                 <text x={10} y={75} fontSize={12} fill="#a0aec0">Negative</text>

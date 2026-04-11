@@ -1,4 +1,12 @@
 {
+  "name": "emote-ai-journal",
+  "private": true,
+  "scripts": {
+    "start": "npm run start --prefix frontend-new",
+    "dev": "npm run start --prefix frontend-new",
+    "build": "npm run build --prefix frontend-new",
+    "test": "npm test --prefix frontend-new"
+  },
   "dependencies": {
     "react-icons": "^5.5.0"
   }

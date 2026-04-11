@@ -1,8 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-// You would need to import your Firebase functions (getFirestore, collection, addDoc, etc.)
-// For this snippet, we'll assume 'db' and 'user' objects are available.
 
-// --- New Component: The Main View for the Goals Tab ---
 const GoalsView = ({ entries, user }) => {
     const [goals, setGoals] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -29,17 +26,10 @@ const GoalsView = ({ entries, user }) => {
     }, [user]);
 
     const handleAddGoal = async (title) => {
-        // Logic to add a new goal to Firestore
-        // await addDoc(collection(db, 'goals'), { userId: user.uid, title, createdAt: serverTimestamp(), completions: {} });
-        console.log("Adding new goal:", title);
-        // For demo, add to local state
         setGoals(prev => [...prev, { id: Math.random().toString(), title, completions: {} }]);
     };
 
     const handleToggleCompletion = async (goalId, date) => {
-        // Logic to update a goal's completion status in Firestore
-        console.log("Toggling completion for goal:", goalId, "on date:", date);
-        // For demo, update local state
         setGoals(goals.map(g => {
             if (g.id === goalId) {
                 const newCompletions = { ...g.completions };
@@ -57,18 +47,21 @@ const GoalsView = ({ entries, user }) => {
     return (
         <div className="space-y-8 animate-fade-in">
             <AIGoalSuggestions entries={entries} onAddGoal={handleAddGoal} />
-            <div className="bg-black/20 backdrop-blur-sm border border-gray-800 p-6 rounded-2xl shadow-lg">
-                <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent">Your Active Goals</h3>
+            <div className="emote-panel">
+                <h3 className="emote-title-gradient text-emote-section">Your active goals</h3>
+                <p className="mb-4 mt-1.5 text-emote-muted leading-relaxed text-slate-500">
+                  Check the circle to mark today done—great for small daily habits you want to notice.
+                </p>
                 {isLoading ? (
-                    <p className="text-gray-400">Loading goals...</p>
+                    <p className="text-emote-muted text-slate-600">Loading goals…</p>
                 ) : goals.length > 0 ? (
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                         {goals.map(goal => (
                             <GoalCard key={goal.id} goal={goal} onToggleCompletion={handleToggleCompletion} />
                         ))}
                     </div>
                 ) : (
-                    <p className="text-gray-400">You haven't set any goals yet. Try adding one from the suggestions above or create your own!</p>
+                    <p className="text-emote-muted text-slate-500">Add a goal below.</p>
                 )}
             </div>
              <NewGoalForm onAddGoal={handleAddGoal} />
@@ -110,14 +103,13 @@ const AIGoalSuggestions = ({ entries, onAddGoal }) => {
     if (suggestedGoals.length === 0) return null;
 
     return (
-        <div className="bg-black/20 backdrop-blur-sm border border-gray-800 p-6 rounded-2xl shadow-lg">
-            <h3 className="text-2xl font-bold mb-2 bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent">Suggestions For You</h3>
-            <p className="text-gray-400 mb-4">Based on your recent entries, you might find these goals helpful:</p>
+        <div className="emote-panel">
+            <h3 className="emote-title-gradient mb-4 text-emote-section">Suggestions</h3>
             <div className="space-y-3">
                 {suggestedGoals.map((suggestion, index) => (
-                    <div key={index} className="bg-gray-800/50 p-3 rounded-lg flex justify-between items-center">
-                        <p className="text-gray-300 flex-1 mr-4">{suggestion}</p>
-                        <button onClick={() => onAddGoal(suggestion)} className="bg-gradient-to-r from-purple-600 to-teal-500 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-transform transform hover:scale-105 shadow-md">Add Goal</button>
+                    <div key={index} className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-slate-50/80 p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+                        <p className="flex-1 text-emote-body leading-relaxed text-slate-800">{suggestion}</p>
+                        <button type="button" onClick={() => onAddGoal(suggestion)} className="emote-btn-primary shrink-0 py-2 px-4">Add goal</button>
                     </div>
                 ))}
             </div>
@@ -125,26 +117,24 @@ const AIGoalSuggestions = ({ entries, onAddGoal }) => {
     );
 };
 
-// --- New Component: A Card for a Single Goal ---
 const GoalCard = ({ goal, onToggleCompletion }) => {
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
     const isCompletedToday = goal.completions && goal.completions[today];
 
     return (
-        <div className={`p-4 rounded-lg flex items-center justify-between transition-all duration-300 ${isCompletedToday ? 'bg-green-500/10 border-l-4 border-green-400' : 'bg-gray-800/50 border-l-4 border-purple-500'}`}>
-            <p className={`text-lg ${isCompletedToday ? 'text-gray-400 line-through' : 'text-gray-200'}`}>{goal.title}</p>
+        <div className={`flex items-center justify-between rounded-xl border p-4 transition-all duration-300 ${isCompletedToday ? 'border-emerald-200 bg-emerald-50/80 border-l-4 border-l-emerald-500' : 'border-slate-200 bg-white shadow-sm border-l-4 border-l-sky-400'}`}>
+            <p className={`text-emote-card-title ${isCompletedToday ? 'text-slate-500 line-through' : 'text-slate-900'}`}>{goal.title}</p>
             <button 
                 onClick={() => onToggleCompletion(goal.id, today)}
-                className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 transform hover:scale-110 ${isCompletedToday ? 'bg-green-400 border-green-300' : 'border-gray-600 hover:border-green-400'}`}
+                className={`flex h-9 w-9 items-center justify-center rounded-full border-2 transition-all duration-300 hover:scale-105 ${isCompletedToday ? 'border-emerald-500 bg-emerald-500 text-white' : 'border-slate-300 bg-white hover:border-emerald-400 hover:bg-emerald-50'}`}
                 title="Mark as complete for today"
             >
-                {isCompletedToday && <span className="text-white text-xl">✓</span>}
+                {isCompletedToday && <span className="text-emote-card-title">✓</span>}
             </button>
         </div>
     );
 };
 
-// --- New Component: A Form to Add a Custom Goal ---
 const NewGoalForm = ({ onAddGoal }) => {
     const [title, setTitle] = useState('');
 
@@ -156,17 +146,20 @@ const NewGoalForm = ({ onAddGoal }) => {
     };
 
     return (
-        <div className="bg-black/20 backdrop-blur-sm border border-gray-800 p-6 rounded-2xl shadow-lg">
-            <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent">Create a New Goal</h3>
-            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4">
+        <div className="emote-panel">
+            <h3 className="emote-title-gradient text-emote-section">New goal</h3>
+            <p className="mb-4 mt-1.5 text-emote-muted leading-relaxed text-slate-500">
+              Phrase it as something you can repeat—short lines work best on the list.
+            </p>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
                 <input
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    placeholder="e.g., Meditate for 10 minutes"
-                    className="flex-grow p-3 bg-gray-800/50 text-white rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-shadow shadow-sm"
+                    placeholder="e.g. Meditate for 10 minutes"
+                    className="emote-input flex-1"
                 />
-                <button type="submit" className="bg-gradient-to-r from-purple-600 to-teal-500 text-white font-bold py-3 px-6 rounded-lg transition-transform transform hover:scale-105 shadow-lg">Add Goal</button>
+                <button type="submit" className="emote-btn-primary shrink-0 sm:px-8">Add goal</button>
             </form>
         </div>
     );
