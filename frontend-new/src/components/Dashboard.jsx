@@ -1,13 +1,11 @@
 import React from 'react';
-import { supabase, mapJournalRow } from '../supabaseClient';
+import { supabase, mapJournalRow, mapProfileRow, mapCyclePeriodRow } from '../supabaseClient';
 import JournalView from './JournalView';
 import EntriesView from './EntriesView';
-import InsightsDashboard from './InsightsDashboard';
-import TimelineView from './TimelineView';
-import GoalsView from './GoalsView';
-import ChatView from './ChatView';
-import ResourcesPanel from './ResourcesPanel';
 import SettingsModal from './SettingsModal';
+import ProfileSetupModal from './ProfileSetupModal';
+import Logo from './Logo';
+import ThemeToggle from './ThemeToggle';
 import {
   FiSettings,
   FiMenu,
@@ -19,9 +17,19 @@ import {
   FiTarget,
   FiMessageCircle,
   FiLayers,
+  FiDroplet,
 } from 'react-icons/fi';
 
-const navItems = [
+// Code-split the heavier tabs (recharts, chat, cycle calendar) out of the
+// initial bundle — only Journal and Entries load eagerly.
+const InsightsDashboard = React.lazy(() => import('./InsightsDashboard'));
+const TimelineView = React.lazy(() => import('./TimelineView'));
+const GoalsView = React.lazy(() => import('./GoalsView'));
+const ChatView = React.lazy(() => import('./ChatView'));
+const ResourcesPanel = React.lazy(() => import('./ResourcesPanel'));
+const CycleView = React.lazy(() => import('./CycleView'));
+
+const BASE_NAV = [
   { id: 'journal', label: 'Journal', icon: FiBookOpen },
   { id: 'entries', label: 'Entries', icon: FiList },
   { id: 'insights', label: 'Insights', icon: FiBarChart2 },
@@ -31,10 +39,13 @@ const navItems = [
   { id: 'resources', label: 'Resources', icon: FiLayers },
 ];
 
+const CYCLE_TAB = { id: 'cycle', label: 'Cycle', icon: FiDroplet };
+
 const sectionTitle = {
   journal: 'Journal',
   entries: 'Entries',
   insights: 'Insights',
+  cycle: 'Cycle & period',
   timeline: 'Timeline',
   goals: 'Goals',
   chat: 'Chat',
@@ -44,7 +55,8 @@ const sectionTitle = {
 const sectionSubtitle = {
   journal: 'Write freely—saving runs a quick analysis for mood, emotions, and themes.',
   entries: 'Everything you have saved, newest first. Delete from the card menu if you need to.',
-  insights: 'Spot patterns in mood, sentiment over time, and how activities line up with how you felt.',
+  insights: 'Week, month, and year views for mood mix, tone, and activities—all scoped to the range you pick.',
+  cycle: 'Mark period start and end on the calendar, track symptoms and mood, and compare journal tone on period days vs other days.',
   timeline: 'A month-by-month trail of entries—tap one to read it in full.',
   goals: 'Keep a short list of habits; suggestions appear when your journal themes repeat.',
   chat: 'Ask about your own words—replies use entries from roughly the last 30 days only.',
@@ -52,9 +64,9 @@ const sectionSubtitle = {
 };
 
 const DashboardLoader = () => (
-  <div className="flex min-h-[min(420px,70vh)] flex-col items-center justify-center gap-4 rounded-2xl border border-slate-200 bg-white px-6 shadow-emote">
+  <div className="flex min-h-[min(420px,70vh)] flex-col items-center justify-center gap-4 rounded-2xl border border-emote-border bg-emote-surface px-6 shadow-emote">
     <svg
-      className="h-10 w-10 animate-spin text-orange-500"
+      className="h-10 w-10 animate-spin text-emote-accent"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
@@ -67,11 +79,12 @@ const DashboardLoader = () => (
         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
       />
     </svg>
-    <p className="text-emote-muted text-slate-500">Loading your journal…</p>
+    <p className="text-emote-muted text-emote-ink-faint">Loading your journal…</p>
   </div>
 );
 
 function NavList({
+  tabs,
   activeTab,
   onSelect,
   onCloseMobile,
@@ -79,7 +92,7 @@ function NavList({
 }) {
   return (
     <nav className={`flex flex-col gap-0.5 ${className}`} aria-label="Main navigation">
-      {navItems.map((tab) => {
+      {tabs.map((tab) => {
         const Icon = tab.icon;
         const isActive = activeTab === tab.id;
         return (
@@ -92,7 +105,7 @@ function NavList({
             }}
             className={`emote-sidenav-link ${isActive ? 'emote-sidenav-link-active' : ''}`}
           >
-            <Icon className="h-5 w-5 shrink-0 text-slate-500" aria-hidden />
+            <Icon className="h-5 w-5 shrink-0 text-emote-ink-faint" aria-hidden />
             <span>{tab.label}</span>
           </button>
         );
@@ -104,9 +117,80 @@ function NavList({
 const Dashboard = ({ user }) => {
   const [entries, setEntries] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
+  const [profile, setProfile] = React.useState(null);
+  const [profileLoading, setProfileLoading] = React.useState(true);
+  const [cyclePeriods, setCyclePeriods] = React.useState([]);
   const [activeTab, setActiveTab] = React.useState('journal');
   const [showSettingsModal, setShowSettingsModal] = React.useState(false);
   const [mobileNavOpen, setMobileNavOpen] = React.useState(false);
+
+  const navTabs = React.useMemo(() => {
+    if (profile?.sex === 'female') {
+      const out = [...BASE_NAV];
+      const ins = out.findIndex((t) => t.id === 'insights');
+      out.splice(ins + 1, 0, CYCLE_TAB);
+      return out;
+    }
+    return BASE_NAV;
+  }, [profile?.sex]);
+
+  const loadProfile = React.useCallback(async () => {
+    if (!supabase || !user?.id) {
+      setProfile(null);
+      setProfileLoading(false);
+      return;
+    }
+    setProfileLoading(true);
+    const { data, error } = await supabase.from('profiles').select('*').eq('id', user.id).maybeSingle();
+    if (error) {
+      console.error('Profile load:', error);
+      setProfile(null);
+      setProfileLoading(false);
+      return;
+    }
+    if (!data) {
+      await supabase.from('profiles').upsert({ id: user.id, email: user.email || '' }, { onConflict: 'id' });
+      const { data: d2 } = await supabase.from('profiles').select('*').eq('id', user.id).maybeSingle();
+      setProfile(mapProfileRow(d2));
+    } else {
+      setProfile(mapProfileRow(data));
+    }
+    setProfileLoading(false);
+  }, [user]);
+
+  const loadCyclePeriods = React.useCallback(async () => {
+    if (!supabase || !user?.id) {
+      setCyclePeriods([]);
+      return;
+    }
+    const { data, error } = await supabase
+      .from('cycle_periods')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('start_date', { ascending: false })
+      .limit(120);
+    if (error) {
+      if (!`${error.message}`.includes('cycle_periods')) console.error('Cycle periods:', error);
+      setCyclePeriods([]);
+      return;
+    }
+    setCyclePeriods((data || []).map(mapCyclePeriodRow));
+  }, [user?.id]);
+
+  React.useEffect(() => {
+    loadProfile();
+  }, [loadProfile]);
+
+  React.useEffect(() => {
+    if (profile?.sex === 'female') loadCyclePeriods();
+    else setCyclePeriods([]);
+  }, [profile?.sex, loadCyclePeriods]);
+
+  React.useEffect(() => {
+    if (activeTab === 'cycle' && profile?.sex !== 'female') {
+      setActiveTab('journal');
+    }
+  }, [activeTab, profile?.sex]);
 
   const loadEntries = React.useCallback(async () => {
     if (!supabase || !user?.id) return;
@@ -148,8 +232,24 @@ const Dashboard = ({ user }) => {
           table: 'journal_entries',
           filter: `user_id=eq.${user.id}`,
         },
-        () => {
-          loadEntries();
+        (payload) => {
+          // Merge the changed row into state instead of refetching the
+          // whole list — saving/editing one entry no longer re-downloads
+          // the entire journal history.
+          if (payload.eventType === 'INSERT') {
+            const row = mapJournalRow(payload.new);
+            setEntries((prev) =>
+              prev.some((e) => e.id === row.id)
+                ? prev
+                : [row, ...prev].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)),
+            );
+          } else if (payload.eventType === 'UPDATE') {
+            const row = mapJournalRow(payload.new);
+            setEntries((prev) => prev.map((e) => (e.id === row.id ? row : e)));
+          } else if (payload.eventType === 'DELETE') {
+            const deletedId = payload.old?.id;
+            setEntries((prev) => prev.filter((e) => e.id !== deletedId));
+          }
         },
       )
       .subscribe();
@@ -188,14 +288,15 @@ const Dashboard = ({ user }) => {
   };
 
   const UserFooter = ({ compact }) => (
-    <div className={`shrink-0 ${compact ? 'mt-auto border-t border-slate-100 pt-4' : 'border-t border-slate-100 p-4'}`}>
+    <div className={`shrink-0 ${compact ? 'mt-auto border-t border-emote-border pt-4' : 'border-t border-emote-border p-4'}`}>
       <p
-        className={`truncate text-emote-caption text-slate-500 ${compact ? 'px-1' : 'px-0'}`}
+        className={`truncate text-emote-caption text-emote-ink-faint ${compact ? 'px-1' : 'px-0'}`}
         title={user.email}
       >
         {user.email}
       </p>
       <div className={`mt-3 flex gap-2 ${compact ? '' : ''}`}>
+        <ThemeToggle className="shrink-0" />
         <button
           type="button"
           onClick={() => {
@@ -216,62 +317,77 @@ const Dashboard = ({ user }) => {
   );
 
   return (
-    <div className="relative flex h-[100dvh] max-h-[100dvh] w-full flex-col overflow-hidden bg-emote-canvas text-slate-800 lg:flex-row">
+    <div className="relative flex h-[100dvh] max-h-[100dvh] w-full flex-col overflow-hidden bg-emote-canvas text-emote-ink lg:flex-row">
       <div className="emote-mesh" aria-hidden />
 
       {/* Desktop sidebar — viewport height, does not scroll with main */}
       <aside
-        className="relative z-20 hidden h-full min-h-0 w-[300px] shrink-0 flex-col border-r border-slate-200 bg-white shadow-sm lg:flex"
+        className="relative z-20 hidden h-full min-h-0 w-[300px] shrink-0 flex-col border-r border-emote-border bg-emote-surface shadow-sm lg:flex"
         aria-label="Sidebar"
       >
-          <div className="flex h-[4.25rem] items-center border-b border-slate-100 px-5">
+          <div className="flex h-[4.25rem] items-center gap-2.5 border-b border-emote-border px-5">
+            <Logo size={28} />
             <span className="emote-title-gradient text-emote-page font-bold tracking-tight">Emote</span>
           </div>
           <div className="flex min-h-0 flex-1 flex-col p-3 pt-2">
             <div className="flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto">
-              <NavList activeTab={activeTab} onSelect={handleNavSelect} className="shrink-0" />
+              <NavList tabs={navTabs} activeTab={activeTab} onSelect={handleNavSelect} className="shrink-0" />
             </div>
             <UserFooter compact />
           </div>
       </aside>
 
       <div className="emote-main-canvas min-w-0 pt-14 lg:pt-0">
+        {!isLoading && !profileLoading && profile && !profile.profileCompletedAt ? (
+          <ProfileSetupModal user={user} initialProfile={profile} onComplete={loadProfile} />
+        ) : null}
         {showSettingsModal && (
           <SettingsModal onClose={() => setShowSettingsModal(false)} user={user} entries={entries} />
         )}
 
         <div className="emote-main-scroll">
-          <header className="mb-6 border-b border-slate-200/80 pb-5 lg:mb-8">
-            <h2 className="text-emote-page font-semibold tracking-tight text-slate-900">
+          <header className="mb-6 border-b border-emote-border pb-5 lg:mb-8">
+            <h2 className="text-emote-page font-semibold tracking-tight text-emote-ink">
               {sectionTitle[activeTab] || 'Journal'}
             </h2>
-            <p className="mt-2 max-w-2xl text-emote-muted leading-relaxed text-slate-500">
+            <p className="mt-2 max-w-2xl text-emote-muted leading-relaxed text-emote-ink-soft">
               {sectionSubtitle[activeTab] || sectionSubtitle.journal}
             </p>
           </header>
 
             <main className="animate-fade-in">
-              {isLoading ? (
+              {activeTab === 'journal' ? (
+                // Journal doesn't depend on `entries`, so writing is never
+                // blocked behind the entries/profile load.
+                <JournalView user={user} />
+              ) : isLoading ? (
                 <DashboardLoader />
               ) : (
-                <>
-                  {activeTab === 'journal' && <JournalView user={user} />}
+                <React.Suspense fallback={<DashboardLoader />}>
                   {activeTab === 'entries' && (
                     <EntriesView entries={entries} onDeleteEntry={handleDeleteEntry} />
                   )}
                   {activeTab === 'insights' && <InsightsDashboard entries={entries} />}
+                  {activeTab === 'cycle' && profile?.sex === 'female' ? (
+                    <CycleView
+                      user={user}
+                      entries={entries}
+                      cyclePeriods={cyclePeriods}
+                      onPeriodsUpdated={loadCyclePeriods}
+                    />
+                  ) : null}
                   {activeTab === 'timeline' && <TimelineView entries={entries} />}
                   {activeTab === 'goals' && <GoalsView entries={entries} user={user} />}
                   {activeTab === 'chat' && <ChatView entries={entries} />}
                   {activeTab === 'resources' && <ResourcesPanel entries={entries} />}
-                </>
+                </React.Suspense>
               )}
             </main>
         </div>
       </div>
 
       {/* Mobile header */}
-      <header className="fixed left-0 right-0 top-0 z-30 flex h-14 items-center justify-between border-b border-slate-200 bg-white/95 px-4 backdrop-blur-md lg:hidden">
+      <header className="fixed left-0 right-0 top-0 z-30 flex h-14 items-center justify-between border-b border-emote-border bg-emote-surface/95 px-4 backdrop-blur-md lg:hidden">
         <button
           type="button"
           onClick={() => setMobileNavOpen(true)}
@@ -280,15 +396,21 @@ const Dashboard = ({ user }) => {
         >
           <FiMenu className="h-5 w-5" />
         </button>
-        <span className="emote-title-gradient text-emote-section font-bold">Emote</span>
-        <button
-          type="button"
-          onClick={() => setShowSettingsModal(true)}
-          className="emote-icon-btn"
-          aria-label="Settings"
-        >
-          <FiSettings className="h-5 w-5" />
-        </button>
+        <span className="flex items-center gap-2">
+          <Logo size={22} />
+          <span className="emote-title-gradient text-emote-section font-bold">Emote</span>
+        </span>
+        <div className="flex items-center gap-1.5">
+          <ThemeToggle />
+          <button
+            type="button"
+            onClick={() => setShowSettingsModal(true)}
+            className="emote-icon-btn"
+            aria-label="Settings"
+          >
+            <FiSettings className="h-5 w-5" />
+          </button>
+        </div>
       </header>
 
       {/* Mobile drawer */}
@@ -300,9 +422,9 @@ const Dashboard = ({ user }) => {
             aria-label="Close menu"
             onClick={() => setMobileNavOpen(false)}
           />
-          <div className="fixed inset-y-0 left-0 z-50 flex w-[min(320px,92vw)] flex-col border-r border-slate-200 bg-white shadow-xl lg:hidden animate-fade-in">
-            <div className="flex h-14 items-center justify-between border-b border-slate-100 px-4">
-              <span className="text-emote-card-title font-semibold text-slate-800">Menu</span>
+          <div className="fixed inset-y-0 left-0 z-50 flex w-[min(320px,92vw)] flex-col border-r border-emote-border bg-emote-surface shadow-xl lg:hidden animate-fade-in">
+            <div className="flex h-14 items-center justify-between border-b border-emote-border px-4">
+              <span className="text-emote-card-title font-semibold text-emote-ink">Menu</span>
               <button
                 type="button"
                 onClick={() => setMobileNavOpen(false)}
@@ -315,6 +437,7 @@ const Dashboard = ({ user }) => {
             <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-3 pt-2">
               <div className="flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto">
                 <NavList
+                  tabs={navTabs}
                   activeTab={activeTab}
                   onSelect={handleNavSelect}
                   onCloseMobile={() => setMobileNavOpen(false)}

@@ -1,10 +1,6 @@
 import React from 'react';
 import { getCreatedAtDate } from '../lib/entryDates';
-
-const getMoodColor = (mood) => {
-    const colors = { happy: '#48bb78', sad: '#4299e1', angry: '#f56565', anxious: '#9f7aea', neutral: '#a0aec0' };
-    return colors[mood] || '#a0aec0';
-};
+import { getMoodColor } from '../lib/moodMeta';
 
 const getSentimentY = (score) => {
     // Map sentiment score (-5 to +5) to y position (higher = more positive)
@@ -28,7 +24,7 @@ const DotRepresentation = ({ entries }) => {
                             cy={getSentimentY(entry.sentimentScore)}
                             r={10}
                             fill={getMoodColor(entry.mood)}
-                            stroke="#fff"
+                            stroke="rgb(var(--emote-surface))"
                             strokeWidth={2}
                         >
                             <title>
@@ -41,11 +37,11 @@ const DotRepresentation = ({ entries }) => {
                     );
                 })}
                 {/* Axis line */}
-                <line x1={10} y1={60} x2={width-10} y2={60} stroke="#a0aec0" strokeDasharray="4 2" />
-                <text x={10} y={75} fontSize={12} fill="#a0aec0">Negative</text>
-                <text x={width-60} y={75} fontSize={12} fill="#a0aec0">Positive</text>
+                <line x1={10} y1={60} x2={width-10} y2={60} stroke="rgb(var(--emote-border-strong))" strokeDasharray="4 2" />
+                <text x={10} y={75} fontSize={12} fill="rgb(var(--emote-ink-faint))">Negative</text>
+                <text x={width-60} y={75} fontSize={12} fill="rgb(var(--emote-ink-faint))">Positive</text>
             </svg>
-            <div className="text-xs text-gray-400 mt-2">Each dot represents a journal entry. Higher dots = more positive sentiment. Color = mood.</div>
+            <div className="text-xs text-emote-ink-faint mt-2">Each dot represents a journal entry. Higher dots = more positive sentiment. Color = mood.</div>
         </div>
     );
 };

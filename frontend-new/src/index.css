@@ -1,98 +1,140 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap');
 @import './styles/globals.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/**
+ * Old-diary theme tokens.
+ * Light = warm parchment/cream diary page. Dark = leather-bound journal at night.
+ * RGB triplets (not hex) so Tailwind's `rgb(var(--x) / <alpha-value>)` opacity modifiers work.
+ */
+:root {
+  --emote-canvas: 246 236 217;
+  --emote-surface: 255 250 240;
+  --emote-surface-alt: 241 226 194;
+  --emote-border: 224 201 160;
+  --emote-border-strong: 201 168 108;
+  --emote-ink: 74 50 32;
+  --emote-ink-soft: 122 92 62;
+  --emote-ink-faint: 166 138 99;
+  --emote-accent: 184 114 46;
+  --emote-accent-2: 138 90 43;
+  --emote-gold: 201 151 31;
+}
+
+:root.dark {
+  --emote-canvas: 31 20 12;
+  --emote-surface: 43 28 17;
+  --emote-surface-alt: 58 40 23;
+  --emote-border: 77 54 32;
+  --emote-border-strong: 107 74 40;
+  --emote-ink: 241 224 192;
+  --emote-ink-soft: 203 178 140;
+  --emote-ink-faint: 156 130 97;
+  --emote-accent: 217 154 68;
+  --emote-accent-2: 232 181 99;
+  --emote-gold: 224 176 74;
+}
+
 @layer base {
   html {
     @apply antialiased;
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
   }
   body {
-    @apply min-h-screen bg-emote-canvas font-sans text-emote-body text-slate-800;
-    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    @apply min-h-screen bg-emote-canvas font-sans text-emote-body text-emote-ink transition-colors duration-300;
+    font-family: 'Lora', Georgia, 'Times New Roman', serif;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: 'Playfair Display', Georgia, serif;
   }
 }
 
 @layer components {
-  /* Soft colorful wash on white */
+  /* Soft warm wash on parchment/leather */
   .emote-mesh {
     @apply pointer-events-none fixed inset-0 -z-10;
     background:
-      radial-gradient(ellipse 90% 70% at 50% -30%, rgba(14, 165, 233, 0.12), transparent 55%),
-      radial-gradient(ellipse 45% 45% at 100% 10%, rgba(251, 113, 133, 0.1), transparent),
-      radial-gradient(ellipse 50% 50% at 0% 90%, rgba(52, 211, 153, 0.08), transparent);
+      radial-gradient(ellipse 90% 70% at 50% -30%, rgb(var(--emote-gold) / 0.14), transparent 55%),
+      radial-gradient(ellipse 45% 45% at 100% 10%, rgb(var(--emote-accent) / 0.1), transparent),
+      radial-gradient(ellipse 50% 50% at 0% 90%, rgb(var(--emote-accent-2) / 0.08), transparent);
   }
 
   .emote-panel {
-    @apply rounded-2xl border border-slate-200/90 bg-white p-6 shadow-emote;
+    @apply rounded-2xl border border-emote-border bg-emote-surface p-6 shadow-emote;
   }
 
   .emote-input {
-    @apply w-full rounded-xl border border-slate-200 bg-white px-3.5 py-3 font-sans text-emote-body text-slate-800 placeholder:text-slate-400 shadow-sm transition focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-400/25;
+    @apply w-full rounded-xl border border-emote-border bg-emote-surface px-3.5 py-3 font-sans text-emote-body text-emote-ink placeholder:text-emote-ink-faint shadow-sm transition focus:border-emote-accent focus:outline-none focus:ring-2 focus:ring-emote-accent/25;
   }
 
-  /* Colorful primary — rose → orange → amber */
+  /* Primary — warm sienna → brass gradient */
   .emote-btn-primary {
-    @apply inline-flex items-center justify-center rounded-full bg-gradient-to-r from-rose-500 via-orange-500 to-amber-400 px-6 py-2.5 text-emote-muted font-semibold text-white shadow-md shadow-orange-500/20 transition hover:brightness-105 hover:shadow-lg hover:shadow-orange-500/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:brightness-100;
+    @apply inline-flex items-center justify-center rounded-full bg-gradient-to-r from-emote-accent-2 via-emote-accent to-emote-gold px-6 py-2.5 text-emote-muted font-semibold text-emote-surface shadow-md shadow-emote-accent/20 transition hover:brightness-105 hover:shadow-lg hover:shadow-emote-accent/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-emote-accent focus-visible:ring-offset-2 focus-visible:ring-offset-emote-surface disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:brightness-100;
   }
 
   .emote-btn-ghost {
-    @apply inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2 text-emote-muted font-medium text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/40 focus-visible:ring-offset-2 focus-visible:ring-offset-emote-canvas;
+    @apply inline-flex items-center justify-center rounded-xl border border-emote-border bg-emote-surface px-4 py-2 text-emote-muted font-medium text-emote-ink-soft shadow-sm transition hover:border-emote-border-strong hover:bg-emote-surface-alt focus:outline-none focus-visible:ring-2 focus-visible:ring-emote-accent/40 focus-visible:ring-offset-2 focus-visible:ring-offset-emote-canvas;
   }
 
   .emote-icon-btn {
-    @apply flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/50;
+    @apply flex h-10 w-10 items-center justify-center rounded-xl border border-emote-border bg-emote-surface text-emote-ink-soft shadow-sm transition hover:border-emote-border-strong hover:bg-emote-surface-alt hover:text-emote-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-emote-accent/50;
   }
 
-  /* Title bar: white strip, consistent across app */
+  /* Title bar: parchment strip, consistent across app */
   .emote-topbar {
-    @apply mb-6 flex flex-col gap-4 rounded-2xl border border-slate-200/90 bg-white/95 px-4 py-4 shadow-emote backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between sm:px-6;
+    @apply mb-6 flex flex-col gap-4 rounded-2xl border border-emote-border bg-emote-surface/95 px-4 py-4 shadow-emote backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between sm:px-6;
   }
 
   /* Tab row under title */
   .emote-nav-strip {
-    @apply mb-8 flex gap-1 overflow-x-auto rounded-xl border border-slate-200/90 bg-white/90 p-1 shadow-sm backdrop-blur-sm;
+    @apply mb-8 flex gap-1 overflow-x-auto rounded-xl border border-emote-border bg-emote-surface/90 p-1 shadow-sm backdrop-blur-sm;
   }
 
   .emote-tab {
-    @apply relative whitespace-nowrap rounded-lg px-3 py-2.5 text-emote-muted font-medium text-slate-500 transition hover:bg-slate-100 hover:text-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/40 sm:px-4 sm:text-emote-body;
+    @apply relative whitespace-nowrap rounded-lg px-3 py-2.5 text-emote-muted font-medium text-emote-ink-soft transition hover:bg-emote-surface-alt hover:text-emote-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-emote-accent/40 sm:px-4 sm:text-emote-body;
   }
 
   .emote-tab-active {
-    @apply bg-slate-100 text-slate-900 shadow-sm;
+    @apply bg-emote-surface-alt text-emote-ink shadow-sm;
   }
 
-  /* Colorful title text — sky / rose / amber (no purple) */
+  /* Title text — sienna / brass gradient */
   .emote-title-gradient {
-    @apply bg-gradient-to-r from-sky-600 via-rose-500 to-amber-500 bg-clip-text font-semibold tracking-tight text-transparent;
+    @apply bg-gradient-to-r from-emote-accent-2 via-emote-accent to-emote-gold bg-clip-text font-display font-semibold tracking-tight text-transparent;
   }
 
   .auth-card-emote {
-    @apply relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-8 shadow-emote shadow-emote-glow;
+    @apply relative overflow-hidden rounded-2xl border border-emote-border bg-emote-surface p-8 shadow-emote shadow-emote-glow;
     animation: auth-card-in 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   }
 
   .auth-card-emote::before {
     content: '';
-    @apply pointer-events-none absolute -right-20 -top-20 h-48 w-48 rounded-full bg-gradient-to-br from-sky-200/80 via-rose-200/60 to-amber-200/50 blur-3xl;
+    @apply pointer-events-none absolute -right-20 -top-20 h-48 w-48 rounded-full bg-gradient-to-br from-emote-gold/40 via-emote-accent/30 to-emote-accent-2/20 blur-3xl;
   }
 
   .feature-card {
-    @apply rounded-2xl border border-slate-200 bg-white p-8 text-left shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-sky-200 hover:shadow-md;
+    @apply rounded-2xl border border-emote-border bg-emote-surface p-8 text-left shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-emote-border-strong hover:shadow-md;
   }
 
   .feature-title-gradient {
-    @apply mb-2 bg-gradient-to-r from-sky-600 to-teal-600 bg-clip-text text-emote-section font-semibold text-transparent;
+    @apply mb-2 bg-gradient-to-r from-emote-accent-2 to-emote-gold bg-clip-text text-emote-section font-display font-semibold text-transparent;
   }
 
   /* Alert / banner base */
   .emote-banner-info {
-    @apply rounded-2xl border border-sky-200 bg-sky-50/90 px-4 py-3 text-emote-muted text-sky-900 shadow-sm;
+    @apply rounded-2xl border border-emote-accent/30 bg-emote-accent/10 px-4 py-3 text-emote-muted text-emote-ink shadow-sm;
   }
 
   .emote-banner-warn {
-    @apply rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-emote-muted text-rose-900 shadow-sm;
+    @apply rounded-2xl border border-rose-800/30 bg-rose-800/10 px-4 py-3 text-emote-muted text-emote-ink shadow-sm;
   }
 
   /* Logged-in app shell: sidebar + main */
@@ -101,11 +143,11 @@
   }
 
   .emote-sidenav-link {
-    @apply flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-emote-nav font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/40;
+    @apply flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-emote-nav font-medium text-emote-ink-soft transition hover:bg-emote-surface-alt hover:text-emote-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-emote-accent/40;
   }
 
   .emote-sidenav-link-active {
-    @apply bg-gradient-to-r from-sky-50 via-white to-rose-50/80 text-slate-900 shadow-sm ring-1 ring-sky-100/80;
+    @apply bg-gradient-to-r from-emote-gold/15 via-emote-surface to-emote-accent/10 text-emote-ink shadow-sm ring-1 ring-emote-gold/30;
   }
 
   /* Main column in dashboard: fills space; scroll lives on .emote-main-scroll only */
@@ -113,13 +155,13 @@
     @apply relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-emote-canvas;
   }
 
-  /* Logged-in main column: same Inter scale as shell */
+  /* Logged-in main column: same type scale as shell */
   .emote-main-scroll {
-    @apply mx-auto min-h-0 w-full max-w-6xl flex-1 overflow-y-auto overscroll-y-contain px-4 pb-28 pt-16 font-sans text-emote-body text-slate-800 antialiased sm:px-6 lg:px-10 lg:pb-8 lg:pt-8;
+    @apply mx-auto min-h-0 w-full max-w-6xl flex-1 overflow-y-auto overscroll-y-contain px-4 pb-28 pt-16 font-sans text-emote-body text-emote-ink antialiased sm:px-6 lg:px-10 lg:pb-8 lg:pt-8;
   }
 
   .emote-section-eyebrow {
-    @apply text-emote-caption font-semibold uppercase tracking-[0.12em] text-slate-400;
+    @apply text-emote-caption font-semibold uppercase tracking-[0.12em] text-emote-ink-faint;
   }
 }
 
@@ -143,10 +185,10 @@
   height: 9px;
 }
 ::-webkit-scrollbar-track {
-  @apply bg-slate-100;
+  @apply bg-emote-surface-alt;
 }
 ::-webkit-scrollbar-thumb {
-  @apply rounded-full bg-slate-300 hover:bg-slate-400;
+  @apply rounded-full bg-emote-border-strong hover:bg-emote-accent;
 }
 
 input,
@@ -156,18 +198,18 @@ button {
 }
 
 a {
-  @apply text-sky-600 no-underline transition-colors hover:text-rose-600;
+  @apply text-emote-accent no-underline transition-colors hover:text-emote-gold;
 }
 
 .card {
-  @apply mb-8 rounded-3xl border border-slate-200 bg-white p-8 shadow-emote;
+  @apply mb-8 rounded-3xl border border-emote-border bg-emote-surface p-8 shadow-emote;
 }
 .card-accent {
-  border-left: 6px solid #f43f5e;
+  border-left: 6px solid rgb(var(--emote-accent));
 }
 .btn-gradient {
-  @apply rounded-full border-0 bg-gradient-to-r from-rose-500 to-teal-500 px-8 py-3 font-bold text-white shadow-md transition hover:brightness-105;
+  @apply rounded-full border-0 bg-gradient-to-r from-emote-accent-2 to-emote-gold px-8 py-3 font-bold text-emote-surface shadow-md transition hover:brightness-105;
 }
 .tag {
-  @apply mb-1 mr-2 inline-block rounded-full bg-gradient-to-r from-sky-500 to-teal-500 px-4 py-1 text-emote-muted font-semibold text-white;
+  @apply mb-1 mr-2 inline-block rounded-full bg-gradient-to-r from-emote-accent to-emote-gold px-4 py-1 text-emote-muted font-semibold text-emote-surface;
 }

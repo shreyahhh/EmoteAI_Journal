@@ -17,6 +17,11 @@ create extension if not exists "pgcrypto";
 create table if not exists public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
   email text,
+  display_name text,
+  username text,
+  age smallint,
+  sex text check (sex is null or sex in ('female', 'male', 'non_binary', 'prefer_not_say', 'other')),
+  profile_completed_at timestamptz,
   updated_at timestamptz not null default now()
 );
 
@@ -48,6 +53,26 @@ comment on column public.journal_entries.themes is 'Gemini theme/topic labels fo
 
 create index if not exists journal_entries_user_created_idx
   on public.journal_entries (user_id, created_at desc);
+
+-- ---------------------------------------------------------------------------
+-- Cycle periods (optional; app shows Cycle tab only when sex = female)
+-- Mark period start/end on calendar; symptoms + notes stored per period.
+-- ---------------------------------------------------------------------------
+create table if not exists public.cycle_periods (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users (id) on delete cascade,
+  start_date date not null,
+  end_date date,
+  mood_reflection text not null default '',
+  symptoms text[] not null default '{}',
+  notes text not null default '',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  check (end_date is null or end_date >= start_date)
+);
+
+create index if not exists cycle_periods_user_start_idx
+  on public.cycle_periods (user_id, start_date desc);
 
 -- ---------------------------------------------------------------------------
 -- Append-only history (every create/update/delete of a journal entry)
@@ -188,6 +213,7 @@ create trigger on_auth_user_created
 alter table public.profiles enable row level security;
 alter table public.journal_entries enable row level security;
 alter table public.journal_entry_history enable row level security;
+alter table public.cycle_periods enable row level security;
 
 -- Profiles
 drop policy if exists "profiles_select_own" on public.profiles;
@@ -204,6 +230,27 @@ drop policy if exists "profiles_insert_own" on public.profiles;
 create policy "profiles_insert_own"
   on public.profiles for insert
   with check (auth.uid() = id);
+
+-- Cycle periods
+drop policy if exists "cycle_periods_select_own" on public.cycle_periods;
+create policy "cycle_periods_select_own"
+  on public.cycle_periods for select
+  using (auth.uid() = user_id);
+
+drop policy if exists "cycle_periods_insert_own" on public.cycle_periods;
+create policy "cycle_periods_insert_own"
+  on public.cycle_periods for insert
+  with check (auth.uid() = user_id);
+
+drop policy if exists "cycle_periods_update_own" on public.cycle_periods;
+create policy "cycle_periods_update_own"
+  on public.cycle_periods for update
+  using (auth.uid() = user_id);
+
+drop policy if exists "cycle_periods_delete_own" on public.cycle_periods;
+create policy "cycle_periods_delete_own"
+  on public.cycle_periods for delete
+  using (auth.uid() = user_id);
 
 -- Journal entries
 drop policy if exists "journal_select_own" on public.journal_entries;

@@ -1,18 +1,27 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: 'class',
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {
       colors: {
         emote: {
-          canvas: '#f4f6fb',
-          surface: '#ffffff',
-          muted: '#f1f5f9',
-          line: '#e2e8f0',
+          canvas: 'rgb(var(--emote-canvas) / <alpha-value>)',
+          surface: 'rgb(var(--emote-surface) / <alpha-value>)',
+          'surface-alt': 'rgb(var(--emote-surface-alt) / <alpha-value>)',
+          border: 'rgb(var(--emote-border) / <alpha-value>)',
+          'border-strong': 'rgb(var(--emote-border-strong) / <alpha-value>)',
+          ink: 'rgb(var(--emote-ink) / <alpha-value>)',
+          'ink-soft': 'rgb(var(--emote-ink-soft) / <alpha-value>)',
+          'ink-faint': 'rgb(var(--emote-ink-faint) / <alpha-value>)',
+          accent: 'rgb(var(--emote-accent) / <alpha-value>)',
+          'accent-2': 'rgb(var(--emote-accent-2) / <alpha-value>)',
+          gold: 'rgb(var(--emote-gold) / <alpha-value>)',
         },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Lora', 'Georgia', 'serif'],
+        display: ['"Playfair Display"', 'Georgia', 'serif'],
       },
       fontSize: {
         'emote-display': [
@@ -56,8 +65,8 @@ module.exports = {
         'emote-nav': ['var(--emote-fs-nav)', { lineHeight: 'var(--emote-lh-nav)' }],
       },
       boxShadow: {
-        emote: '0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -4px rgba(15, 23, 42, 0.08)',
-        'emote-glow': '0 12px 40px -12px rgba(251, 113, 133, 0.25), 0 8px 24px -8px rgba(45, 212, 191, 0.12)',
+        emote: '0 1px 2px rgba(74, 50, 32, 0.06), 0 8px 24px -4px rgba(74, 50, 32, 0.12)',
+        'emote-glow': '0 12px 40px -12px rgba(184, 114, 46, 0.3), 0 8px 24px -8px rgba(201, 151, 31, 0.18)',
       },
       keyframes: {
         'fade-in': {
@@ -75,7 +84,7 @@ module.exports = {
       },
       backgroundImage: {
         'gradient-emote':
-          'linear-gradient(135deg, rgba(14, 165, 233, 0.08) 0%, transparent 45%, rgba(251, 113, 133, 0.06) 100%)',
+          'linear-gradient(135deg, rgba(201, 151, 31, 0.1) 0%, transparent 45%, rgba(184, 114, 46, 0.08) 100%)',
       },
     },
   },

@@ -13,51 +13,12 @@ import {
   Cell,
 } from 'recharts';
 import { getCreatedAtDate } from '../lib/entryDates';
+import { buildMoodBuckets, filterEntriesByRange } from '../lib/moodBuckets';
+import { getWeeklySummary } from '../lib/gemini';
+import { getMoodColor, MOOD_COLORS, ACTIVITY_CHART_NAMES } from '../lib/moodMeta';
+import { useTheme } from '../contexts/ThemeContext';
 
 const panelClass = 'emote-panel';
-
-async function getWeeklySummaryWithAI(entriesText) {
-  const apiKey = process.env.REACT_APP_GEMINI_API_KEY;
-  const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-  const prompt = `
-        As a compassionate psychologist, you are reviewing a client's journal entries from the past week.
-        Please provide a gentle and insightful summary based on the text provided.
-        Provide your response in a structured JSON format. Do not include any text outside of the JSON object.
-        The JSON object should have the following keys:
-        - "overallFeeling": A short paragraph (2-3 sentences) summarizing the overall emotional tone of the week.
-        - "keyThemes": An array of 2-4 strings identifying the most prominent themes or topics.
-        - "positiveMoment": A short paragraph highlighting a specific positive moment or feeling mentioned in the entries. If no clear positive moment exists, create a gentle encouragement.
-        - "gentleSuggestion": A single, forward-looking, and encouraging suggestion for the week ahead.
-        Journal Entries Text:
-        ---
-        ${entriesText}
-        ---
-    `;
-  const payload = {
-    contents: [{ role: 'user', parts: [{ text: prompt }] }],
-    generationConfig: {
-      responseMimeType: 'application/json',
-    },
-  };
-  try {
-    const response = await fetch(apiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    if (!response.ok) {
-      throw new Error(`API call failed with status: ${response.status}`);
-    }
-    const result = await response.json();
-    if (result.candidates && result.candidates[0].content && result.candidates[0].content.parts[0]) {
-      return JSON.parse(result.candidates[0].content.parts[0].text);
-    }
-    return { overallFeeling: 'Could not generate a summary at this time.', keyThemes: [], positiveMoment: '', gentleSuggestion: 'Try to be kind to yourself this week.' };
-  } catch (error) {
-    console.error('AI Summary Generation Error:', error);
-    return { overallFeeling: 'An error occurred while analyzing your week.', keyThemes: [], positiveMoment: '', gentleSuggestion: 'Try to be kind to yourself this week.' };
-  }
-}
 
 const WeeklySummary = ({ entries }) => {
   const [summary, setSummary] = useState(null);
@@ -84,14 +45,14 @@ const WeeklySummary = ({ entries }) => {
         return `Entry on ${d ? d.toLocaleDateString() : '?'}:\nTitle: ${e.title}\nContent: ${e.content}`;
       })
       .join('\n\n---\n\n');
-    const generatedSummary = await getWeeklySummaryWithAI(entriesText);
+    const generatedSummary = await getWeeklySummary(entriesText);
     setSummary(generatedSummary);
     setIsLoading(false);
   };
   return (
     <div className={panelClass}>
       <h3 className="emote-title-gradient text-emote-section">Weekly summary</h3>
-      <p className="mb-4 mt-1.5 text-emote-muted leading-relaxed text-slate-500">
+      <p className="mb-4 mt-1.5 text-emote-muted leading-relaxed text-emote-ink-soft">
         Uses entries from the last seven days (you need at least three). Good for a gentle recap of tone and themes.
       </p>
       <button
@@ -112,30 +73,30 @@ const WeeklySummary = ({ entries }) => {
           'Generate summary'
         )}
       </button>
-      {error && <p className="mt-4 text-center text-emote-muted font-medium text-rose-600">{error}</p>}
+      {error && <p className="mt-4 text-center text-emote-muted font-medium text-[#a8432f]">{error}</p>}
       {summary && (
-        <div className="mt-6 space-y-6 border-t border-slate-100 pt-6 animate-fade-in">
+        <div className="mt-6 space-y-6 border-t border-emote-border pt-6 animate-fade-in">
           <div>
-            <h4 className="mb-2 text-emote-caption font-semibold uppercase tracking-wide text-sky-600">Overall feeling</h4>
-            <p className="text-emote-body leading-relaxed text-slate-600">{summary.overallFeeling}</p>
+            <h4 className="mb-2 text-emote-caption font-semibold uppercase tracking-wide text-emote-accent">Overall feeling</h4>
+            <p className="text-emote-body leading-relaxed text-emote-ink-soft">{summary.overallFeeling}</p>
           </div>
           <div>
-            <h4 className="mb-2 text-emote-caption font-semibold uppercase tracking-wide text-sky-600">Key themes</h4>
+            <h4 className="mb-2 text-emote-caption font-semibold uppercase tracking-wide text-emote-accent">Key themes</h4>
             <div className="flex flex-wrap gap-2">
               {summary.keyThemes?.map((theme, index) => (
-                <span key={index} className="rounded-lg bg-teal-50 px-3 py-1 text-emote-muted font-medium text-teal-900 ring-1 ring-teal-200">
+                <span key={index} className="rounded-lg bg-emote-gold/10 px-3 py-1 text-emote-muted font-medium text-emote-accent-2 ring-1 ring-emote-gold/30">
                   {theme}
                 </span>
               ))}
             </div>
           </div>
           <div>
-            <h4 className="mb-2 text-emote-caption font-semibold uppercase tracking-wide text-sky-600">A positive moment</h4>
-            <p className="text-emote-body italic leading-relaxed text-slate-500">&ldquo;{summary.positiveMoment}&rdquo;</p>
+            <h4 className="mb-2 text-emote-caption font-semibold uppercase tracking-wide text-emote-accent">A positive moment</h4>
+            <p className="text-emote-body italic leading-relaxed text-emote-ink-soft">&ldquo;{summary.positiveMoment}&rdquo;</p>
           </div>
           <div>
-            <h4 className="mb-2 text-emote-caption font-semibold uppercase tracking-wide text-sky-600">Suggestion</h4>
-            <p className="text-emote-body leading-relaxed text-slate-600">{summary.gentleSuggestion}</p>
+            <h4 className="mb-2 text-emote-caption font-semibold uppercase tracking-wide text-emote-accent">Suggestion</h4>
+            <p className="text-emote-body leading-relaxed text-emote-ink-soft">{summary.gentleSuggestion}</p>
           </div>
         </div>
       )}
@@ -143,25 +104,58 @@ const WeeklySummary = ({ entries }) => {
   );
 };
 
-const getMoodColor = (mood) => {
-  const colors = { happy: '#34d399', sad: '#38bdf8', angry: '#fb7185', anxious: '#fbbf24', neutral: '#94a3b8' };
-  return colors[mood] || '#94a3b8';
-};
-
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-emote">
-        <p className="text-emote-card-title font-semibold text-slate-900">{`${label}`}</p>
-        <p className="text-emote-muted font-medium text-teal-600">{`${payload[0].name}: ${payload[0].value}`}</p>
+      <div className="rounded-xl border border-emote-border bg-emote-surface p-3 shadow-emote">
+        <p className="text-emote-card-title font-semibold text-emote-ink">{`${label}`}</p>
+        <p className="text-emote-muted font-medium text-emote-accent">{`${payload[0].name}: ${payload[0].value}`}</p>
       </div>
     );
   }
   return null;
 };
 
-const chartMuted = '#64748b';
-const gridLight = '#e2e8f0';
+const StackedMoodTooltip = ({ active, payload, label }) => {
+  if (!active || !payload?.length) return null;
+  const rows = payload.filter((p) => p.value > 0);
+  const total = rows.reduce((s, p) => s + p.value, 0);
+  return (
+    <div className="rounded-xl border border-emote-border bg-emote-surface p-3 shadow-emote text-emote-muted text-emote-ink">
+      <p className="text-emote-card-title font-semibold text-emote-ink">{label}</p>
+      {total === 0 ? (
+        <p className="mt-1">No entries in this bucket.</p>
+      ) : (
+        <ul className="mt-2 space-y-1">
+          {rows.map((p) => (
+            <li key={p.dataKey}>
+              {p.name}: {p.value}{' '}
+              <span className="text-emote-ink-faint">({Math.round((p.value / total) * 100)}%)</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
+
+/** Chart axis/grid colors aren't Tailwind classes (recharts renders them as raw SVG
+ * attributes, which don't resolve CSS custom properties), so they're theme-picked here. */
+function useChartPalette() {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+  return {
+    muted: isDark ? '#cbb28c' : '#7a5c3e',
+    grid: isDark ? '#4d3620' : '#e0c9a0',
+    legend: isDark ? '#cbb28c' : '#7a5c3e',
+  };
+}
+
+const RANGE_TABS = [
+  { id: 'week', label: 'Week' },
+  { id: 'month', label: 'Month' },
+  { id: 'year', label: 'Year' },
+];
 
 const ActivityMoodChart = ({ entries }) => {
   const chartData = useMemo(() => {
@@ -174,19 +168,9 @@ const ActivityMoodChart = ({ entries }) => {
         });
       }
     });
-    const activityNames = {
-      exercise: 'Exercise',
-      work: 'Work',
-      social: 'Socialized',
-      hobby: 'Hobby',
-      rest: 'Rested',
-      family: 'Family Time',
-      chores: 'Chores',
-      nature: 'Nature',
-    };
     return Object.entries(activityMoods)
       .map(([activityId, count]) => ({
-        name: activityNames[activityId] || activityId,
+        name: ACTIVITY_CHART_NAMES[activityId] || activityId,
         count,
       }))
       .sort((a, b) => b.count - a.count)
@@ -196,29 +180,29 @@ const ActivityMoodChart = ({ entries }) => {
   if (chartData.length === 0) {
     return (
       <div className={panelClass}>
-        <h3 className="mb-2 text-emote-card-title font-semibold text-slate-900">Activities & mood</h3>
-        <p className="text-emote-muted text-slate-500">Tag activities on entries with positive mood.</p>
+        <h3 className="mb-2 text-emote-card-title font-semibold text-emote-ink">Activities & mood</h3>
+        <p className="text-emote-muted text-emote-ink-soft">Tag activities on entries with positive mood in this range.</p>
       </div>
     );
   }
   return (
     <div className={panelClass}>
-      <h3 className="text-emote-card-title font-semibold text-slate-900">Activities & mood</h3>
-      <p className="mb-4 mt-1.5 text-emote-muted leading-relaxed text-slate-500">
-        Based on entries labeled happy—see which tagged activities showed up most often.
+      <h3 className="text-emote-card-title font-semibold text-emote-ink">Activities & mood</h3>
+      <p className="mb-4 mt-1.5 text-emote-muted leading-relaxed text-emote-ink-soft">
+        Based on happy entries in the selected range—tagged activities you logged most often.
       </p>
       <div className="space-y-3">
         {chartData.map((item) => {
           const barWidth = `${(item.count / Math.max(...chartData.map((d) => d.count))) * 100}%`;
           return (
             <div key={item.name} className="flex items-center gap-4 text-emote-muted">
-              <span className="w-28 text-right font-medium text-slate-600">{item.name}</span>
-              <div className="h-7 flex-1 overflow-hidden rounded-full bg-slate-100 ring-1 ring-slate-200/80">
+              <span className="w-28 text-right font-medium text-emote-ink-soft">{item.name}</span>
+              <div className="h-7 flex-1 overflow-hidden rounded-full bg-emote-surface-alt ring-1 ring-emote-border">
                 <div
-                  className="flex h-full items-center justify-end rounded-full bg-gradient-to-r from-rose-500 via-orange-400 to-teal-500 px-2 transition-all duration-500"
+                  className="flex h-full items-center justify-end rounded-full bg-gradient-to-r from-emote-accent-2 via-emote-accent to-emote-gold px-2 transition-all duration-500"
                   style={{ width: barWidth }}
                 >
-                  <span className="text-emote-caption font-bold text-white">{item.count}</span>
+                  <span className="text-emote-caption font-bold text-emote-surface">{item.count}</span>
                 </div>
               </div>
             </div>
@@ -229,10 +213,96 @@ const ActivityMoodChart = ({ entries }) => {
   );
 };
 
+const MoodTrendSection = ({ entries, range }) => {
+  const scoped = useMemo(() => filterEntriesByRange(entries, range), [entries, range]);
+  const buckets = useMemo(() => buildMoodBuckets(scoped, range), [scoped, range]);
+  const { muted: chartMuted, grid: gridLight, legend: legendColor } = useChartPalette();
+
+  return (
+    <div className="space-y-8">
+      <div className={panelClass}>
+        <h3 className="text-emote-card-title font-semibold text-emote-ink">Mood mix over time</h3>
+        <p className="mb-4 mt-1.5 text-emote-muted leading-relaxed text-emote-ink-soft">
+          Stacked entry counts by mood label for each {range === 'week' ? 'day' : range === 'month' ? 'week' : 'month'} in
+          the window.
+        </p>
+        <div className="h-[320px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={buckets} margin={{ top: 8, right: 12, left: -8, bottom: range === 'month' ? 48 : 8 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke={gridLight} />
+              <XAxis
+                dataKey="label"
+                stroke={chartMuted}
+                tick={{ fill: chartMuted, fontSize: 10 }}
+                interval={0}
+                angle={range === 'month' ? -18 : 0}
+                textAnchor={range === 'month' ? 'end' : 'middle'}
+                height={range === 'month' ? 56 : 32}
+              />
+              <YAxis stroke={chartMuted} tick={{ fill: chartMuted, fontSize: 11 }} allowDecimals={false} />
+              <Tooltip content={<StackedMoodTooltip />} />
+              <Legend wrapperStyle={{ fontSize: 12, color: legendColor }} />
+              <Bar dataKey="happy" name="Happy" stackId="m" fill={MOOD_COLORS.happy} />
+              <Bar dataKey="neutral" name="Neutral" stackId="m" fill={MOOD_COLORS.neutral} />
+              <Bar dataKey="sad" name="Sad" stackId="m" fill={MOOD_COLORS.sad} />
+              <Bar dataKey="anxious" name="Anxious" stackId="m" fill={MOOD_COLORS.anxious} />
+              <Bar dataKey="angry" name="Angry" stackId="m" fill={MOOD_COLORS.angry} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div className={panelClass}>
+        <h3 className="text-emote-card-title font-semibold text-emote-ink">Average tone</h3>
+        <p className="mb-4 mt-1.5 text-emote-muted leading-relaxed text-emote-ink-soft">
+          Mean of AI sentiment (or estimated mood score) per bucket. Range about −10 to +10.
+        </p>
+        <div className="h-[280px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={buckets} margin={{ top: 8, right: 12, left: -8, bottom: range === 'month' ? 48 : 8 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke={gridLight} />
+              <XAxis
+                dataKey="label"
+                stroke={chartMuted}
+                tick={{ fill: chartMuted, fontSize: 10 }}
+                interval={0}
+                angle={range === 'month' ? -18 : 0}
+                textAnchor={range === 'month' ? 'end' : 'middle'}
+                height={range === 'month' ? 56 : 32}
+              />
+              <YAxis stroke={chartMuted} tick={{ fill: chartMuted, fontSize: 11 }} domain={[-10, 10]} />
+              <Tooltip
+                formatter={(v) => (v == null ? '—' : v)}
+                labelFormatter={(l) => l}
+                contentStyle={{ borderRadius: '12px', border: `1px solid ${gridLight}` }}
+              />
+              <Line
+                type="monotone"
+                dataKey="avgSentiment"
+                name="Avg tone"
+                stroke="#b8722e"
+                strokeWidth={2}
+                connectNulls
+                dot={{ r: 4, fill: '#b8722e' }}
+                activeDot={{ r: 7, fill: '#c9971f' }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const InsightsDashboard = ({ entries }) => {
+  const [range, setRange] = useState('week');
+  const { muted: chartMuted, grid: gridLight, legend: legendColor } = useChartPalette();
+
+  const scopedEntries = useMemo(() => filterEntriesByRange(entries, range), [entries, range]);
+
   const moodDistribution = useMemo(() => {
     const counts = { happy: 0, sad: 0, angry: 0, anxious: 0, neutral: 0 };
-    entries.forEach((entry) => {
+    scopedEntries.forEach((entry) => {
       if (Object.prototype.hasOwnProperty.call(counts, entry.mood)) {
         counts[entry.mood]++;
       }
@@ -242,28 +312,23 @@ const InsightsDashboard = ({ entries }) => {
       count: counts[key],
       fill: getMoodColor(key),
     }));
-  }, [entries]);
+  }, [scopedEntries]);
 
-  const sentimentOverTime = useMemo(() => {
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    return entries
-      .filter((entry) => {
-        const d = getCreatedAtDate(entry);
-        return d && d > thirtyDaysAgo;
-      })
+  const sentimentPoints = useMemo(() => {
+    return [...scopedEntries]
+      .filter((e) => getCreatedAtDate(e))
       .map((entry) => ({
         date: (getCreatedAtDate(entry) || new Date()).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-        score: entry.sentimentScore,
+        score: entry.sentimentScore != null && !Number.isNaN(Number(entry.sentimentScore)) ? Number(entry.sentimentScore) : null,
       }))
       .reverse();
-  }, [entries]);
+  }, [scopedEntries]);
 
   if (entries.length === 0) {
     return (
       <div className={`${panelClass} text-center`}>
-        <h3 className="text-emote-card-title font-semibold text-slate-900">No data yet</h3>
-        <p className="mt-2 text-emote-muted leading-relaxed text-slate-500">
+        <h3 className="text-emote-card-title font-semibold text-emote-ink">No data yet</h3>
+        <p className="mt-2 text-emote-muted leading-relaxed text-emote-ink-soft">
           Save a few journal entries—mood labels and dates fill the charts and weekly tools automatically.
         </p>
       </div>
@@ -273,16 +338,48 @@ const InsightsDashboard = ({ entries }) => {
   return (
     <div className="space-y-8">
       <WeeklySummary entries={entries} />
+
+      <div className={panelClass}>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h3 className="text-emote-section font-semibold text-emote-ink">Mood analytics</h3>
+            <p className="mt-1 text-emote-muted leading-relaxed text-emote-ink-soft">
+              Switch the window to see week-by-day, rolling weeks, or year-by-month patterns.
+            </p>
+          </div>
+          <div className="flex shrink-0 rounded-xl border border-emote-border bg-emote-surface-alt/80 p-1" role="tablist" aria-label="Chart time range">
+            {RANGE_TABS.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                role="tab"
+                aria-selected={range === t.id}
+                onClick={() => setRange(t.id)}
+                className={`rounded-lg px-4 py-2 text-emote-muted font-medium transition ${
+                  range === t.id ? 'bg-emote-surface text-emote-ink shadow-sm ring-1 ring-emote-border' : 'text-emote-ink-soft hover:text-emote-ink'
+                }`}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <MoodTrendSection entries={entries} range={range} />
+
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
         <div className={panelClass}>
-          <h3 className="text-emote-card-title font-semibold text-slate-900">Mood distribution</h3>
-          <p className="mb-4 mt-1.5 text-emote-muted leading-relaxed text-slate-500">How many entries fall into each mood the model picked when you saved.</p>
+          <h3 className="text-emote-card-title font-semibold text-emote-ink">Mood distribution</h3>
+          <p className="mb-4 mt-1.5 text-emote-muted leading-relaxed text-emote-ink-soft">
+            Counts in the selected range ({scopedEntries.length} entries).
+          </p>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={moodDistribution} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke={gridLight} />
               <XAxis dataKey="name" stroke={chartMuted} tick={{ fill: chartMuted, fontSize: 12 }} />
               <YAxis stroke={chartMuted} tick={{ fill: chartMuted, fontSize: 12 }} allowDecimals={false} />
-              <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(14, 165, 233, 0.08)' }} />
+              <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(184, 114, 46, 0.1)' }} />
               <Bar dataKey="count" name="Entries" radius={[6, 6, 0, 0]}>
                 {moodDistribution.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.fill} />
@@ -292,29 +389,37 @@ const InsightsDashboard = ({ entries }) => {
           </ResponsiveContainer>
         </div>
         <div className={panelClass}>
-          <h3 className="text-emote-card-title font-semibold text-slate-900">Sentiment (last 30 days)</h3>
-          <p className="mb-4 mt-1.5 text-emote-muted leading-relaxed text-slate-500">Score per entry from roughly the past month—higher is more positive tone in the text.</p>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={sentimentOverTime} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={gridLight} />
-              <XAxis dataKey="date" stroke={chartMuted} tick={{ fill: chartMuted, fontSize: 11 }} />
-              <YAxis stroke={chartMuted} tick={{ fill: chartMuted, fontSize: 12 }} domain={[-10, 10]} />
-              <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(244, 63, 94, 0.06)' }} />
-              <Legend wrapperStyle={{ color: '#475569', fontSize: 12 }} />
-              <Line
-                type="monotone"
-                dataKey="score"
-                name="Sentiment"
-                stroke="#f97316"
-                strokeWidth={2}
-                dot={{ r: 4, fill: '#f97316' }}
-                activeDot={{ r: 7, fill: '#fb923c' }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+          <h3 className="text-emote-card-title font-semibold text-emote-ink">Sentiment per entry</h3>
+          <p className="mb-4 mt-1.5 text-emote-muted leading-relaxed text-emote-ink-soft">
+            Each point is one entry in the range (chronological). Missing scores are skipped.
+          </p>
+          {sentimentPoints.filter((p) => p.score != null).length === 0 ? (
+            <p className="py-12 text-center text-emote-muted text-emote-ink-soft">No scored entries in this range yet.</p>
+          ) : (
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={sentimentPoints.filter((p) => p.score != null)} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={gridLight} />
+                <XAxis dataKey="date" stroke={chartMuted} tick={{ fill: chartMuted, fontSize: 10 }} interval="preserveStartEnd" />
+                <YAxis stroke={chartMuted} tick={{ fill: chartMuted, fontSize: 12 }} domain={[-10, 10]} />
+                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(184, 114, 46, 0.08)' }} />
+                <Legend wrapperStyle={{ color: legendColor, fontSize: 12 }} />
+                <Line
+                  type="monotone"
+                  dataKey="score"
+                  name="Sentiment"
+                  stroke="#b8722e"
+                  strokeWidth={2}
+                  dot={{ r: 3, fill: '#b8722e' }}
+                  activeDot={{ r: 6, fill: '#c9971f' }}
+                  connectNulls
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          )}
         </div>
       </div>
-      <ActivityMoodChart entries={entries} />
+
+      <ActivityMoodChart entries={scopedEntries} />
     </div>
   );
 };

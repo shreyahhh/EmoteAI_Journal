@@ -66,9 +66,9 @@ const EntriesView = ({ entries, onDeleteEntry }) => {
 
   if (entries.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-14 text-center shadow-sm">
-        <p className="text-emote-body font-medium text-slate-800">No entries yet</p>
-        <p className="mt-2 text-emote-muted leading-relaxed text-slate-500">
+      <div className="rounded-2xl border border-dashed border-emote-border bg-emote-surface px-6 py-14 text-center shadow-sm">
+        <p className="text-emote-body font-medium text-emote-ink">No entries yet</p>
+        <p className="mt-2 text-emote-muted leading-relaxed text-emote-ink-faint">
           Go to Journal, write something, and save—your cards will show up here.
         </p>
       </div>
@@ -77,14 +77,14 @@ const EntriesView = ({ entries, onDeleteEntry }) => {
 
   return (
     <>
-      <p className="mb-5 text-emote-muted leading-relaxed text-slate-500">
+      <p className="mb-5 text-emote-muted leading-relaxed text-emote-ink-faint">
         Open a card to read the full entry or jump to history. Newest posts appear at the top of the list.
       </p>
 
-      <div className="mb-6 rounded-2xl border border-slate-200/90 bg-white p-4 shadow-sm sm:p-5">
+      <div className="mb-6 rounded-2xl border border-emote-border/90 bg-emote-surface p-4 shadow-sm sm:p-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:gap-5">
           <div className="min-w-0 flex-1">
-            <label htmlFor="entries-search" className="mb-1.5 block text-emote-caption font-medium uppercase tracking-wide text-slate-500">
+            <label htmlFor="entries-search" className="mb-1.5 block text-emote-caption font-medium uppercase tracking-wide text-emote-ink-faint">
               Search
             </label>
             <input
@@ -99,7 +99,7 @@ const EntriesView = ({ entries, onDeleteEntry }) => {
           </div>
           <div className="grid flex-1 gap-4 sm:grid-cols-2 lg:max-w-md lg:flex-none lg:shrink-0">
             <div>
-              <label htmlFor="entries-mood" className="mb-1.5 block text-emote-caption font-medium uppercase tracking-wide text-slate-500">
+              <label htmlFor="entries-mood" className="mb-1.5 block text-emote-caption font-medium uppercase tracking-wide text-emote-ink-faint">
                 Mood
               </label>
               <select
@@ -116,7 +116,7 @@ const EntriesView = ({ entries, onDeleteEntry }) => {
               </select>
             </div>
             <div>
-              <label htmlFor="entries-date" className="mb-1.5 block text-emote-caption font-medium uppercase tracking-wide text-slate-500">
+              <label htmlFor="entries-date" className="mb-1.5 block text-emote-caption font-medium uppercase tracking-wide text-emote-ink-faint">
                 Date
               </label>
               <select
@@ -134,10 +134,10 @@ const EntriesView = ({ entries, onDeleteEntry }) => {
             </div>
           </div>
         </div>
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-slate-100 pt-4">
-          <p className="text-emote-muted text-slate-600">
-            Showing <span className="font-semibold text-slate-800">{filtered.length}</span> of{' '}
-            <span className="font-semibold text-slate-800">{entries.length}</span>
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-emote-border pt-4">
+          <p className="text-emote-muted text-emote-ink-soft">
+            Showing <span className="font-semibold text-emote-ink">{filtered.length}</span> of{' '}
+            <span className="font-semibold text-emote-ink">{entries.length}</span>
           </p>
           {hasActiveFilters ? (
             <button type="button" onClick={clearFilters} className="emote-btn-ghost py-2 text-emote-muted">
@@ -148,9 +148,9 @@ const EntriesView = ({ entries, onDeleteEntry }) => {
       </div>
 
       {filtered.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-12 text-center shadow-sm">
-          <p className="text-emote-body font-medium text-slate-800">No matching entries</p>
-          <p className="mt-2 text-emote-muted leading-relaxed text-slate-500">
+        <div className="rounded-2xl border border-dashed border-emote-border bg-emote-surface px-6 py-12 text-center shadow-sm">
+          <p className="text-emote-body font-medium text-emote-ink">No matching entries</p>
+          <p className="mt-2 text-emote-muted leading-relaxed text-emote-ink-faint">
             Try different search words, mood, or date range—or clear filters to see everything again.
           </p>
           <button type="button" onClick={clearFilters} className="emote-btn-primary mt-5">
@@ -158,13 +158,14 @@ const EntriesView = ({ entries, onDeleteEntry }) => {
           </button>
         </div>
       ) : (
-        <ul className="grid list-none grid-cols-1 gap-6 xl:grid-cols-2">
+        <ul className="grid list-none grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3 lg:items-stretch lg:gap-4">
           {filtered.map((entry) => (
-            <li key={entry.id}>
+            <li key={entry.id} className="h-full min-h-0">
               <JournalEntryCard
                 entry={entry}
                 onDelete={onDeleteEntry ? () => onDeleteEntry(entry.id) : undefined}
                 showHistoryButton
+                uniformHeight
               />
             </li>
           ))}

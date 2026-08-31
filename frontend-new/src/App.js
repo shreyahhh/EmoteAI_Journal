@@ -3,6 +3,7 @@ import { supabase, getSupabaseConfigIssue } from './supabaseClient';
 import LoadingScreen from './components/LoadingScreen';
 import AuthPage from './components/AuthPage';
 import Dashboard from './components/Dashboard';
+import ResetPasswordPage from './components/ResetPasswordPage';
 
 export default function App() {
   const [user, setUser] = React.useState(null);
@@ -33,8 +34,13 @@ export default function App() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
-      if (session?.user) setPage('dashboard');
-      else setPage('login');
+      if (_event === 'PASSWORD_RECOVERY') {
+        setPage('reset-password');
+      } else if (session?.user) {
+        setPage('dashboard');
+      } else {
+        setPage('login');
+      }
       setLoading(false);
     });
 
@@ -52,6 +58,8 @@ export default function App() {
   switch (page) {
     case 'signup':
       return <AuthPage isLogin={false} navigateTo={navigateTo} />;
+    case 'reset-password':
+      return <ResetPasswordPage onDone={() => navigateTo(user ? 'dashboard' : 'login')} />;
     case 'dashboard':
       return user ? <Dashboard user={user} /> : <AuthPage isLogin navigateTo={navigateTo} />;
     case 'login':

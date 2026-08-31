@@ -105,13 +105,13 @@ const SettingsModal = ({ onClose, user, entries }) => {
       aria-modal="true"
       aria-labelledby="settings-title"
     >
-      <div className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-slate-200 bg-white p-6 shadow-emote shadow-emote-glow">
+      <div className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-emote-border bg-emote-surface p-6 shadow-emote shadow-emote-glow">
         <div className="mb-6 flex items-start justify-between gap-4">
           <div>
             <h2 id="settings-title" className="emote-title-gradient text-emote-section">
               Settings
             </h2>
-            {user?.email && <p className="mt-1 truncate text-emote-muted text-slate-500">{user.email}</p>}
+            {user?.email && <p className="mt-1 truncate text-emote-muted text-emote-ink-faint">{user.email}</p>}
           </div>
           <button
             type="button"
@@ -119,40 +119,40 @@ const SettingsModal = ({ onClose, user, entries }) => {
             className="emote-icon-btn h-9 w-9"
             aria-label="Close settings"
           >
-            <span className="text-emote-section leading-none text-slate-500">&times;</span>
+            <span className="text-emote-section leading-none text-emote-ink-faint">&times;</span>
           </button>
         </div>
 
         <div className="space-y-8">
           <section>
-            <h3 className="mb-3 text-emote-caption font-semibold uppercase tracking-wide text-slate-500">Daily reminder</h3>
+            <h3 className="mb-3 text-emote-caption font-semibold uppercase tracking-wide text-emote-ink-faint">Daily reminder</h3>
             {notificationPermission !== 'granted' ? (
               <div className="emote-banner-info">
-                <p className="mb-1 text-emote-muted font-semibold text-sky-900">Browser notifications</p>
-                <p className="mb-3 text-emote-muted text-sky-800/90">Allow notifications for a gentle nudge to journal.</p>
+                <p className="mb-1 text-emote-muted font-semibold text-emote-ink">Browser notifications</p>
+                <p className="mb-3 text-emote-muted text-emote-ink/90">Allow notifications for a gentle nudge to journal.</p>
                 <button type="button" onClick={handleRequestPermission} className="emote-btn-primary w-full">
                   Allow notifications
                 </button>
               </div>
             ) : (
-              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+              <div className="rounded-xl border border-emote-border bg-emote-surface-alt p-4">
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-emote-muted font-medium text-slate-800">Enable daily reminder</span>
+                  <span className="text-emote-muted font-medium text-emote-ink">Enable daily reminder</span>
                   <button
                     type="button"
                     id="reminder-toggle"
                     onClick={handleToggleReminders}
-                    className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors ${remindersEnabled ? 'bg-gradient-to-r from-rose-500 to-orange-400' : 'bg-slate-300'}`}
+                    className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors ${remindersEnabled ? 'bg-gradient-to-r from-emote-accent-2 to-emote-gold' : 'bg-emote-border-strong'}`}
                     aria-pressed={remindersEnabled}
                   >
                     <span
-                      className={`absolute top-1 left-1 block h-5 w-5 rounded-full bg-white shadow transition-transform ${remindersEnabled ? 'translate-x-5' : 'translate-x-0'}`}
+                      className={`absolute top-1 left-1 block h-5 w-5 rounded-full bg-emote-surface shadow transition-transform ${remindersEnabled ? 'translate-x-5' : 'translate-x-0'}`}
                     />
                   </button>
                 </div>
                 {remindersEnabled && (
                   <div className="mt-4">
-                    <label htmlFor="reminder-time" className="mb-1.5 block text-emote-caption font-medium text-slate-500">
+                    <label htmlFor="reminder-time" className="mb-1.5 block text-emote-caption font-medium text-emote-ink-faint">
                       Time
                     </label>
                     <input
@@ -169,8 +169,8 @@ const SettingsModal = ({ onClose, user, entries }) => {
           </section>
 
           <section>
-            <h3 className="mb-3 text-emote-caption font-semibold uppercase tracking-wide text-slate-500">Export data</h3>
-            <p className="mb-3 text-emote-muted text-slate-500">Download a copy of your journal entries.</p>
+            <h3 className="mb-3 text-emote-caption font-semibold uppercase tracking-wide text-emote-ink-faint">Export data</h3>
+            <p className="mb-3 text-emote-muted text-emote-ink-faint">Download a copy of your journal entries.</p>
             <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
               <button
                 type="button"
@@ -197,7 +197,7 @@ const SettingsModal = ({ onClose, user, entries }) => {
                 CSV
               </button>
             </div>
-            {exportMessage && <p className="mt-3 text-center text-emote-muted font-medium text-teal-600">{exportMessage}</p>}
+            {exportMessage && <p className="mt-3 text-center text-emote-muted font-medium text-emote-accent">{exportMessage}</p>}
           </section>
         </div>
       </div>
