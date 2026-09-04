@@ -10,6 +10,13 @@ export function getCreatedAtDate(entry) {
   return null;
 }
 
+/** Calendar-day key ('YYYY-MM-DD') in local time — for matching against
+ * user-entered dates like cycle_periods.start_date, which carry no timezone. */
+export function toLocalDateKey(date) {
+  if (!date || Number.isNaN(date.getTime())) return null;
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
 export function formatCreatedAt(entry, options) {
   const d = getCreatedAtDate(entry);
   if (!d || Number.isNaN(d.getTime())) return 'Just now';

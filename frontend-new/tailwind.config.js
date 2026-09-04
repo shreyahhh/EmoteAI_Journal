@@ -5,14 +5,62 @@ module.exports = {
     extend: {
       colors: {
         emote: {
-          canvas: '#f4f6fb',
-          surface: '#ffffff',
-          muted: '#f1f5f9',
-          line: '#e2e8f0',
+          canvas: 'rgb(var(--emote-canvas) / <alpha-value>)',
+          surface: 'rgb(var(--emote-surface) / <alpha-value>)',
+          'surface-alt': 'rgb(var(--emote-surface-alt) / <alpha-value>)',
+          border: 'rgb(var(--emote-border) / <alpha-value>)',
+          'border-strong': 'rgb(var(--emote-border-strong) / <alpha-value>)',
+          ink: 'rgb(var(--emote-ink) / <alpha-value>)',
+          'ink-soft': 'rgb(var(--emote-ink-soft) / <alpha-value>)',
+          'ink-faint': 'rgb(var(--emote-ink-faint) / <alpha-value>)',
+          accent: 'rgb(var(--emote-accent) / <alpha-value>)',
+          'accent-2': 'rgb(var(--emote-accent-2) / <alpha-value>)',
+          gold: 'rgb(var(--emote-gold) / <alpha-value>)',
         },
+        // shadcn/ui's standard token names — bridged onto the same emote-* RGB values
+        // in index.css so ported shadcn component source works unmodified.
+        background: 'rgb(var(--background) / <alpha-value>)',
+        foreground: 'rgb(var(--foreground) / <alpha-value>)',
+        card: {
+          DEFAULT: 'rgb(var(--card) / <alpha-value>)',
+          foreground: 'rgb(var(--card-foreground) / <alpha-value>)',
+        },
+        popover: {
+          DEFAULT: 'rgb(var(--popover) / <alpha-value>)',
+          foreground: 'rgb(var(--popover-foreground) / <alpha-value>)',
+        },
+        primary: {
+          DEFAULT: 'rgb(var(--primary) / <alpha-value>)',
+          foreground: 'rgb(var(--primary-foreground) / <alpha-value>)',
+        },
+        secondary: {
+          DEFAULT: 'rgb(var(--secondary) / <alpha-value>)',
+          foreground: 'rgb(var(--secondary-foreground) / <alpha-value>)',
+        },
+        muted: {
+          DEFAULT: 'rgb(var(--muted) / <alpha-value>)',
+          foreground: 'rgb(var(--muted-foreground) / <alpha-value>)',
+        },
+        accent: {
+          DEFAULT: 'rgb(var(--accent) / <alpha-value>)',
+          foreground: 'rgb(var(--accent-foreground) / <alpha-value>)',
+        },
+        destructive: {
+          DEFAULT: 'rgb(var(--destructive) / <alpha-value>)',
+          foreground: 'rgb(var(--destructive-foreground) / <alpha-value>)',
+        },
+        border: 'rgb(var(--border) / <alpha-value>)',
+        input: 'rgb(var(--input) / <alpha-value>)',
+        ring: 'rgb(var(--ring) / <alpha-value>)',
+      },
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 4px)',
+        sm: 'calc(var(--radius) - 8px)',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Inter', 'system-ui', 'sans-serif'],
       },
       fontSize: {
         'emote-display': [
@@ -56,26 +104,16 @@ module.exports = {
         'emote-nav': ['var(--emote-fs-nav)', { lineHeight: 'var(--emote-lh-nav)' }],
       },
       boxShadow: {
-        emote: '0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -4px rgba(15, 23, 42, 0.08)',
-        'emote-glow': '0 12px 40px -12px rgba(251, 113, 133, 0.25), 0 8px 24px -8px rgba(45, 212, 191, 0.12)',
+        emote: '0 1px 2px rgba(74, 50, 32, 0.06), 0 8px 24px -4px rgba(74, 50, 32, 0.12)',
       },
       keyframes: {
         'fade-in': {
           '0%': { opacity: '0', transform: 'translateY(8px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
-        shimmer: {
-          '0%': { backgroundPosition: '200% 0' },
-          '100%': { backgroundPosition: '-200% 0' },
-        },
       },
       animation: {
         'fade-in': 'fade-in 0.5s ease-out forwards',
-        shimmer: 'shimmer 8s linear infinite',
-      },
-      backgroundImage: {
-        'gradient-emote':
-          'linear-gradient(135deg, rgba(14, 165, 233, 0.08) 0%, transparent 45%, rgba(251, 113, 133, 0.06) 100%)',
       },
     },
   },
