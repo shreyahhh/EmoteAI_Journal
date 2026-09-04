@@ -3,13 +3,8 @@
   "name": "Emote - Your Emotional Journal",
   "icons": [
     {
-      "src": "favicon.svg",
-      "type": "image/svg+xml",
-      "sizes": "any"
-    },
-    {
       "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
+      "sizes": "16x16 32x32",
       "type": "image/x-icon"
     },
     {
@@ -25,6 +20,6 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#4a3220",
+  "theme_color": "#f6ecd9",
   "background_color": "#f6ecd9"
 }

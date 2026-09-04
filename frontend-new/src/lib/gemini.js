@@ -57,10 +57,11 @@ export async function analyzeEntry(text) {
   }
 }
 
-/** Weekly recap across a batch of entries. */
-export async function getWeeklySummary(entriesText) {
+/** Recap across a batch of entries, for either the past week or the past month. */
+export async function getWeeklySummary(entriesText, period = 'week') {
+  const periodLabel = period === 'month' ? 'month' : 'week';
   const prompt = `
-        As a compassionate psychologist, you are reviewing a client's journal entries from the past week.
+        As a compassionate psychologist, you are reviewing a client's journal entries from the past ${periodLabel}.
         Please provide a gentle and insightful summary based on the text provided.
         Provide your response in a structured JSON format. Do not include any text outside of the JSON object.
         The JSON object should have the following keys:

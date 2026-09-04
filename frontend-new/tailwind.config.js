@@ -1,6 +1,5 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: 'class',
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {
@@ -18,10 +17,50 @@ module.exports = {
           'accent-2': 'rgb(var(--emote-accent-2) / <alpha-value>)',
           gold: 'rgb(var(--emote-gold) / <alpha-value>)',
         },
+        // shadcn/ui's standard token names — bridged onto the same emote-* RGB values
+        // in index.css so ported shadcn component source works unmodified.
+        background: 'rgb(var(--background) / <alpha-value>)',
+        foreground: 'rgb(var(--foreground) / <alpha-value>)',
+        card: {
+          DEFAULT: 'rgb(var(--card) / <alpha-value>)',
+          foreground: 'rgb(var(--card-foreground) / <alpha-value>)',
+        },
+        popover: {
+          DEFAULT: 'rgb(var(--popover) / <alpha-value>)',
+          foreground: 'rgb(var(--popover-foreground) / <alpha-value>)',
+        },
+        primary: {
+          DEFAULT: 'rgb(var(--primary) / <alpha-value>)',
+          foreground: 'rgb(var(--primary-foreground) / <alpha-value>)',
+        },
+        secondary: {
+          DEFAULT: 'rgb(var(--secondary) / <alpha-value>)',
+          foreground: 'rgb(var(--secondary-foreground) / <alpha-value>)',
+        },
+        muted: {
+          DEFAULT: 'rgb(var(--muted) / <alpha-value>)',
+          foreground: 'rgb(var(--muted-foreground) / <alpha-value>)',
+        },
+        accent: {
+          DEFAULT: 'rgb(var(--accent) / <alpha-value>)',
+          foreground: 'rgb(var(--accent-foreground) / <alpha-value>)',
+        },
+        destructive: {
+          DEFAULT: 'rgb(var(--destructive) / <alpha-value>)',
+          foreground: 'rgb(var(--destructive-foreground) / <alpha-value>)',
+        },
+        border: 'rgb(var(--border) / <alpha-value>)',
+        input: 'rgb(var(--input) / <alpha-value>)',
+        ring: 'rgb(var(--ring) / <alpha-value>)',
+      },
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 4px)',
+        sm: 'calc(var(--radius) - 8px)',
       },
       fontFamily: {
-        sans: ['Lora', 'Georgia', 'serif'],
-        display: ['"Playfair Display"', 'Georgia', 'serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Inter', 'system-ui', 'sans-serif'],
       },
       fontSize: {
         'emote-display': [
@@ -66,25 +105,15 @@ module.exports = {
       },
       boxShadow: {
         emote: '0 1px 2px rgba(74, 50, 32, 0.06), 0 8px 24px -4px rgba(74, 50, 32, 0.12)',
-        'emote-glow': '0 12px 40px -12px rgba(184, 114, 46, 0.3), 0 8px 24px -8px rgba(201, 151, 31, 0.18)',
       },
       keyframes: {
         'fade-in': {
           '0%': { opacity: '0', transform: 'translateY(8px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
-        shimmer: {
-          '0%': { backgroundPosition: '200% 0' },
-          '100%': { backgroundPosition: '-200% 0' },
-        },
       },
       animation: {
         'fade-in': 'fade-in 0.5s ease-out forwards',
-        shimmer: 'shimmer 8s linear infinite',
-      },
-      backgroundImage: {
-        'gradient-emote':
-          'linear-gradient(135deg, rgba(201, 151, 31, 0.1) 0%, transparent 45%, rgba(184, 114, 46, 0.08) 100%)',
       },
     },
   },

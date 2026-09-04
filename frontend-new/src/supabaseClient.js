@@ -141,6 +141,21 @@ export function mapGoalRow(row) {
   };
 }
 
+/** Pattern feedback row: one standing thumbs up/down per (user, pattern). */
+export function mapPatternFeedbackRow(row) {
+  if (!row) return null;
+  return {
+    id: row.id,
+    userId: row.user_id,
+    patternId: row.pattern_id,
+    patternType: row.pattern_type,
+    verdict: row.verdict,
+    snapshot: row.snapshot && typeof row.snapshot === 'object' ? row.snapshot : {},
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
 /** Period row: calendar start/end + symptoms + reflections. */
 export function mapCyclePeriodRow(row) {
   if (!row) return null;

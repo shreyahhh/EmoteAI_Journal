@@ -1,12 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400;1,700&display=swap');
 @import './styles/globals.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /**
- * Old-diary theme tokens.
- * Light = warm parchment/cream diary page. Dark = leather-bound journal at night.
+ * Old-diary theme tokens — warm parchment/cream diary page.
  * RGB triplets (not hex) so Tailwind's `rgb(var(--x) / <alpha-value>)` opacity modifiers work.
  */
 :root {
@@ -21,38 +20,56 @@
   --emote-accent: 184 114 46;
   --emote-accent-2: 138 90 43;
   --emote-gold: 201 151 31;
-}
 
-:root.dark {
-  --emote-canvas: 31 20 12;
-  --emote-surface: 43 28 17;
-  --emote-surface-alt: 58 40 23;
-  --emote-border: 77 54 32;
-  --emote-border-strong: 107 74 40;
-  --emote-ink: 241 224 192;
-  --emote-ink-soft: 203 178 140;
-  --emote-ink-faint: 156 130 97;
-  --emote-accent: 217 154 68;
-  --emote-accent-2: 232 181 99;
-  --emote-gold: 224 176 74;
+  /* shadcn/ui standard tokens — bridged onto the values above so ported
+     component source (button, card, dialog, etc.) works unmodified. */
+  --background: var(--emote-canvas);
+  --foreground: var(--emote-ink);
+  --card: var(--emote-surface);
+  --card-foreground: var(--emote-ink);
+  --popover: var(--emote-surface);
+  --popover-foreground: var(--emote-ink);
+  --primary: var(--emote-accent);
+  --primary-foreground: var(--emote-surface);
+  --secondary: var(--emote-surface-alt);
+  --secondary-foreground: var(--emote-ink);
+  --muted: var(--emote-surface-alt);
+  --muted-foreground: var(--emote-ink-soft);
+  --accent: var(--emote-surface-alt);
+  --accent-foreground: var(--emote-ink);
+  --destructive: 159 18 57;
+  --destructive-foreground: 253 244 246;
+  --border: var(--emote-border);
+  --input: var(--emote-border);
+  --ring: var(--emote-accent);
+  --radius: 1rem;
 }
 
 @layer base {
   html {
     @apply antialiased;
     color-scheme: light;
-  }
-  html.dark {
-    color-scheme: dark;
+    --dialog-center-offset: 0px;
+    font-size: 15px;
   }
   body {
     @apply min-h-screen bg-emote-canvas font-sans text-emote-body text-emote-ink transition-colors duration-300;
-    font-family: 'Lora', Georgia, 'Times New Roman', serif;
+    font-family: 'Inter', system-ui, sans-serif;
   }
   h1,
   h2,
   h3 {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+/* The dashboard's sidebar (w-64, lg+ only) is fixed chrome that a
+   centered dialog should center against, not the raw viewport — otherwise
+   the modal looks shifted toward the sidebar. AppShell toggles
+   `html.has-sidebar` while mounted; see dialog.jsx / alert-dialog.jsx. */
+@media (min-width: 1024px) {
+  html.has-sidebar {
+    --dialog-center-offset: 120px;
   }
 }
 
@@ -66,66 +83,9 @@
       radial-gradient(ellipse 50% 50% at 0% 90%, rgb(var(--emote-accent-2) / 0.08), transparent);
   }
 
-  .emote-panel {
-    @apply rounded-2xl border border-emote-border bg-emote-surface p-6 shadow-emote;
-  }
-
-  .emote-input {
-    @apply w-full rounded-xl border border-emote-border bg-emote-surface px-3.5 py-3 font-sans text-emote-body text-emote-ink placeholder:text-emote-ink-faint shadow-sm transition focus:border-emote-accent focus:outline-none focus:ring-2 focus:ring-emote-accent/25;
-  }
-
-  /* Primary — warm sienna → brass gradient */
-  .emote-btn-primary {
-    @apply inline-flex items-center justify-center rounded-full bg-gradient-to-r from-emote-accent-2 via-emote-accent to-emote-gold px-6 py-2.5 text-emote-muted font-semibold text-emote-surface shadow-md shadow-emote-accent/20 transition hover:brightness-105 hover:shadow-lg hover:shadow-emote-accent/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-emote-accent focus-visible:ring-offset-2 focus-visible:ring-offset-emote-surface disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:brightness-100;
-  }
-
-  .emote-btn-ghost {
-    @apply inline-flex items-center justify-center rounded-xl border border-emote-border bg-emote-surface px-4 py-2 text-emote-muted font-medium text-emote-ink-soft shadow-sm transition hover:border-emote-border-strong hover:bg-emote-surface-alt focus:outline-none focus-visible:ring-2 focus-visible:ring-emote-accent/40 focus-visible:ring-offset-2 focus-visible:ring-offset-emote-canvas;
-  }
-
-  .emote-icon-btn {
-    @apply flex h-10 w-10 items-center justify-center rounded-xl border border-emote-border bg-emote-surface text-emote-ink-soft shadow-sm transition hover:border-emote-border-strong hover:bg-emote-surface-alt hover:text-emote-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-emote-accent/50;
-  }
-
-  /* Title bar: parchment strip, consistent across app */
-  .emote-topbar {
-    @apply mb-6 flex flex-col gap-4 rounded-2xl border border-emote-border bg-emote-surface/95 px-4 py-4 shadow-emote backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between sm:px-6;
-  }
-
-  /* Tab row under title */
-  .emote-nav-strip {
-    @apply mb-8 flex gap-1 overflow-x-auto rounded-xl border border-emote-border bg-emote-surface/90 p-1 shadow-sm backdrop-blur-sm;
-  }
-
-  .emote-tab {
-    @apply relative whitespace-nowrap rounded-lg px-3 py-2.5 text-emote-muted font-medium text-emote-ink-soft transition hover:bg-emote-surface-alt hover:text-emote-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-emote-accent/40 sm:px-4 sm:text-emote-body;
-  }
-
-  .emote-tab-active {
-    @apply bg-emote-surface-alt text-emote-ink shadow-sm;
-  }
-
-  /* Title text — sienna / brass gradient */
+  /* Title text — solid sienna */
   .emote-title-gradient {
-    @apply bg-gradient-to-r from-emote-accent-2 via-emote-accent to-emote-gold bg-clip-text font-display font-semibold tracking-tight text-transparent;
-  }
-
-  .auth-card-emote {
-    @apply relative overflow-hidden rounded-2xl border border-emote-border bg-emote-surface p-8 shadow-emote shadow-emote-glow;
-    animation: auth-card-in 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  }
-
-  .auth-card-emote::before {
-    content: '';
-    @apply pointer-events-none absolute -right-20 -top-20 h-48 w-48 rounded-full bg-gradient-to-br from-emote-gold/40 via-emote-accent/30 to-emote-accent-2/20 blur-3xl;
-  }
-
-  .feature-card {
-    @apply rounded-2xl border border-emote-border bg-emote-surface p-8 text-left shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-emote-border-strong hover:shadow-md;
-  }
-
-  .feature-title-gradient {
-    @apply mb-2 bg-gradient-to-r from-emote-accent-2 to-emote-gold bg-clip-text text-emote-section font-display font-semibold text-transparent;
+    @apply font-display font-semibold tracking-tight text-emote-accent-2;
   }
 
   /* Alert / banner base */
@@ -137,19 +97,6 @@
     @apply rounded-2xl border border-rose-800/30 bg-rose-800/10 px-4 py-3 text-emote-muted text-emote-ink shadow-sm;
   }
 
-  /* Logged-in app shell: sidebar + main */
-  .emote-app-shell {
-    @apply relative flex min-h-screen w-full;
-  }
-
-  .emote-sidenav-link {
-    @apply flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-emote-nav font-medium text-emote-ink-soft transition hover:bg-emote-surface-alt hover:text-emote-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-emote-accent/40;
-  }
-
-  .emote-sidenav-link-active {
-    @apply bg-gradient-to-r from-emote-gold/15 via-emote-surface to-emote-accent/10 text-emote-ink shadow-sm ring-1 ring-emote-gold/30;
-  }
-
   /* Main column in dashboard: fills space; scroll lives on .emote-main-scroll only */
   .emote-main-canvas {
     @apply relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-emote-canvas;
@@ -159,36 +106,21 @@
   .emote-main-scroll {
     @apply mx-auto min-h-0 w-full max-w-6xl flex-1 overflow-y-auto overscroll-y-contain px-4 pb-28 pt-16 font-sans text-emote-body text-emote-ink antialiased sm:px-6 lg:px-10 lg:pb-8 lg:pt-8;
   }
-
-  .emote-section-eyebrow {
-    @apply text-emote-caption font-semibold uppercase tracking-[0.12em] text-emote-ink-faint;
-  }
-}
-
-@keyframes auth-card-in {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
 }
 
 * {
   box-sizing: border-box;
 }
 
-::-webkit-scrollbar {
-  width: 9px;
-  height: 9px;
+/* Scrollable areas keep working, the scrollbar chrome itself just never renders. */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
-::-webkit-scrollbar-track {
-  @apply bg-emote-surface-alt;
-}
-::-webkit-scrollbar-thumb {
-  @apply rounded-full bg-emote-border-strong hover:bg-emote-accent;
+*::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 input,
@@ -199,17 +131,4 @@ button {
 
 a {
   @apply text-emote-accent no-underline transition-colors hover:text-emote-gold;
-}
-
-.card {
-  @apply mb-8 rounded-3xl border border-emote-border bg-emote-surface p-8 shadow-emote;
-}
-.card-accent {
-  border-left: 6px solid rgb(var(--emote-accent));
-}
-.btn-gradient {
-  @apply rounded-full border-0 bg-gradient-to-r from-emote-accent-2 to-emote-gold px-8 py-3 font-bold text-emote-surface shadow-md transition hover:brightness-105;
-}
-.tag {
-  @apply mb-1 mr-2 inline-block rounded-full bg-gradient-to-r from-emote-accent to-emote-gold px-4 py-1 text-emote-muted font-semibold text-emote-surface;
 }
