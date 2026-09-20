@@ -3,7 +3,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { supabase } from '../../../supabaseClient';
-import { getCreatedAtDate } from '../../../lib/entryDates';
+import { getCreatedAtDate, toLocalDateKey } from '../../../lib/entryDates';
 import { moodValence } from '../../../lib/moodBuckets';
 import { analyzeCyclePatterns, PMS_WINDOW_DAYS } from '../../../lib/cyclePattern';
 import { cn } from '../../../lib/utils';
@@ -45,9 +45,12 @@ function cmpDateKey(a, b) {
 }
 
 function entryDayKey(entry) {
-  const d = getCreatedAtDate(entry);
-  if (!d || Number.isNaN(d.getTime())) return null;
-  return d.toISOString().slice(0, 10);
+  // Local calendar day, not UTC — must match how the period start/end dates
+  // are picked on the calendar (toDateKey, built from local Y/M/D) and how
+  // cyclePattern.js buckets entries (also toLocalDateKey). Using UTC here
+  // used to shift entries logged late/early in the day onto the wrong side
+  // of a period boundary for anyone not near UTC.
+  return toLocalDateKey(getCreatedAtDate(entry));
 }
 
 function dayInSavedPeriod(dayKey, periods) {
