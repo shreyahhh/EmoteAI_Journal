@@ -4,6 +4,8 @@
 -- Guarded with a DO block so re-running this migration never errors with
 -- "relation is already member of publication".
 
+do $$ begin raise notice '>>> Running migration: 20260829000008_realtime_publication'; end $$;
+
 do $$
 begin
   if not exists (
@@ -25,3 +27,5 @@ begin
   end if;
 end;
 $$;
+
+do $$ begin raise notice '<<< Completed migration: 20260829000008_realtime_publication'; end $$;

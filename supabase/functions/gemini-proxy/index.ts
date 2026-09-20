@@ -12,7 +12,7 @@
 // By default Supabase verifies the caller's JWT before invoking this
 // function, so only signed-in app users can reach it.
 
-const GEMINI_MODEL = 'gemini-2.0-flash';
+const GEMINI_MODEL = 'gemini-3.6-flash';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
