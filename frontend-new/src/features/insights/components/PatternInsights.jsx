@@ -12,6 +12,19 @@ const SEVERITY_STYLES = {
   info: { icon: Sparkles, badge: 'bg-emote-accent/10 text-emote-accent-2 ring-emote-accent/30' },
 };
 
+// patternAnalysis.js hands back a bare `type` per pattern (trend/weekday/
+// streak/theme/activity), but the card text alone doesn't say which kind of
+// tag a correlation is about — "Work Stress" (a theme) and "Social" (an
+// activity) read identically. Labeling the category makes that distinction
+// visible instead of leaving all tag-correlation patterns looking the same.
+const TYPE_LABELS = {
+  trend: 'Trend',
+  weekday: 'Day of week',
+  streak: 'Streak',
+  theme: 'Theme',
+  activity: 'Activity',
+};
+
 const VOTE_BUTTON = 'rounded-lg p-1.5 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50';
 
 /**
@@ -90,7 +103,10 @@ const PatternInsights = ({ entries, user }) => {
                     <Icon className="h-4 w-4" aria-hidden />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="font-semibold text-foreground">{pattern.title}</p>
+                    <p className="text-[11px] font-semibold uppercase tracking-wide text-emote-ink-faint">
+                      {TYPE_LABELS[pattern.type] || pattern.type}
+                    </p>
+                    <p className="mt-0.5 font-semibold text-foreground">{pattern.title}</p>
                     <p className="mt-0.5 text-emote-muted leading-relaxed text-muted-foreground">{pattern.description}</p>
                   </div>
                   {user?.id ? (
