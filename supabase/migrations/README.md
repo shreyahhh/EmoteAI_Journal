@@ -15,6 +15,8 @@ safe to re-run the whole folder if something fails partway through.
 | `20260829000007_row_level_security.sql` | RLS enabled + per-user policies on all four tables |
 | `20260829000008_realtime_publication.sql` | Adds `journal_entries` / `journal_entry_history` to `supabase_realtime` |
 | `20260829000009_goals_table.sql` | `public.goals` (real persistence for the Goals tab — was in-memory mock data before) |
+| `20260902000001_pattern_feedback_table.sql` | `public.pattern_feedback` (thumbs up/down on Insights → Patterns cards) |
+| `20260920000001_journal_entries_replica_identity_full.sql` | Sets `REPLICA IDENTITY FULL` on `journal_entries` so Realtime DELETE events actually reach the client (fixes deleted entries lingering in the UI until reload) |
 
 ## How to run
 

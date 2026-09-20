@@ -3,6 +3,8 @@
 -- 2. Mirror every journal_entries create/update/delete into journal_entry_history.
 -- 3. Create a public.profiles row automatically when a new auth user signs up.
 
+do $$ begin raise notice '>>> Running migration: 20260829000006_functions_and_triggers'; end $$;
+
 -- ---------------------------------------------------------------------------
 -- set_journal_entries_updated_at: stamps updated_at on every UPDATE
 -- ---------------------------------------------------------------------------
@@ -110,3 +112,5 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row
   execute function public.handle_new_user();
+
+do $$ begin raise notice '<<< Completed migration: 20260829000006_functions_and_triggers'; end $$;

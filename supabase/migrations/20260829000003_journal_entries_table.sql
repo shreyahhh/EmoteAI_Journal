@@ -2,6 +2,8 @@
 -- Current-state row per journal entry. Every write is additionally captured
 -- in journal_entry_history by the triggers created in a later migration.
 
+do $$ begin raise notice '>>> Running migration: 20260829000003_journal_entries_table'; end $$;
+
 create table if not exists public.journal_entries (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users (id) on delete cascade,
@@ -25,3 +27,5 @@ comment on column public.journal_entries.themes is 'Gemini theme/topic labels fo
 
 create index if not exists journal_entries_user_created_idx
   on public.journal_entries (user_id, created_at desc);
+
+do $$ begin raise notice '<<< Completed migration: 20260829000003_journal_entries_table'; end $$;

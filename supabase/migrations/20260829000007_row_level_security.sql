@@ -4,6 +4,8 @@
 -- insert/update/delete policy for regular users — it is only ever written
 -- by the SECURITY DEFINER trigger functions.
 
+do $$ begin raise notice '>>> Running migration: 20260829000007_row_level_security'; end $$;
+
 alter table public.profiles enable row level security;
 alter table public.journal_entries enable row level security;
 alter table public.journal_entry_history enable row level security;
@@ -72,3 +74,5 @@ drop policy if exists "cycle_periods_delete_own" on public.cycle_periods;
 create policy "cycle_periods_delete_own"
   on public.cycle_periods for delete
   using (auth.uid() = user_id);
+
+do $$ begin raise notice '<<< Completed migration: 20260829000007_row_level_security'; end $$;

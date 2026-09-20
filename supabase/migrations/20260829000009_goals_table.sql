@@ -3,6 +3,8 @@
 -- completions is a map of 'YYYY-MM-DD' -> true, matching the shape the UI
 -- already used, so no client-side data model change was needed.
 
+do $$ begin raise notice '>>> Running migration: 20260829000009_goals_table'; end $$;
+
 create table if not exists public.goals (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users (id) on delete cascade,
@@ -52,3 +54,5 @@ drop policy if exists "goals_delete_own" on public.goals;
 create policy "goals_delete_own"
   on public.goals for delete
   using (auth.uid() = user_id);
+
+do $$ begin raise notice '<<< Completed migration: 20260829000009_goals_table'; end $$;

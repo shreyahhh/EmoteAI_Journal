@@ -2,6 +2,8 @@
 -- Optional; the app only shows the Cycle tab when a profile's sex = 'female'.
 -- One row per marked period: calendar start/end, symptoms, and notes.
 
+do $$ begin raise notice '>>> Running migration: 20260829000005_cycle_periods_table'; end $$;
+
 create table if not exists public.cycle_periods (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users (id) on delete cascade,
@@ -17,3 +19,5 @@ create table if not exists public.cycle_periods (
 
 create index if not exists cycle_periods_user_start_idx
   on public.cycle_periods (user_id, start_date desc);
+
+do $$ begin raise notice '<<< Completed migration: 20260829000005_cycle_periods_table'; end $$;

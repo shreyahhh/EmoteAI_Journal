@@ -3,6 +3,8 @@
 -- Populated exclusively by the SECURITY DEFINER trigger functions created
 -- in 20260829000006_functions_and_triggers.sql.
 
+do $$ begin raise notice '>>> Running migration: 20260829000004_journal_entry_history_table'; end $$;
+
 create table if not exists public.journal_entry_history (
   id uuid primary key default gen_random_uuid(),
   journal_entry_id uuid references public.journal_entries (id) on delete set null,
@@ -24,3 +26,5 @@ create index if not exists journal_entry_history_entry_idx
 
 create index if not exists journal_entry_history_user_idx
   on public.journal_entry_history (user_id, created_at desc);
+
+do $$ begin raise notice '<<< Completed migration: 20260829000004_journal_entry_history_table'; end $$;

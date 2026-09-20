@@ -1,6 +1,8 @@
 -- Migration: profiles_table
 -- One row per auth user, holding app-level profile fields collected during onboarding.
 
+do $$ begin raise notice '>>> Running migration: 20260829000002_profiles_table'; end $$;
+
 create table if not exists public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
   email text,
@@ -13,3 +15,5 @@ create table if not exists public.profiles (
 );
 
 comment on table public.profiles is 'App profile row linked to auth.users; extended metadata per user.';
+
+do $$ begin raise notice '<<< Completed migration: 20260829000002_profiles_table'; end $$;
