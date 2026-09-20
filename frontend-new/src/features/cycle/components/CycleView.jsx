@@ -356,21 +356,35 @@ const CycleView = ({ user, entries, cyclePeriods, onPeriodsUpdated }) => {
                 const inSaved = dayInSavedPeriod(key, cyclePeriods);
                 const inPending = dayInPendingRange(key, pendingStart, pendingEnd, ongoing);
                 const isStart = key === pendingStart;
-                const isEnd = key === pendingEnd;
+                const isEnd = Boolean(pendingEnd) && key === pendingEnd;
                 const clickable = calendarMode || editingId;
+
+                // Precedence: a start/end anchor gets a solid fill so it reads
+                // as "selected" at a glance, instead of a ring layered on top
+                // of the range highlight's own ring — two ring utilities on
+                // one element fight over the same CSS variables, so only one
+                // (whichever Tailwind happens to emit last) ever actually
+                // showed, making the anchor look faint or inconsistent.
+                let dayClasses;
+                if (isStart) {
+                  dayClasses = 'bg-emote-gold text-white shadow-sm ring-2 ring-emote-gold/40 ring-offset-2 ring-offset-emote-surface';
+                } else if (isEnd) {
+                  dayClasses = 'bg-emote-accent text-white shadow-sm ring-2 ring-emote-accent/40 ring-offset-2 ring-offset-emote-surface';
+                } else if (inPending) {
+                  dayClasses = 'bg-[#a8432f]/30 text-[#a8432f] ring-1 ring-[#a8432f]/60';
+                } else if (inSaved) {
+                  dayClasses = 'bg-[#a8432f]/10 text-[#a8432f] ring-1 ring-[#a8432f]/25';
+                } else {
+                  dayClasses = 'bg-emote-surface-alt text-emote-ink hover:bg-emote-border/40';
+                }
+
                 return (
                   <button
                     key={key}
                     type="button"
                     disabled={!clickable}
                     onClick={() => handleDayClick(key)}
-                    className={`flex aspect-square min-h-8 w-full min-w-0 items-center justify-center rounded-lg text-emote-muted font-semibold transition sm:min-h-9 sm:text-emote-body ${
-                      inPending
-                        ? 'bg-[#a8432f]/30 text-[#a8432f] ring-1 ring-[#a8432f]/60'
-                        : inSaved
-                          ? 'bg-[#a8432f]/10 text-[#a8432f] ring-1 ring-[#a8432f]/25'
-                          : 'bg-emote-surface-alt text-emote-ink hover:bg-emote-border/40'
-                    } ${!clickable ? 'cursor-default opacity-60' : 'active:scale-[0.98]'} ${isStart ? 'ring-2 ring-emote-gold ring-offset-1 ring-offset-emote-surface' : ''} ${isEnd && pendingEnd ? 'ring-2 ring-emote-accent ring-offset-1 ring-offset-emote-surface' : ''}`}
+                    className={`flex aspect-square min-h-8 w-full min-w-0 items-center justify-center rounded-lg text-emote-muted font-semibold transition sm:min-h-9 sm:text-emote-body ${dayClasses} ${!clickable ? 'cursor-default opacity-60' : 'active:scale-[0.98]'}`}
                   >
                     {cell.day}
                   </button>
