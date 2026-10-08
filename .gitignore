@@ -1,1 +1,12 @@
 .playwright-mcp/
+
+# ML service
+ml/.venv/
+ml/model/
+ml/__pycache__/
+ml/train.log
+ml/ml.zip
+ml/crosscheck_report.json
+ml/sarcasm_model/
+ml/smoke_*/
+ml/*.log

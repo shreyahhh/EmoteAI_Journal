@@ -1,0 +1,10 @@
+torch
+transformers>=4.46
+datasets
+accelerate
+scikit-learn
+scipy
+numpy
+fastapi
+uvicorn
+pydantic
