@@ -8,6 +8,7 @@ import { moodValence } from '../../../lib/moodBuckets';
 import { analyzeCyclePatterns, PMS_WINDOW_DAYS } from '../../../lib/cyclePattern';
 import { cn } from '../../../lib/utils';
 import ConfirmDialog from '../../../components/shared/ConfirmDialog';
+import CycleForecastCard from './CycleForecastCard';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
 import { Textarea } from '../../../components/ui/textarea';
@@ -588,6 +589,8 @@ const CycleView = ({ user, entries, cyclePeriods, onPeriodsUpdated }) => {
           </CardContent>
         </Card>
       ) : null}
+
+      {cyclePeriods.length > 0 ? <CycleForecastCard entries={entries} cyclePeriods={cyclePeriods} /> : null}
 
       <Card>
         <CardHeader>
