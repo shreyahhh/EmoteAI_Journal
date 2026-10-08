@@ -17,6 +17,8 @@ safe to re-run the whole folder if something fails partway through.
 | `20260829000009_goals_table.sql` | `public.goals` (real persistence for the Goals tab — was in-memory mock data before) |
 | `20260902000001_pattern_feedback_table.sql` | `public.pattern_feedback` (thumbs up/down on Insights → Patterns cards) |
 | `20260920000001_journal_entries_replica_identity_full.sql` | Sets `REPLICA IDENTITY FULL` on `journal_entries` so Realtime DELETE events actually reach the client (fixes deleted entries lingering in the UI until reload) |
+| `20261008000001_llm_rate_limit.sql` | `public.llm_usage` + `public.llm_rate_limit()`: per-user, per-minute and per-day request counters for the `llm-proxy` function (service role only) |
+| `20261007000001_sarcasm_check.sql` | `journal_entries.analysis` (per-line model results) + `public.sarcasm_feedback` (answers to "did you mean that sarcastically?", RLS, opt-in flag for retraining) |
 
 ## How to run
 
