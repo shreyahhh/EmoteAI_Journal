@@ -89,6 +89,7 @@ export function mapJournalRow(row) {
     activities: row.activities ?? [],
     activityLabels: row.activity_labels && typeof row.activity_labels === 'object' ? row.activity_labels : {},
     mood: row.mood ?? 'neutral',
+    analysis: row.analysis && typeof row.analysis === 'object' ? row.analysis : null,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };

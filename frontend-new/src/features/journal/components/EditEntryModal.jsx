@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { supabase } from '../../../supabaseClient';
-import { analyzeEntry } from '../../../lib/gemini';
+import { analyzeEntry } from '../../../lib/entryAnalysis';
+import { updateEntryRow } from '../../../lib/entryUpdate';
 import { ACTIVITY_OPTIONS } from '../../../lib/moodMeta';
 import { cn } from '../../../lib/utils';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../../components/ui/dialog';
@@ -42,7 +43,7 @@ const EditEntryModal = ({ entry, onClose }) => {
       if (opt) activityLabels[key] = opt.label;
     });
 
-    const analysis = await analyzeEntry(content);
+    const analysis = await analyzeEntry(content, { answers: entry.analysis?.answers });
 
     setStatusMessage('Saving...');
     const update = {
@@ -54,11 +55,12 @@ const EditEntryModal = ({ entry, onClose }) => {
     if (!analysis.failed) {
       update.sentiment_score = analysis.sentimentScore;
       update.emotions = analysis.emotions;
-      update.themes = analysis.themes;
+      if (!analysis.themesFailed) update.themes = analysis.themes;
       update.mood = analysis.mood;
+      update.analysis = analysis.analysis; // null when Gemini analysed it: clears stale per-line data
     }
 
-    const { error: updateError } = await supabase.from('journal_entries').update(update).eq('id', entry.id);
+    const { error: updateError } = await updateEntryRow(supabase, entry.id, update);
     setIsSaving(false);
     if (updateError) {
       console.error('Update entry error:', updateError);

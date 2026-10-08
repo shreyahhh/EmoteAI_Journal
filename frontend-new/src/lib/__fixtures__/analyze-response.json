@@ -1,0 +1,342 @@
+{
+ "text": "I finally got the promotion I worked so hard for! I was so nervous walking into the meeting. Great, another all-hands at 8am on a Monday, just what I needed. Honestly I'm just exhausted and a little proud of myself.",
+ "plain": {
+  "sentimentScore": 2.7,
+  "mood": "happy",
+  "emotions": [
+   "Admiration",
+   "Joy",
+   "Fear",
+   "Nervousness"
+  ],
+  "mixed": true,
+  "scores": {
+   "admiration": 0.938,
+   "joy": 0.7412,
+   "fear": 0.7137,
+   "nervousness": 0.2873,
+   "excitement": 0.0962,
+   "gratitude": 0.0741,
+   "neutral": 0.0612,
+   "pride": 0.0562
+  },
+  "sarcasm": {
+   "detected": true,
+   "lines": [
+    0,
+    2
+   ],
+   "needsReview": [
+    0,
+    2
+   ],
+   "maxProbability": 0.9897,
+   "available": true
+  },
+  "lines": [
+   {
+    "text": "I finally got the promotion I worked so hard for!",
+    "start": 0,
+    "end": 49,
+    "sentimentScore": 7.3,
+    "emotions": [
+     "Joy",
+     "Excitement"
+    ],
+    "mood": "happy",
+    "mixed": false,
+    "scores": {
+     "joy": 0.7412,
+     "excitement": 0.0962,
+     "neutral": 0.0612,
+     "relief": 0.0534,
+     "realization": 0.0488,
+     "approval": 0.0465,
+     "admiration": 0.0314,
+     "gratitude": 0.0291
+    },
+    "sarcasm": {
+     "probability": 0.9673,
+     "flagged": true,
+     "confirmed": false,
+     "needsReview": true
+    },
+    "adjusted": false,
+    "ifSarcastic": {
+     "sentimentScore": -7.4,
+     "emotions": [
+      "Annoyance",
+      "Realization"
+     ],
+     "mood": "angry"
+    }
+   },
+   {
+    "text": "I was so nervous walking into the meeting.",
+    "start": 50,
+    "end": 92,
+    "sentimentScore": -6.8,
+    "emotions": [
+     "Fear",
+     "Nervousness"
+    ],
+    "mood": "anxious",
+    "mixed": false,
+    "scores": {
+     "fear": 0.7137,
+     "nervousness": 0.2873,
+     "sadness": 0.0536,
+     "neutral": 0.0505,
+     "caring": 0.0309,
+     "amusement": 0.0282,
+     "realization": 0.0268,
+     "disappointment": 0.0232
+    },
+    "sarcasm": {
+     "probability": 0.0736,
+     "flagged": false,
+     "confirmed": false,
+     "needsReview": false
+    },
+    "adjusted": false
+   },
+   {
+    "text": "Great, another all-hands at 8am on a Monday, just what I needed.",
+    "start": 93,
+    "end": 157,
+    "sentimentScore": 9.3,
+    "emotions": [
+     "Admiration",
+     "Approval"
+    ],
+    "mood": "happy",
+    "mixed": false,
+    "scores": {
+     "admiration": 0.938,
+     "approval": 0.0543,
+     "gratitude": 0.0436,
+     "neutral": 0.0186,
+     "joy": 0.0109,
+     "optimism": 0.0101,
+     "annoyance": 0.008,
+     "excitement": 0.0079
+    },
+    "sarcasm": {
+     "probability": 0.9897,
+     "flagged": true,
+     "confirmed": false,
+     "needsReview": true
+    },
+    "adjusted": false,
+    "ifSarcastic": {
+     "sentimentScore": -9.4,
+     "emotions": [
+      "Annoyance",
+      "Realization"
+     ],
+     "mood": "angry"
+    }
+   },
+   {
+    "text": "Honestly I'm just exhausted and a little proud of myself.",
+    "start": 158,
+    "end": 215,
+    "sentimentScore": 4.5,
+    "emotions": [
+     "Admiration",
+     "Joy"
+    ],
+    "mood": "happy",
+    "mixed": false,
+    "scores": {
+     "admiration": 0.4846,
+     "joy": 0.1283,
+     "gratitude": 0.0741,
+     "pride": 0.0562,
+     "amusement": 0.0398,
+     "disappointment": 0.0309,
+     "neutral": 0.0301,
+     "approval": 0.0291
+    },
+    "sarcasm": {
+     "probability": 0.4997,
+     "flagged": false,
+     "confirmed": false,
+     "needsReview": false
+    },
+    "adjusted": false
+   }
+  ],
+  "truncated": false,
+  "totalLines": 4
+ },
+ "confirmedLine2": {
+  "sentimentScore": -0.7,
+  "mood": "happy",
+  "emotions": [
+   "Annoyance",
+   "Joy",
+   "Fear",
+   "Admiration"
+  ],
+  "mixed": true,
+  "scores": {
+   "annoyance": 0.938,
+   "joy": 0.7412,
+   "fear": 0.7137,
+   "admiration": 0.4846,
+   "nervousness": 0.2873,
+   "excitement": 0.0962,
+   "gratitude": 0.0741,
+   "neutral": 0.0612
+  },
+  "sarcasm": {
+   "detected": true,
+   "lines": [
+    0,
+    2
+   ],
+   "needsReview": [
+    0
+   ],
+   "maxProbability": 0.9897,
+   "available": true
+  },
+  "lines": [
+   {
+    "text": "I finally got the promotion I worked so hard for!",
+    "start": 0,
+    "end": 49,
+    "sentimentScore": 7.3,
+    "emotions": [
+     "Joy",
+     "Excitement"
+    ],
+    "mood": "happy",
+    "mixed": false,
+    "scores": {
+     "joy": 0.7412,
+     "excitement": 0.0962,
+     "neutral": 0.0612,
+     "relief": 0.0534,
+     "realization": 0.0488,
+     "approval": 0.0465,
+     "admiration": 0.0314,
+     "gratitude": 0.0291
+    },
+    "sarcasm": {
+     "probability": 0.9673,
+     "flagged": true,
+     "confirmed": false,
+     "needsReview": true
+    },
+    "adjusted": false,
+    "ifSarcastic": {
+     "sentimentScore": -7.4,
+     "emotions": [
+      "Annoyance",
+      "Realization"
+     ],
+     "mood": "angry"
+    }
+   },
+   {
+    "text": "I was so nervous walking into the meeting.",
+    "start": 50,
+    "end": 92,
+    "sentimentScore": -6.8,
+    "emotions": [
+     "Fear",
+     "Nervousness"
+    ],
+    "mood": "anxious",
+    "mixed": false,
+    "scores": {
+     "fear": 0.7137,
+     "nervousness": 0.2873,
+     "sadness": 0.0536,
+     "neutral": 0.0505,
+     "caring": 0.0309,
+     "amusement": 0.0282,
+     "realization": 0.0268,
+     "disappointment": 0.0232
+    },
+    "sarcasm": {
+     "probability": 0.0736,
+     "flagged": false,
+     "confirmed": false,
+     "needsReview": false
+    },
+    "adjusted": false
+   },
+   {
+    "text": "Great, another all-hands at 8am on a Monday, just what I needed.",
+    "start": 93,
+    "end": 157,
+    "sentimentScore": -9.4,
+    "emotions": [
+     "Annoyance",
+     "Realization"
+    ],
+    "mood": "angry",
+    "mixed": false,
+    "scores": {
+     "annoyance": 0.938,
+     "neutral": 0.0186,
+     "realization": 0.0075,
+     "disappointment": 0.0057,
+     "disapproval": 0.0051,
+     "curiosity": 0.0044,
+     "disgust": 0.0038,
+     "anger": 0.0037
+    },
+    "sarcasm": {
+     "probability": 0.9897,
+     "flagged": true,
+     "confirmed": true,
+     "needsReview": false
+    },
+    "adjusted": true,
+    "literal": {
+     "sentimentScore": 9.3,
+     "emotions": [
+      "Admiration",
+      "Approval"
+     ],
+     "mood": "happy"
+    }
+   },
+   {
+    "text": "Honestly I'm just exhausted and a little proud of myself.",
+    "start": 158,
+    "end": 215,
+    "sentimentScore": 4.5,
+    "emotions": [
+     "Admiration",
+     "Joy"
+    ],
+    "mood": "happy",
+    "mixed": false,
+    "scores": {
+     "admiration": 0.4846,
+     "joy": 0.1283,
+     "gratitude": 0.0741,
+     "pride": 0.0562,
+     "amusement": 0.0398,
+     "disappointment": 0.0309,
+     "neutral": 0.0301,
+     "approval": 0.0291
+    },
+    "sarcasm": {
+     "probability": 0.4997,
+     "flagged": false,
+     "confirmed": false,
+     "needsReview": false
+    },
+    "adjusted": false
+   }
+  ],
+  "truncated": false,
+  "totalLines": 4
+ }
+}

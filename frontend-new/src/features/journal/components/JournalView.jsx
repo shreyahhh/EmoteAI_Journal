@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check, Tag } from 'lucide-react';
 import { supabase } from '../../../supabaseClient';
-import { analyzeEntry } from '../../../lib/gemini';
+import { analyzeEntry } from '../../../lib/entryAnalysis';
+import { updateEntryRow } from '../../../lib/entryUpdate';
 import { ACTIVITY_OPTIONS } from '../../../lib/moodMeta';
 import { cn } from '../../../lib/utils';
 import { Button } from '../../../components/ui/button';
@@ -77,15 +78,13 @@ const JournalView = ({ user }) => {
 
     analyzeEntry(savedContent).then((analysis) => {
       if (analysis.failed) return;
-      supabase
-        .from('journal_entries')
-        .update({
-          sentiment_score: analysis.sentimentScore,
-          emotions: analysis.emotions,
-          themes: analysis.themes,
-          mood: analysis.mood,
-        })
-        .eq('id', data.id)
+      updateEntryRow(supabase, data.id, {
+        sentiment_score: analysis.sentimentScore,
+        emotions: analysis.emotions,
+        ...(analysis.themesFailed ? {} : { themes: analysis.themes }),
+        mood: analysis.mood,
+        ...(analysis.analysis ? { analysis: analysis.analysis } : {}),
+      })
         .then(({ error: updateError }) => {
           if (updateError) console.error('Analysis update error:', updateError);
         });

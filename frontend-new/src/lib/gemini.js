@@ -8,23 +8,29 @@ function normalizeMood(value) {
 }
 
 /**
- * Every AI call is relayed through the `gemini-proxy` Supabase Edge Function
- * so the Gemini API key never reaches the browser. See
- * supabase/functions/gemini-proxy/index.ts.
+ * Every AI call is relayed through the `llm-proxy` Supabase Edge Function, which
+ * tries Groq first and falls back to Gemini, so no API key reaches the browser and
+ * one provider being rate-limited or down doesn't break the app. The request and the
+ * response keep Gemini's shape whichever provider answered. See
+ * supabase/functions/llm-proxy/.
+ *
+ * If `llm-proxy` isn't deployed yet (404), the older single-provider `gemini-proxy`
+ * is used, so deploying the new function can happen in any order.
  */
 async function callGemini(payload) {
   if (!supabase) throw new Error('Supabase is not configured.');
-  const { data, error } = await supabase.functions.invoke('gemini-proxy', {
-    body: { payload },
-  });
+  let { data, error } = await supabase.functions.invoke('llm-proxy', { body: { payload } });
+  if (error && error.context?.status === 404) {
+    ({ data, error } = await supabase.functions.invoke('gemini-proxy', { body: { payload } }));
+  }
   if (error) throw error;
   const parts = data?.candidates?.[0]?.content?.parts;
   if (!parts?.[0]?.text) throw new Error('Empty response from AI.');
   return parts[0].text;
 }
 
-/** Analyze one journal entry: sentiment, emotions, themes, mood. */
-export async function analyzeEntry(text) {
+/** Analyze one journal entry with Gemini: sentiment, emotions, themes, mood. Fallback used by lib/entryAnalysis.js. */
+export async function analyzeEntryWithGemini(text) {
   const prompt = `
         As a compassionate psychologist, analyze the following journal entry.
         Provide your analysis in a structured JSON format. Do not include any text outside of the JSON object.
@@ -54,6 +60,29 @@ export async function analyzeEntry(text) {
   } catch (error) {
     console.error('AI analysis error:', error);
     return { sentimentScore: 0, emotions: [], themes: [], mood: 'neutral', failed: true };
+  }
+}
+
+/** Themes only (2-3 topics), for when the trained model supplies the emotions. Returns null on failure. */
+export async function getThemes(text) {
+  const prompt = `
+        Identify the 2-3 key themes or topics in the following journal entry (e.g., "Work Stress", "Family Conflict").
+        Respond with JSON only, in the form {"themes": ["...", "..."]}.
+        Journal Entry:
+        ---
+        ${text}
+        ---
+    `;
+  try {
+    const raw = await callGemini({
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      generationConfig: { responseMimeType: 'application/json' },
+    });
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed.themes) ? parsed.themes.slice(0, 3) : null;
+  } catch (error) {
+    console.error('AI themes error:', error);
+    return null;
   }
 }
 
@@ -143,6 +172,9 @@ export async function getChatResponse(question, entriesText) {
     return await callGemini({ contents: [{ role: 'user', parts: [{ text: prompt }] }] });
   } catch (error) {
     console.error('AI chat error:', error);
+    if (error?.context?.status === 429) {
+      return "You've reached the AI usage limit for now. Please try again in a minute.";
+    }
     return "Sorry, I couldn't connect. Please check your connection and try again.";
   }
 }

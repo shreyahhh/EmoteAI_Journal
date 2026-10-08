@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Pencil, Trash2 } from 'lucide-react';
 import EntryHistoryModal from './EntryHistoryModal';
 import EditEntryModal from './EditEntryModal';
+import SarcasmCheck from './SarcasmCheck';
 import { formatCreatedAt } from '../../../lib/entryDates';
 import { MOOD_EMOJIS } from '../../../lib/moodMeta';
 import { cn } from '../../../lib/utils';
@@ -161,6 +162,8 @@ const JournalEntryCard = ({
       </div>
 
       <p className={bodyClass}>{entry.content}</p>
+
+      <SarcasmCheck entry={entry} compact={uniformHeight} />
 
       {hasTags && (
         <div className={tagsWrapClass}>

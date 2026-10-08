@@ -210,7 +210,14 @@ const Dashboard = ({ user }) => {
             );
           } else if (payload.eventType === 'UPDATE') {
             const row = mapJournalRow(payload.new);
-            setEntries((prev) => prev.map((e) => (e.id === row.id ? row : e)));
+            // Upsert, not just replace: if the INSERT event was missed (an entry saved
+            // while the realtime channel was still connecting), the analysis update that
+            // follows still brings the entry into view instead of leaving it hidden.
+            setEntries((prev) =>
+              prev.some((e) => e.id === row.id)
+                ? prev.map((e) => (e.id === row.id ? row : e))
+                : [row, ...prev].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)),
+            );
           } else if (payload.eventType === 'DELETE') {
             const deletedId = payload.old?.id;
             setEntries((prev) => prev.filter((e) => e.id !== deletedId));
