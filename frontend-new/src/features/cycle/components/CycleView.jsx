@@ -9,6 +9,7 @@ import { analyzeCyclePatterns, PMS_WINDOW_DAYS } from '../../../lib/cyclePattern
 import { cn } from '../../../lib/utils';
 import ConfirmDialog from '../../../components/shared/ConfirmDialog';
 import CycleForecastCard from './CycleForecastCard';
+import TodayCheckIn from './TodayCheckIn';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
 import { Textarea } from '../../../components/ui/textarea';
@@ -87,14 +88,14 @@ function buildDuringOutsideChart(entries, periods) {
       avg: avg(during) ?? 0,
       avgReal: avg(during),
       n: during.length,
-      fill: '#a8432f',
+      fill: '#D9909A',
     },
     {
       name: 'Other days',
       avg: avg(outside) ?? 0,
       avgReal: avg(outside),
       n: outside.length,
-      fill: '#a68a63',
+      fill: '#4A3C30',
     },
   ];
 }
@@ -123,8 +124,8 @@ function dayInPendingRange(dayKey, startKey, endKey, ongoingPick) {
 }
 
 const CycleView = ({ user, entries, cyclePeriods, onPeriodsUpdated }) => {
-  const chartMuted = '#7a5c3e';
-  const chartGrid = '#e0c9a0';
+  const chartMuted = '#CDBBA3';
+  const chartGrid = '#2A2A36';
   const now = new Date();
   const [viewYear, setViewYear] = useState(now.getFullYear());
   const [viewMonth, setViewMonth] = useState(now.getMonth());
@@ -299,6 +300,8 @@ const CycleView = ({ user, entries, cyclePeriods, onPeriodsUpdated }) => {
         </span>
       </div>
 
+      <TodayCheckIn user={user} />
+
       <Card>
         <CardHeader>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -372,9 +375,9 @@ const CycleView = ({ user, entries, cyclePeriods, onPeriodsUpdated }) => {
                 } else if (isEnd) {
                   dayClasses = 'bg-emote-accent text-white shadow-sm ring-2 ring-emote-accent/40 ring-offset-2 ring-offset-emote-surface';
                 } else if (inPending) {
-                  dayClasses = 'bg-[#a8432f]/30 text-[#a8432f] ring-1 ring-[#a8432f]/60';
+                  dayClasses = 'bg-[#D9909A]/30 text-[#D9909A] ring-1 ring-[#D9909A]/60';
                 } else if (inSaved) {
-                  dayClasses = 'bg-[#a8432f]/10 text-[#a8432f] ring-1 ring-[#a8432f]/25';
+                  dayClasses = 'bg-[#D9909A]/10 text-[#D9909A] ring-1 ring-[#D9909A]/25';
                 } else {
                   dayClasses = 'bg-emote-surface-alt text-emote-ink hover:bg-emote-border/40';
                 }
@@ -401,7 +404,7 @@ const CycleView = ({ user, entries, cyclePeriods, onPeriodsUpdated }) => {
                   type="checkbox"
                   checked={ongoing}
                   onChange={(e) => setOngoing(e.target.checked)}
-                  className="h-4 w-4 rounded border-input text-[#a8432f] focus:ring-[#a8432f]/40"
+                  className="h-4 w-4 rounded border-input accent-[#D9909A] focus:ring-[#D9909A]/40"
                 />
                 Still ongoing (no end date yet)
               </label>
@@ -418,7 +421,7 @@ const CycleView = ({ user, entries, cyclePeriods, onPeriodsUpdated }) => {
               <p className="text-emote-muted text-emote-ink-soft">
                 <span className="font-semibold text-emote-ink">Start:</span> {pendingStart}
                 {ongoing ? (
-                  <span className="ml-2 text-[#a8432f]">(ongoing)</span>
+                  <span className="ml-2 text-[#D9909A]">(ongoing)</span>
                 ) : (
                   <>
                     <span className="mx-2">→</span>

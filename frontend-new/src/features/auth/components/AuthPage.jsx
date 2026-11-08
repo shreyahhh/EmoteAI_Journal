@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { supabase, getSupabaseConfigIssue } from '../../../supabaseClient';
 import Logo from '../../../components/shared/Logo';
+import Starfield from '../../../components/shared/Starfield';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { PasswordInput } from '../../../components/ui/password-input';
@@ -84,112 +85,120 @@ const AuthPage = ({ isLogin, navigateTo }) => {
   };
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-background font-sans text-emote-body text-foreground">
-      <div className="emote-mesh" aria-hidden />
+    <div className="flex min-h-screen bg-emote-canvas font-sans text-emote-body text-emote-ink">
+      <div className="relative hidden flex-1 flex-col justify-between overflow-hidden p-10 lg:flex">
+        <Starfield count={70} seed={42} />
+        <button type="button" onClick={() => navigateTo('landing')} className="relative z-10 flex items-center gap-2.5">
+          <Logo size={28} />
+          <span className="emote-title-gradient text-emote-page">Emote</span>
+        </button>
+        <div className="relative z-10 max-w-md">
+          <p className="font-display text-emote-page leading-snug text-emote-ink">
+            Your words leave a trail, and it leads back to you.
+          </p>
+          <p className="mt-4 text-emote-muted text-emote-ink-soft">
+            Private by design. Your entries are never a public feed, never a score, and you can export them whenever
+            you like.
+          </p>
+        </div>
+      </div>
 
-      <header className="relative z-10 px-6 py-5">
-        <div className="container mx-auto flex items-center justify-between">
+      <div className="flex w-full flex-1 flex-col justify-center border-l border-border px-6 py-12 sm:px-10 lg:w-[440px] lg:flex-none">
+        <button type="button" onClick={() => navigateTo('landing')} className="mb-8 flex items-center gap-2.5 lg:hidden">
+          <Logo size={26} />
+          <span className="emote-title-gradient text-emote-page">Emote</span>
+        </button>
+
+        <div className="mb-7 flex gap-6 border-b border-border text-emote-body">
           <button
             type="button"
-            onClick={() => navigateTo('landing')}
-            className="flex items-center gap-2.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 rounded-lg"
+            onClick={() => navigateTo('login')}
+            className={`-mb-px border-b-2 pb-3 font-semibold transition ${
+              isLogin ? 'border-emote-accent text-emote-ink' : 'border-transparent text-emote-ink-faint hover:text-emote-ink-soft'
+            }`}
           >
-            <Logo size={30} />
-            <span className="emote-title-gradient text-emote-page font-semibold">Emote</span>
+            Sign in
           </button>
-          <Button type="button" variant="outline" onClick={() => navigateTo(isLogin ? 'signup' : 'login')}>
-            {isLogin ? 'Create account' : 'Log in'}
-          </Button>
+          <button
+            type="button"
+            onClick={() => navigateTo('signup')}
+            className={`-mb-px border-b-2 pb-3 font-semibold transition ${
+              !isLogin ? 'border-emote-accent text-emote-ink' : 'border-transparent text-emote-ink-faint hover:text-emote-ink-soft'
+            }`}
+          >
+            Create account
+          </button>
         </div>
-      </header>
 
-      <section className="relative z-10 px-6 pb-16 pt-6">
-        <div className="container mx-auto grid max-w-5xl items-start gap-10 lg:grid-cols-2 lg:gap-12">
-          <div className="text-center lg:text-left">
-            <h2 className="text-emote-display font-semibold tracking-tight text-foreground md:text-emote-display-lg">
-              Journal with <span className="emote-title-gradient">AI insight</span>
-            </h2>
-            <p className="mt-3 max-w-md text-emote-muted leading-relaxed text-muted-foreground lg:max-w-none">
-              A calm place to write privately, see mood and themes over time, and ask questions that stay grounded in your own entries.
-            </p>
-          </div>
+        <motion.div
+          key={isLogin ? 'login' : 'signup'}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <h1 className="text-emote-display font-semibold text-emote-ink">{isLogin ? 'Welcome back.' : 'Start your journal.'}</h1>
+          <p className="mt-2 text-emote-muted text-emote-ink-soft">
+            {isLogin ? 'Your journal syncs to this account, on every device.' : 'Free to start. No card, no trial countdown.'}
+          </p>
 
-          <div className="mx-auto w-full max-w-md lg:mx-0 lg:ml-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 20, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              className="relative overflow-hidden rounded-2xl border border-border bg-card p-8 shadow-emote"
-            >
-              <div
-                className="pointer-events-none absolute -right-20 -top-20 h-48 w-48 rounded-full bg-gradient-to-br from-emote-gold/40 via-emote-accent/30 to-emote-accent-2/20 blur-3xl"
-                aria-hidden
+          {supabaseSetupIssue && <p className="emote-banner-warn mt-5">{supabaseSetupIssue}</p>}
+          {error && <p className="emote-banner-warn mt-5">{error}</p>}
+          {info && <p className="emote-banner-info mt-5">{info}</p>}
+
+          <form onSubmit={handleSubmit} className="mt-6 space-y-5">
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                autoComplete="email"
               />
-              <h1 className="relative z-10 text-center text-emote-section font-semibold text-foreground">
-                {isLogin ? 'Sign in' : 'Create account'}
-              </h1>
-              <p className="relative z-10 mb-6 mt-1.5 text-center text-emote-muted text-muted-foreground">
-                {isLogin
-                  ? 'Welcome back—your journal syncs to this account.'
-                  : 'Create a password you will remember; we will email you if confirmation is required.'}
-              </p>
-              {supabaseSetupIssue && <p className="emote-banner-warn relative z-10 mb-4 text-left">{supabaseSetupIssue}</p>}
-              {error && <p className="emote-banner-warn relative z-10 mb-4 text-center">{error}</p>}
-              {info && <p className="emote-banner-info relative z-10 mb-4 text-center">{info}</p>}
-              <form onSubmit={handleSubmit} className="relative z-10 space-y-5">
-                <div>
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    type="email"
-                    id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="you@example.com"
-                    autoComplete="email"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="password">Password</Label>
-                  <PasswordInput
-                    id="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    autoComplete={isLogin ? 'current-password' : 'new-password'}
-                  />
-                  {isLogin ? (
-                    <button
-                      type="button"
-                      onClick={handleForgotPassword}
-                      disabled={isSendingReset}
-                      className="mt-1.5 text-emote-caption font-medium text-emote-accent hover:text-emote-gold disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                      {isSendingReset ? 'Sending…' : 'Forgot password?'}
-                    </button>
-                  ) : null}
-                </div>
-                <Button type="submit" variant="gradient" disabled={isLoading} className="w-full">
-                  {isLoading ? 'Please wait…' : isLogin ? 'Log in' : 'Sign up'}
-                </Button>
-              </form>
-              <p className="relative z-10 mt-6 text-center text-emote-muted text-muted-foreground">
-                {isLogin ? 'No account? ' : 'Have an account? '}
-                <button
-                  type="button"
-                  onClick={() => navigateTo(isLogin ? 'signup' : 'login')}
-                  className="font-semibold text-emote-accent hover:text-emote-gold"
-                >
-                  {isLogin ? 'Sign up' : 'Log in'}
-                </button>
-              </p>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+            </div>
+            <div>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password" className="mb-0">
+                  Password
+                </Label>
+                {isLogin ? (
+                  <button
+                    type="button"
+                    onClick={handleForgotPassword}
+                    disabled={isSendingReset}
+                    className="text-emote-caption font-medium text-emote-accent hover:text-emote-gold disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {isSendingReset ? 'Sending…' : 'Forgot password?'}
+                  </button>
+                ) : null}
+              </div>
+              <PasswordInput
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Your password"
+                autoComplete={isLogin ? 'current-password' : 'new-password'}
+              />
+            </div>
+            <Button type="submit" variant="gradient" size="lg" disabled={isLoading} className="w-full">
+              {isLoading ? 'Please wait…' : isLogin ? 'Sign in' : 'Create account'}
+            </Button>
+          </form>
 
-      <footer className="relative z-10 border-t border-border px-6 py-8">
-        <p className="text-center text-emote-muted text-muted-foreground">&copy; {new Date().getFullYear()} Emote</p>
-      </footer>
+          <p className="mt-6 text-center text-emote-muted text-emote-ink-faint">
+            {isLogin ? (
+              <>
+                New here? <span className="font-semibold text-emote-accent">Switch to Create account above.</span>
+              </>
+            ) : (
+              <>
+                Already have an account? <span className="font-semibold text-emote-accent">Switch to Sign in above.</span>
+              </>
+            )}
+          </p>
+        </motion.div>
+      </div>
     </div>
   );
 };

@@ -5,6 +5,7 @@ import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { Button } from '../../../components/ui/button';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../../components/ui/select';
+import ReminderPrefsFields from './ReminderPrefsFields';
 
 const SEX_OPTIONS = [
   { value: 'unset', label: 'Select…' },
@@ -24,6 +25,9 @@ const ProfileSetupModal = ({ user, initialProfile, onComplete }) => {
   const [username, setUsername] = useState(initialProfile?.username || '');
   const [age, setAge] = useState(initialProfile?.age != null ? String(initialProfile.age) : '');
   const [sex, setSex] = useState(initialProfile?.sex || '');
+  const [reminderEnabled, setReminderEnabled] = useState(initialProfile?.reminderEnabled ?? true);
+  const [reminderTime, setReminderTime] = useState(initialProfile?.reminderTime || '21:00');
+  const [reminderDays, setReminderDays] = useState(initialProfile?.reminderDays || [0, 1, 2, 3, 4, 5, 6]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
@@ -54,6 +58,9 @@ const ProfileSetupModal = ({ user, initialProfile, onComplete }) => {
       username: username.trim() || null,
       age: age.trim() === '' || Number.isNaN(ageNum) ? null : ageNum,
       sex: sex || null,
+      reminder_enabled: skipped ? false : reminderEnabled,
+      reminder_time: reminderTime,
+      reminder_days: reminderDays,
       profile_completed_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
@@ -67,6 +74,9 @@ const ProfileSetupModal = ({ user, initialProfile, onComplete }) => {
           : upErr.message || 'Could not save profile.',
       );
       return;
+    }
+    if (!skipped && reminderEnabled && typeof Notification !== 'undefined' && Notification.permission === 'default') {
+      Notification.requestPermission();
     }
     onComplete?.();
   };
@@ -154,6 +164,21 @@ const ProfileSetupModal = ({ user, initialProfile, onComplete }) => {
               If you select <span className="font-semibold text-emote-ink-soft">Female</span>, you will see an optional
               period calendar (start/end dates), symptoms, and mood notes alongside your journal.
             </p>
+          </div>
+          <div>
+            <Label htmlFor="reminder-toggle">When do you usually end your day?</Label>
+            <p className="-mt-1 mb-2 text-emote-caption text-emote-ink-faint">
+              We'll nudge you to write around that time — one gentle notification, never more.
+            </p>
+            <ReminderPrefsFields
+              idPrefix="reminder"
+              enabled={reminderEnabled}
+              onEnabledChange={setReminderEnabled}
+              time={reminderTime}
+              onTimeChange={setReminderTime}
+              days={reminderDays}
+              onDaysChange={setReminderDays}
+            />
           </div>
         </div>
 

@@ -125,6 +125,10 @@ export function mapProfileRow(row) {
     age: row.age != null ? Number(row.age) : null,
     sex: row.sex ?? null,
     profileCompletedAt: row.profile_completed_at ?? null,
+    reminderEnabled: row.reminder_enabled ?? false,
+    reminderTime: row.reminder_time ?? '21:00',
+    reminderDays: Array.isArray(row.reminder_days) ? row.reminder_days : [1, 2, 3, 4, 5],
+    cycleRemindersEnabled: row.cycle_reminders_enabled ?? true,
     updatedAt: row.updated_at,
   };
 }
@@ -167,6 +171,26 @@ export function mapCyclePeriodRow(row) {
     endDate: row.end_date ?? null,
     moodReflection: row.mood_reflection ?? '',
     symptoms: Array.isArray(row.symptoms) ? row.symptoms : [],
+    notes: row.notes ?? '',
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+/** Map a cycle_daily_logs row — one day's cycle check-in. */
+export function mapCycleDailyLogRow(row) {
+  if (!row) return null;
+  return {
+    id: row.id,
+    userId: row.user_id,
+    logDate: row.log_date,
+    flow: row.flow ?? null,
+    pain: row.pain ?? null,
+    symptoms: Array.isArray(row.symptoms) ? row.symptoms : [],
+    mood: Array.isArray(row.mood) ? row.mood : [],
+    energy: Array.isArray(row.energy) ? row.energy : [],
+    cravings: Array.isArray(row.cravings) ? row.cravings : [],
+    products: Array.isArray(row.products) ? row.products : [],
     notes: row.notes ?? '',
     createdAt: row.created_at,
     updatedAt: row.updated_at,

@@ -66,7 +66,7 @@ const EntryHistoryModal = ({ entryId, entryTitle, onClose }) => {
               </div>
               {h.title ? <p className="font-medium text-foreground">{h.title}</p> : null}
               {h.content ? (
-                <p className="line-clamp-6 whitespace-pre-wrap text-emote-muted leading-relaxed text-muted-foreground">{h.content}</p>
+                <p className="line-clamp-6 whitespace-pre-wrap font-serif text-emote-muted leading-relaxed text-muted-foreground">{h.content}</p>
               ) : null}
               <div className="flex flex-wrap gap-2">
                 {h.mood ? <Badge variant="secondary">Mood: {h.mood}</Badge> : null}

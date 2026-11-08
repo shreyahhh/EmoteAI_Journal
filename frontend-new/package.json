@@ -42,6 +42,11 @@
       "react-app/jest"
     ]
   },
+  "jest": {
+    "moduleNameMapper": {
+      "^@radix-ui/primitive/is-development$": "<rootDir>/node_modules/@radix-ui/primitive/dist/internal/is-development.false.js"
+    }
+  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -55,6 +60,9 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.8",
     "autoprefixer": "^10.4.21",
     "dotenv": "^16.6.1",
     "postcss": "^8.5.6",

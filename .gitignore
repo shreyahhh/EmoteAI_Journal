@@ -1,4 +1,6 @@
 .playwright-mcp/
+.claude/
+supabase/.temp/
 
 # ML service
 ml/.venv/

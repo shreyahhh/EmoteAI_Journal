@@ -4,7 +4,7 @@ import { getMoodEmoji, getMoodTagStyle } from '../../lib/moodMeta';
 import { cn } from '../../lib/utils';
 
 /** Mood-keyed badge — colors come from lib/moodMeta so every mood tag in the
- * app (timeline, entry cards, entries list) stays visually consistent. */
+ * app (entry cards, entries list) stays visually consistent. */
 export default function MoodBadge({ mood, showEmoji = false, className, ...props }) {
   const label = (mood || 'neutral').toLowerCase();
   return (

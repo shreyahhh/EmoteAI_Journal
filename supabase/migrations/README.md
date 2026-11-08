@@ -19,6 +19,8 @@ safe to re-run the whole folder if something fails partway through.
 | `20260920000001_journal_entries_replica_identity_full.sql` | Sets `REPLICA IDENTITY FULL` on `journal_entries` so Realtime DELETE events actually reach the client (fixes deleted entries lingering in the UI until reload) |
 | `20261008000001_llm_rate_limit.sql` | `public.llm_usage` + `public.llm_rate_limit()`: per-user, per-minute and per-day request counters for the `llm-proxy` function (service role only) |
 | `20261007000001_sarcasm_check.sql` | `journal_entries.analysis` (per-line model results) + `public.sarcasm_feedback` (answers to "did you mean that sarcastically?", RLS, opt-in flag for retraining) |
+| `20261108000001_profile_reminder_prefs.sql` | `profiles.reminder_enabled` / `reminder_time` / `reminder_days` / `cycle_reminders_enabled` — evening journal reminder + cycle check-in reminder opt-in, set during onboarding and in Settings |
+| `20261108000002_cycle_daily_logs_table.sql` | `public.cycle_daily_logs` — one row per day's cycle check-in (flow/pain/symptoms/mood/energy/cravings/products), RLS |
 
 ## How to run
 

@@ -94,7 +94,13 @@ const EditEntryModal = ({ entry, onClose }) => {
 
           <div>
             <Label htmlFor="edit-body">Entry</Label>
-            <Textarea id="edit-body" value={content} onChange={(e) => setContent(e.target.value)} rows={8} className="min-h-[200px] resize-y" />
+            <Textarea
+              id="edit-body"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              rows={8}
+              className="min-h-[200px] resize-y font-serif"
+            />
           </div>
 
           <div>

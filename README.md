@@ -9,7 +9,7 @@ Emote is a modern, AI-driven journaling application designed to be your personal
 - **Entry history:** Database triggers record create, update, and delete snapshots; you can open **History** on a journal card to review past versions.
 - **AI-powered chat:** Ask questions about recent entries; answers are grounded in your journal text (Gemini).
 - **Mood and sentiment:** Mood labels and sentiment scores feed the insights charts and timeline.
-- **Goal setting:** Create and track wellness goals (UI; goals are not yet persisted to the database).
+- **Goal setting:** Create and track wellness goals, persisted per-user in the `goals` table.
 - **Insights dashboard:** Mood distribution, sentiment over time, activity correlations, and an optional weekly AI summary.
 - **Timeline:** Chronological view of entries by month.
 - **Curated resources:** Theme-based resources and AI-assisted detail views.
@@ -171,7 +171,7 @@ npx serve -s build -l 3000
 - **Journal:** New entries, list of cards, AI tags, **History** per entry, delete.
 - **Insights:** Charts, weekly summary, activity–mood view.
 - **Timeline:** Monthly grouping and full-entry modal.
-- **Goals:** Suggestions and local goal tracking.
+- **Goals:** Suggestions and goal tracking, saved to Supabase.
 - **Chat:** Questions about your last 30 days of entries.
 - **Resources:** Recommendations by theme.
 - **Settings:** Reminders and data export.

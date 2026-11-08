@@ -43,10 +43,10 @@ const MIN_CYCLES_FOR_ESTIMATE = 2; // completed start-to-start gaps
 const MIN_ENTRIES_PER_BUCKET = 3; // for the PMS comparison to be worth showing
 
 export const PHASES = [
-  { id: 'menstrual', label: 'Menstrual', color: '#a8432f' },
-  { id: 'follicular', label: 'Follicular', color: '#3f8f5f' },
-  { id: 'ovulation', label: 'Ovulation', color: '#c9971f' },
-  { id: 'luteal', label: 'Luteal', color: '#5b7a9c' },
+  { id: 'menstrual', label: 'Menstrual', color: '#db7d94' },
+  { id: 'follicular', label: 'Follicular', color: '#82c4a0' },
+  { id: 'ovulation', label: 'Ovulation', color: '#e0a845' },
+  { id: 'luteal', label: 'Luteal', color: '#a896d6' },
 ];
 
 function toEpochDay(dateKey) {

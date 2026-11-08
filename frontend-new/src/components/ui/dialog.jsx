@@ -12,7 +12,7 @@ const DialogClose = DialogPrimitive.Close;
 const DialogOverlay = React.forwardRef(({ className, ...props }, ref) => (
   <DialogPrimitive.Overlay
     ref={ref}
-    className={cn('fixed inset-0 z-50 bg-emote-ink/40 backdrop-blur-sm', className)}
+    className={cn('fixed inset-0 z-50 bg-black/60', className)}
     {...props}
   />
 ));
@@ -68,7 +68,7 @@ const DialogHeader = ({ className, ...props }) => (
 const DialogTitle = React.forwardRef(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={cn('text-emote-card-title font-semibold text-foreground', className)}
+    className={cn('font-display text-emote-card-title font-semibold text-foreground', className)}
     {...props}
   />
 ));

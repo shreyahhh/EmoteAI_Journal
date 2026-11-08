@@ -50,8 +50,8 @@ const JournalEntryCard = ({
     : 'rounded-2xl p-6';
 
   const bodyClass = uniformHeight
-    ? 'relative mt-2 min-h-0 flex-1 overflow-hidden text-sm leading-snug text-muted-foreground line-clamp-4'
-    : 'relative mt-3 whitespace-pre-wrap text-emote-body leading-relaxed text-muted-foreground';
+    ? 'relative mt-2 min-h-0 flex-1 overflow-hidden font-serif text-sm leading-snug text-muted-foreground line-clamp-4'
+    : 'relative mt-3 whitespace-pre-wrap font-serif text-emote-body leading-relaxed text-muted-foreground';
 
   const tagsWrapClass = uniformHeight
     ? 'relative mt-auto flex flex-wrap gap-1.5 border-t border-border pt-3'

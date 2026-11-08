@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { getCreatedAtDate } from '../../lib/entryDates';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 
-/** Read-only "open a card to read the full entry" view — shared by Entries and Timeline. */
+/** Read-only "open a card to read the full entry" view. */
 export default function EntryDetailModal({ entry, onClose }) {
   const formattedDate = useMemo(() => {
     const date = getCreatedAtDate(entry);

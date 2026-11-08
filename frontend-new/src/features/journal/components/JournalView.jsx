@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Check, Tag } from 'lucide-react';
+import { Check, Mic, MicOff, Tag } from 'lucide-react';
 import { supabase } from '../../../supabaseClient';
 import { analyzeEntry } from '../../../lib/entryAnalysis';
 import { updateEntryRow } from '../../../lib/entryUpdate';
 import { ACTIVITY_OPTIONS } from '../../../lib/moodMeta';
+import { useSpeechToText } from '../../../lib/useSpeechToText';
 import { cn } from '../../../lib/utils';
 import { Button } from '../../../components/ui/button';
 
@@ -21,6 +22,13 @@ const JournalView = ({ user }) => {
 
   useEffect(() => () => clearTimeout(savedTimeoutRef.current), []);
 
+  const { isSupported: sttSupported, isListening, toggle: toggleListening } = useSpeechToText({
+    onResult: (phrase) => {
+      if (!phrase) return;
+      setContent((prev) => (prev && !/\s$/.test(prev) ? `${prev} ${phrase}` : `${prev}${phrase}`));
+    },
+  });
+
   const handleToggleActivity = (activity) => {
     setSelectedActivities((prev) =>
       prev.includes(activity) ? prev.filter((a) => a !== activity) : [...prev, activity],
@@ -29,6 +37,7 @@ const JournalView = ({ user }) => {
 
   const handleSaveEntry = async () => {
     if (!content.trim() || !supabase || !user?.id || isSaving) return;
+    if (isListening) toggleListening();
     setIsSaving(true);
 
     const activityLabels = {};
@@ -125,8 +134,17 @@ const JournalView = ({ user }) => {
         onChange={(e) => setContent(e.target.value)}
         onKeyDown={handleSaveShortcut}
         placeholder="Start writing…"
-        className="min-h-[50vh] w-full resize-none border-none bg-transparent font-sans text-emote-body leading-relaxed text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
+        className="min-h-[50vh] w-full resize-none border-none bg-transparent font-serif text-emote-body leading-relaxed text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
       />
+      {isListening ? (
+        <p className="-mt-2 mb-2 flex items-center gap-1.5 text-emote-caption text-emote-rose">
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emote-rose opacity-75" />
+            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emote-rose" />
+          </span>
+          Listening…
+        </p>
+      ) : null}
 
       <AnimatePresence initial={false}>
         {tagsOpen ? (
@@ -161,16 +179,33 @@ const JournalView = ({ user }) => {
       </AnimatePresence>
 
       <div className="flex items-center justify-between gap-3 border-t border-border pt-4">
-        <button
-          type="button"
-          onClick={() => setTagsOpen((v) => !v)}
-          className="flex items-center gap-1.5 text-emote-muted text-muted-foreground transition hover:text-foreground"
-        >
-          <Tag className="h-4 w-4" />
-          {selectedActivities.length
-            ? `${selectedActivities.length} tag${selectedActivities.length > 1 ? 's' : ''}`
-            : 'Add tags'}
-        </button>
+        <div className="flex items-center gap-4">
+          <button
+            type="button"
+            onClick={() => setTagsOpen((v) => !v)}
+            className="flex items-center gap-1.5 text-emote-muted text-muted-foreground transition hover:text-foreground"
+          >
+            <Tag className="h-4 w-4" />
+            {selectedActivities.length
+              ? `${selectedActivities.length} tag${selectedActivities.length > 1 ? 's' : ''}`
+              : 'Add tags'}
+          </button>
+          {sttSupported ? (
+            <button
+              type="button"
+              onClick={toggleListening}
+              aria-pressed={isListening}
+              title={isListening ? 'Stop dictating' : 'Speak your entry'}
+              className={cn(
+                'flex items-center gap-1.5 text-emote-muted transition',
+                isListening ? 'text-emote-rose' : 'text-muted-foreground hover:text-foreground',
+              )}
+            >
+              {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+              {isListening ? 'Stop' : 'Speak'}
+            </button>
+          ) : null}
+        </div>
         <Button
           type="button"
           variant={justSaved ? 'default' : 'gradient'}

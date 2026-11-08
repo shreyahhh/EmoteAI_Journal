@@ -1,5 +1,4 @@
 import React from 'react';
-import { BookOpen, List, BarChart2, Calendar, Target, MessageCircle, Layers, Droplet } from 'lucide-react';
 import { supabase, mapJournalRow, mapProfileRow, mapCyclePeriodRow } from '../../supabaseClient';
 import AppShell from '../../layout/AppShell';
 import { Card, CardContent } from '../../components/ui/card';
@@ -8,49 +7,52 @@ import EntriesView from '../entries/components/EntriesView';
 import SettingsModal from '../profile/components/SettingsModal';
 import ProfileSetupModal from '../profile/components/ProfileSetupModal';
 import StreakBadge from '../../components/shared/StreakBadge';
+import ErrorBoundary from '../../components/shared/ErrorBoundary';
 import { computeStreak } from '../../lib/streaks';
+import { useReminderScheduler } from '../../lib/useReminderScheduler';
 
 // Code-split the heavier tabs (recharts, chat, cycle calendar) out of the
 // initial bundle — only Journal and Entries load eagerly.
 const InsightsDashboard = React.lazy(() => import('../insights/components/InsightsDashboard'));
-const TimelineView = React.lazy(() => import('../timeline/components/TimelineView'));
 const GoalsView = React.lazy(() => import('../goals/components/GoalsView'));
 const ChatView = React.lazy(() => import('../chat/components/ChatView'));
 const ResourcesPanel = React.lazy(() => import('../resources/components/ResourcesPanel'));
 const CycleView = React.lazy(() => import('../cycle/components/CycleView'));
 
-const BASE_NAV = [
-  { id: 'journal', label: 'Journal', icon: BookOpen },
-  { id: 'entries', label: 'Entries', icon: List },
-  { id: 'insights', label: 'Insights', icon: BarChart2 },
-  { id: 'timeline', label: 'Timeline', icon: Calendar },
-  { id: 'goals', label: 'Goals', icon: Target },
-  { id: 'chat', label: 'Chat', icon: MessageCircle },
-  { id: 'resources', label: 'Resources', icon: Layers },
+// Grouped to match the nav drawer mockup: a primary "journaling flow" group
+// (write, review, reflect) and a secondary group of standalone tools.
+const PRIMARY_NAV = [
+  { id: 'journal', label: 'Write', caption: 'tonight' },
+  { id: 'entries', label: 'Entries', caption: "all you've saved" },
+  { id: 'insights', label: 'Insights', caption: 'patterns' },
+  { id: 'chat', label: 'Ask your journal', caption: 'last 30 days' },
 ];
 
-const CYCLE_TAB = { id: 'cycle', label: 'Cycle', icon: Droplet };
+const SECONDARY_NAV = [
+  { id: 'goals', label: 'Goals', caption: 'small habits' },
+  { id: 'resources', label: 'Resources', caption: 'guided topics' },
+];
+
+const CYCLE_TAB = { id: 'cycle', label: 'Cycle', caption: 'private' };
 
 const sectionTitle = {
-  journal: 'Journal',
+  journal: 'Write',
   entries: 'Entries',
   insights: 'Insights',
   cycle: 'Cycle & period',
-  timeline: 'Timeline',
-  goals: 'Goals',
-  chat: 'Chat',
+  goals: 'Streak & habits',
+  chat: 'Ask your journal',
   resources: 'Resources',
 };
 
 const sectionSubtitle = {
   journal: 'Write freely—saving runs a quick analysis for mood, emotions, and themes.',
-  entries: 'Everything you have saved, newest first. Delete from the card menu if you need to.',
+  entries: "Your library. Find, edit, tidy or export anything you've written.",
   insights: 'Week, month, and year views for mood mix, tone, and activities—all scoped to the range you pick.',
   cycle: 'Mark period start and end on the calendar, track symptoms and mood, and compare journal tone on period days vs other days.',
-  timeline: 'A month-by-month trail of entries—tap one to read it in full.',
-  goals: 'Keep a short list of habits; suggestions appear when your journal themes repeat.',
-  chat: 'Ask about your own words—replies use entries from roughly the last 30 days only.',
-  resources: 'Guided topics for common feelings; recommendations follow themes in recent entries.',
+  goals: 'Show up nightly and draw your constellation. Keep a short list of habits on the side.',
+  chat: 'Answers come only from what you’ve written in the last 30 days, and always show which entries they used.',
+  resources: 'Short, self-guided reads and exercises. Not a substitute for professional care.',
 };
 
 const DashboardLoader = () => (
@@ -81,15 +83,12 @@ const Dashboard = ({ user }) => {
 
   const streak = React.useMemo(() => computeStreak(entries), [entries]);
 
-  const navTabs = React.useMemo(() => {
-    if (profile?.sex === 'female') {
-      const out = [...BASE_NAV];
-      const ins = out.findIndex((t) => t.id === 'insights');
-      out.splice(ins + 1, 0, CYCLE_TAB);
-      return out;
-    }
-    return BASE_NAV;
-  }, [profile?.sex]);
+  useReminderScheduler({ user, profile, entries, cyclePeriods });
+
+  const secondaryTabs = React.useMemo(
+    () => (profile?.sex === 'female' ? [CYCLE_TAB, ...SECONDARY_NAV] : SECONDARY_NAV),
+    [profile?.sex],
+  );
 
   const loadProfile = React.useCallback(async () => {
     if (!supabase || !user?.id) {
@@ -249,10 +248,10 @@ const Dashboard = ({ user }) => {
 
   return (
     <AppShell
-      navTabs={navTabs}
+      primaryTabs={PRIMARY_NAV}
+      secondaryTabs={secondaryTabs}
       activeTab={activeTab}
       onSelectTab={setActiveTab}
-      email={user.email}
       onOpenSettings={() => {
         setShowSettingsModal(true);
         setMobileNavOpen(false);
@@ -260,33 +259,49 @@ const Dashboard = ({ user }) => {
       onLogout={handleLogout}
       mobileNavOpen={mobileNavOpen}
       onMobileNavOpenChange={setMobileNavOpen}
-      title={sectionTitle[activeTab] || 'Journal'}
+      title={sectionTitle[activeTab] || 'Write'}
       subtitle={sectionSubtitle[activeTab] || sectionSubtitle.journal}
       headerExtra={!isLoading ? <StreakBadge {...streak} /> : null}
     >
       {!isLoading && !profileLoading && profile && !profile.profileCompletedAt ? (
         <ProfileSetupModal user={user} initialProfile={profile} onComplete={loadProfile} />
       ) : null}
-      <SettingsModal open={showSettingsModal} onClose={() => setShowSettingsModal(false)} user={user} entries={entries} />
+      <SettingsModal
+        open={showSettingsModal}
+        onClose={() => setShowSettingsModal(false)}
+        user={user}
+        entries={entries}
+        profile={profile}
+        onProfileUpdated={loadProfile}
+      />
 
       {activeTab === 'journal' ? (
         // Journal doesn't depend on `entries`, so writing is never
         // blocked behind the entries/profile load.
-        <JournalView user={user} />
+        <ErrorBoundary resetKey={activeTab}>
+          <JournalView user={user} />
+        </ErrorBoundary>
       ) : isLoading ? (
         <DashboardLoader />
       ) : (
-        <React.Suspense fallback={<DashboardLoader />}>
-          {activeTab === 'entries' && <EntriesView entries={entries} onDeleteEntry={handleDeleteEntry} />}
-          {activeTab === 'insights' && <InsightsDashboard entries={entries} user={user} />}
-          {activeTab === 'cycle' && profile?.sex === 'female' ? (
-            <CycleView user={user} entries={entries} cyclePeriods={cyclePeriods} onPeriodsUpdated={loadCyclePeriods} />
-          ) : null}
-          {activeTab === 'timeline' && <TimelineView entries={entries} />}
-          {activeTab === 'goals' && <GoalsView entries={entries} user={user} />}
-          {activeTab === 'chat' && <ChatView entries={entries} />}
-          {activeTab === 'resources' && <ResourcesPanel entries={entries} />}
-        </React.Suspense>
+        <ErrorBoundary resetKey={activeTab}>
+          <React.Suspense fallback={<DashboardLoader />}>
+            {activeTab === 'entries' && (
+              <EntriesView entries={entries} onDeleteEntry={handleDeleteEntry} onNewEntry={() => setActiveTab('journal')} />
+            )}
+            {activeTab === 'insights' && <InsightsDashboard entries={entries} user={user} />}
+            {activeTab === 'cycle' && profile?.sex === 'female' ? (
+              <CycleView user={user} entries={entries} cyclePeriods={cyclePeriods} onPeriodsUpdated={loadCyclePeriods} />
+            ) : null}
+            {activeTab === 'goals' && (
+              <GoalsView entries={entries} user={user} onWriteTonight={() => setActiveTab('journal')} />
+            )}
+            {activeTab === 'chat' && <ChatView entries={entries} />}
+            {activeTab === 'resources' && (
+              <ResourcesPanel entries={entries} onWriteEntry={() => setActiveTab('journal')} />
+            )}
+          </React.Suspense>
+        </ErrorBoundary>
       )}
     </AppShell>
   );

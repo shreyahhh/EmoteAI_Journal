@@ -1,25 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import { getCreatedAtDate } from '../../../lib/entryDates';
+import { supabase } from '../../../supabaseClient';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../../components/ui/dialog';
 import { Button } from '../../../components/ui/button';
 import { Switch } from '../../../components/ui/switch';
 import { Label } from '../../../components/ui/label';
-import { Input } from '../../../components/ui/input';
+import { cn } from '../../../lib/utils';
+import { PALETTES, getStoredPalette, applyPalette } from '../../../lib/palettePreference';
+import ReminderPrefsFields from './ReminderPrefsFields';
 
-const SettingsModal = ({ open, onClose, user, entries }) => {
-  const [remindersEnabled, setRemindersEnabled] = useState(localStorage.getItem('remindersEnabled') === 'true');
-  const [reminderTime, setReminderTime] = useState(localStorage.getItem('reminderTime') || '21:00');
+const SettingsModal = ({ open, onClose, user, entries, profile, onProfileUpdated }) => {
+  const [palette, setPalette] = useState(getStoredPalette);
+  const [remindersEnabled, setRemindersEnabled] = useState(profile?.reminderEnabled ?? false);
+  const [reminderTime, setReminderTime] = useState(profile?.reminderTime || '21:00');
+  const [reminderDays, setReminderDays] = useState(profile?.reminderDays || [1, 2, 3, 4, 5]);
+  const [cycleRemindersEnabled, setCycleRemindersEnabled] = useState(profile?.cycleRemindersEnabled ?? true);
   const [notificationPermission, setNotificationPermission] = useState(
     typeof Notification !== 'undefined' ? Notification.permission : 'denied',
   );
   const [isExporting, setIsExporting] = useState(false);
   const [exportMessage, setExportMessage] = useState('');
 
+  // Profile loads async (and can change under us — e.g. after onboarding),
+  // so re-sync local state whenever a fresher row arrives instead of only
+  // reading it once at mount.
   useEffect(() => {
-    if (notificationPermission === 'granted') {
-      localStorage.setItem('remindersEnabled', remindersEnabled);
-    }
-  }, [remindersEnabled, reminderTime, notificationPermission]);
+    if (!profile) return;
+    setRemindersEnabled(profile.reminderEnabled ?? false);
+    setReminderTime(profile.reminderTime || '21:00');
+    setReminderDays(profile.reminderDays || [1, 2, 3, 4, 5]);
+    setCycleRemindersEnabled(profile.cycleRemindersEnabled ?? true);
+  }, [profile]);
+
+  const saveReminderPrefs = async (patch) => {
+    if (!supabase || !user?.id) return;
+    const { error } = await supabase
+      .from('profiles')
+      .update({ ...patch, updated_at: new Date().toISOString() })
+      .eq('id', user.id);
+    if (error) console.error('Reminder prefs save:', error);
+    else onProfileUpdated?.();
+  };
 
   const handleRequestPermission = () => {
     if (!('Notification' in window)) {
@@ -29,23 +50,39 @@ const SettingsModal = ({ open, onClose, user, entries }) => {
         setNotificationPermission(permission);
         if (permission === 'granted') {
           setRemindersEnabled(true);
+          saveReminderPrefs({ reminder_enabled: true });
         }
       });
     }
   };
 
-  const handleTimeChange = (e) => {
-    const newTime = e.target.value;
+  const handleTimeChange = (newTime) => {
     setReminderTime(newTime);
-    localStorage.setItem('reminderTime', newTime);
+    saveReminderPrefs({ reminder_time: newTime });
   };
 
-  const handleToggleReminders = () => {
-    if (notificationPermission !== 'granted') {
+  const handleDaysChange = (newDays) => {
+    setReminderDays(newDays);
+    saveReminderPrefs({ reminder_days: newDays });
+  };
+
+  const handleToggleReminders = (checked) => {
+    if (checked && notificationPermission !== 'granted') {
       handleRequestPermission();
     } else {
-      setRemindersEnabled((prev) => !prev);
+      setRemindersEnabled(checked);
+      saveReminderPrefs({ reminder_enabled: checked });
     }
+  };
+
+  const handlePaletteChange = (id) => {
+    setPalette(id);
+    applyPalette(id);
+  };
+
+  const handleToggleCycleReminders = (checked) => {
+    setCycleRemindersEnabled(checked);
+    saveReminderPrefs({ cycle_reminders_enabled: checked });
   };
 
   const handleExportPdf = async () => {
@@ -177,37 +214,64 @@ const SettingsModal = ({ open, onClose, user, entries }) => {
 
         <div className="space-y-8">
           <section>
-            <h3 className="mb-3 text-emote-caption font-semibold uppercase tracking-wide text-emote-ink-faint">Daily reminder</h3>
-            {notificationPermission !== 'granted' ? (
-              <div className="emote-banner-info">
-                <p className="mb-1 text-emote-muted font-semibold text-emote-ink">Browser notifications</p>
-                <p className="mb-3 text-emote-muted text-emote-ink/90">Allow notifications for a gentle nudge to journal.</p>
-                <Button type="button" variant="gradient" onClick={handleRequestPermission} className="w-full">
-                  Allow notifications
-                </Button>
-              </div>
-            ) : (
-              <div className="rounded-xl border border-emote-border bg-emote-surface-alt p-4">
-                <div className="flex items-center justify-between gap-3">
-                  <Label htmlFor="reminder-toggle" className="mb-0 text-emote-muted font-medium normal-case tracking-normal text-emote-ink">
-                    Enable daily reminder
+            <h3 className="mb-3 text-emote-caption font-semibold uppercase tracking-wide text-emote-ink-faint">Reminders</h3>
+            <p className="mb-3 text-emote-muted text-emote-ink-faint">One gentle nudge, never more. Skip a day and nothing happens.</p>
+            <div className="space-y-3">
+              <ReminderPrefsFields
+                idPrefix="settings-reminder"
+                enabled={remindersEnabled}
+                onEnabledChange={handleToggleReminders}
+                time={reminderTime}
+                onTimeChange={handleTimeChange}
+                days={reminderDays}
+                onDaysChange={handleDaysChange}
+              />
+              {notificationPermission === 'denied' ? (
+                <p className="text-emote-caption text-emote-accent">
+                  Notifications are blocked for this site in your browser. Allow them in your browser's site settings
+                  to turn reminders on.
+                </p>
+              ) : (
+                <p className="text-emote-caption text-emote-ink-faint">
+                  {notificationPermission === 'granted'
+                    ? 'Browser notifications are on for this device.'
+                    : "Turning this on will ask your browser's permission for notifications."}
+                </p>
+              )}
+              {profile?.sex === 'female' ? (
+                <div className="flex items-center justify-between gap-3 rounded-xl border border-emote-border bg-emote-surface-alt p-4">
+                  <Label htmlFor="cycle-reminder-toggle" className="mb-0 text-emote-muted font-medium normal-case tracking-normal text-emote-ink">
+                    Cycle check-in reminders
                   </Label>
-                  <Switch id="reminder-toggle" checked={remindersEnabled} onCheckedChange={handleToggleReminders} />
+                  <Switch id="cycle-reminder-toggle" checked={cycleRemindersEnabled} onCheckedChange={handleToggleCycleReminders} />
                 </div>
-                {remindersEnabled && (
-                  <div className="mt-4">
-                    <Label htmlFor="reminder-time">Time</Label>
-                    <Input
-                      type="time"
-                      id="reminder-time"
-                      value={reminderTime}
-                      onChange={handleTimeChange}
-                      className="w-auto"
-                    />
-                  </div>
-                )}
-              </div>
-            )}
+              ) : null}
+            </div>
+          </section>
+
+          <section>
+            <h3 className="mb-3 text-emote-caption font-semibold uppercase tracking-wide text-emote-ink-faint">Appearance</h3>
+            <div className="grid grid-cols-3 gap-3">
+              {PALETTES.map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => handlePaletteChange(p.id)}
+                  aria-pressed={palette === p.id}
+                  className={cn(
+                    'rounded-xl border p-3 text-left transition',
+                    palette === p.id ? 'border-emote-accent ring-1 ring-emote-accent' : 'border-emote-border hover:border-emote-border-strong',
+                  )}
+                >
+                  <span className="flex h-12 items-center gap-1.5 rounded-lg px-2.5" style={{ backgroundColor: p.canvas }}>
+                    {p.dots.map((dot, i) => (
+                      <span key={i} className="h-2 w-2 rounded-full" style={{ backgroundColor: dot }} />
+                    ))}
+                  </span>
+                  <span className="mt-2 block text-emote-muted font-medium text-emote-ink">{p.label}</span>
+                </button>
+              ))}
+            </div>
           </section>
 
           <section>

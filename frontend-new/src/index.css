@@ -1,25 +1,45 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Instrument+Serif:ital@0;1&family=Newsreader:ital,wght@0,400;0,500;1,400&display=swap');
 @import './styles/globals.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /**
- * Old-diary theme tokens — warm parchment/cream diary page.
- * RGB triplets (not hex) so Tailwind's `rgb(var(--x) / <alpha-value>)` opacity modifiers work.
+ * Emote design tokens — exact values from the finalized design spec.
+ * RGB triplets (not hex) so Tailwind's `rgb(var(--x) / <alpha-value>)`
+ * opacity modifiers work. Keep this the single source of truth for color —
+ * every component reads these via the emote-* Tailwind classes.
  */
 :root {
-  --emote-canvas: 246 236 217;
-  --emote-surface: 255 250 240;
-  --emote-surface-alt: 241 226 194;
-  --emote-border: 224 201 160;
-  --emote-border-strong: 201 168 108;
-  --emote-ink: 74 50 32;
-  --emote-ink-soft: 122 92 62;
-  --emote-ink-faint: 166 138 99;
-  --emote-accent: 184 114 46;
-  --emote-accent-2: 138 90 43;
-  --emote-gold: 201 151 31;
+  --emote-canvas: 4 4 7; /* --bg #040407 — pitch-black deep space, not warm brown */
+  --emote-surface: 16 16 22; /* --surface #101016 */
+  --emote-surface-alt: 12 12 17; /* --surface-2 #0C0C11 */
+  --emote-band: 9 9 13; /* --band #09090D */
+  --emote-border: 42 42 54; /* --line #2A2A36 — neutral cool-grey, not brown */
+  --emote-border-strong: 62 62 78;
+  --emote-line-soft: 28 28 37; /* --line-soft #1C1C25 */
+  --emote-ink: 242 230 212; /* --text #F2E6D4 */
+  --emote-ink-soft: 205 187 163; /* --text-2 #CDBBA3 */
+  --emote-ink-faint: 168 149 125; /* --muted #A8957D */
+  --emote-ink-faintest: 125 108 89; /* --faint #7D6C59 */
+  --emote-accent: 232 181 122; /* --accent #E8B57A */
+  --emote-accent-2: 232 181 122; /* single accent family — same as --accent */
+  --emote-accent-ink: 42 26 12; /* --accent-ink #2A1A0C — text ON accent, never white */
+  --emote-gold: 240 163 94; /* reuse as warm highlight / hover tone */
+  --emote-warm: 240 163 94; /* --warm #F0A35E — lighter days */
+  --emote-cool: 143 179 217; /* --cool #8FB3D9 — heavier days */
+  --emote-rose: 217 144 154; /* --rose #D9909A — cycle / period */
+
+  /* Real star colors, by spectral class, for the decorative Starfield —
+     weighted toward the blue-white/white stars that dominate a naked-eye
+     sky, with rarer gold/orange/red giants for variety. Not theme accents:
+     these stay fixed across all three Appearance palettes below. */
+  --star-blue: 155 176 255; /* O/B type — hot blue-white */
+  --star-blue-white: 202 215 255; /* A type */
+  --star-white: 248 247 255; /* A/F type */
+  --star-yellow-white: 255 244 234; /* F/G type, sun-like */
+  --star-orange: 255 210 161; /* K type */
+  --star-red: 255 170 120; /* M type — red/orange giant */
 
   /* shadcn/ui standard tokens — bridged onto the values above so ported
      component source (button, card, dialog, etc.) works unmodified. */
@@ -30,25 +50,54 @@
   --popover: var(--emote-surface);
   --popover-foreground: var(--emote-ink);
   --primary: var(--emote-accent);
-  --primary-foreground: var(--emote-surface);
+  --primary-foreground: var(--emote-accent-ink);
   --secondary: var(--emote-surface-alt);
   --secondary-foreground: var(--emote-ink);
   --muted: var(--emote-surface-alt);
   --muted-foreground: var(--emote-ink-soft);
   --accent: var(--emote-surface-alt);
   --accent-foreground: var(--emote-ink);
-  --destructive: 159 18 57;
-  --destructive-foreground: 253 244 246;
+  --destructive: 194 102 90; /* --danger #C2665A */
+  --destructive-foreground: 253 240 230;
   --border: var(--emote-border);
   --input: var(--emote-border);
   --ring: var(--emote-accent);
   --radius: 1rem;
 }
 
+/**
+ * Alternate accent palettes — same warm ink/accent family, different
+ * canvas/surface/border neutrals, so the whole app re-themes from a single
+ * `data-palette` attribute on <html> (see lib/palettePreference.js and the
+ * blocking script in public/index.html that sets it before first paint).
+ * Galaxy (pitch-black) is the default and lives on the bare :root above.
+ */
+:root[data-palette='indigo'] {
+  --emote-canvas: 12 14 26;
+  --emote-surface: 18 21 36;
+  --emote-surface-alt: 26 30 50;
+  --emote-border: 42 48 74;
+  --emote-border-strong: 64 72 106;
+  --emote-ink: 228 230 240;
+  --emote-ink-soft: 168 174 200;
+  --emote-ink-faint: 118 124 152;
+}
+
+:root[data-palette='moss'] {
+  --emote-canvas: 13 17 14;
+  --emote-surface: 19 24 20;
+  --emote-surface-alt: 27 34 28;
+  --emote-border: 42 52 44;
+  --emote-border-strong: 64 78 66;
+  --emote-ink: 227 232 222;
+  --emote-ink-soft: 172 184 168;
+  --emote-ink-faint: 120 132 118;
+}
+
 @layer base {
   html {
     @apply antialiased;
-    color-scheme: light;
+    color-scheme: dark;
     --dialog-center-offset: 0px;
     font-size: 15px;
   }
@@ -56,36 +105,65 @@
     @apply min-h-screen bg-emote-canvas font-sans text-emote-body text-emote-ink transition-colors duration-300;
     font-family: 'Inter', system-ui, sans-serif;
   }
+  /* Instrument Serif ships ONLY a regular (400) weight, plus italic. It has
+     no bold — font-weight:400 plus font-synthesis:none here stops browsers
+     from faking a bold (which is what made headings look heavy/wrong), even
+     if a component still carries a stray font-semibold/font-bold class. */
   h1,
   h2,
   h3 {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-weight: 400;
+    font-synthesis-weight: none;
   }
-}
-
-/* The dashboard's sidebar (w-64, lg+ only) is fixed chrome that a
-   centered dialog should center against, not the raw viewport — otherwise
-   the modal looks shifted toward the sidebar. AppShell toggles
-   `html.has-sidebar` while mounted; see dialog.jsx / alert-dialog.jsx. */
-@media (min-width: 1024px) {
-  html.has-sidebar {
-    --dialog-center-offset: 120px;
+  /* Same guard for any non-heading element using the display face via the
+     `font-display` utility (card titles, logo wordmark, big stat numbers). */
+  .font-display {
+    font-weight: 400;
+    font-synthesis-weight: none;
   }
 }
 
 @layer components {
-  /* Soft warm wash on parchment/leather */
+  /* Night sky: a faint scatter of stars plus a soft ember wash, over the
+     near-black canvas. Pure CSS (no image assets) so it scales/tiles free. */
   .emote-mesh {
-    @apply pointer-events-none fixed inset-0 -z-10;
-    background:
-      radial-gradient(ellipse 90% 70% at 50% -30%, rgb(var(--emote-gold) / 0.14), transparent 55%),
-      radial-gradient(ellipse 45% 45% at 100% 10%, rgb(var(--emote-accent) / 0.1), transparent),
-      radial-gradient(ellipse 50% 50% at 0% 90%, rgb(var(--emote-accent-2) / 0.08), transparent);
+    @apply pointer-events-none fixed inset-0 z-0 bg-emote-canvas;
+    background-image:
+      radial-gradient(ellipse 90% 60% at 50% -20%, rgb(var(--emote-gold) / 0.1), transparent 55%),
+      radial-gradient(ellipse 45% 45% at 100% 10%, rgb(var(--emote-accent) / 0.08), transparent),
+      radial-gradient(ellipse 50% 50% at 0% 95%, rgb(var(--emote-accent-2) / 0.07), transparent),
+      radial-gradient(1px 1px at 10% 15%, rgb(var(--star-white) / 0.6), transparent),
+      radial-gradient(1px 1px at 25% 60%, rgb(var(--star-blue-white) / 0.45), transparent),
+      radial-gradient(1.5px 1.5px at 40% 25%, rgb(var(--star-white) / 0.6), transparent),
+      radial-gradient(1px 1px at 60% 75%, rgb(var(--star-blue) / 0.4), transparent),
+      radial-gradient(1px 1px at 75% 10%, rgb(var(--star-yellow-white) / 0.5), transparent),
+      radial-gradient(1.5px 1.5px at 88% 45%, rgb(var(--star-white) / 0.55), transparent),
+      radial-gradient(1px 1px at 95% 85%, rgb(var(--star-orange) / 0.4), transparent),
+      radial-gradient(1px 1px at 15% 90%, rgb(var(--star-blue-white) / 0.4), transparent),
+      radial-gradient(1px 1px at 50% 50%, rgb(var(--star-white) / 0.35), transparent);
+    background-size:
+      100% 100%,
+      100% 100%,
+      100% 100%,
+      600px 600px,
+      600px 600px,
+      600px 600px,
+      600px 600px,
+      600px 600px,
+      600px 600px,
+      600px 600px,
+      600px 600px,
+      600px 600px;
+    background-repeat: no-repeat, no-repeat, no-repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat,
+      repeat;
   }
 
-  /* Title text — solid sienna */
+  /* Title text — Instrument Serif, regular weight only (it has no bold). */
   .emote-title-gradient {
-    @apply font-display font-semibold tracking-tight text-emote-accent-2;
+    @apply font-display tracking-tight text-emote-ink;
+    font-weight: 400;
+    font-synthesis-weight: none;
   }
 
   /* Alert / banner base */
@@ -97,9 +175,11 @@
     @apply rounded-2xl border border-rose-800/30 bg-rose-800/10 px-4 py-3 text-emote-muted text-emote-ink shadow-sm;
   }
 
-  /* Main column in dashboard: fills space; scroll lives on .emote-main-scroll only */
+  /* Main column in dashboard: fills space; scroll lives on .emote-main-scroll only.
+     No bg of its own — left transparent so the fixed starfield (.emote-mesh,
+     painted behind the whole shell) shows through instead of being covered. */
   .emote-main-canvas {
-    @apply relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-emote-canvas;
+    @apply relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden;
   }
 
   /* Logged-in main column: same type scale as shell */

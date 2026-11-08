@@ -11,7 +11,7 @@ const SheetClose = DialogPrimitive.Close;
 const SheetOverlay = React.forwardRef(({ className, ...props }, ref) => (
   <DialogPrimitive.Overlay
     ref={ref}
-    className={cn('fixed inset-0 z-40 bg-emote-ink/40 backdrop-blur-sm', className)}
+    className={cn('fixed inset-0 z-40 bg-black/60', className)}
     {...props}
   />
 ));

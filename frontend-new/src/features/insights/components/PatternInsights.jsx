@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { TrendingUp, TrendingDown, Sparkles, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { TrendingUp, TrendingDown, Sparkles } from 'lucide-react';
 import { detectPatterns } from '../../../lib/patternAnalysis';
 import { fetchPatternFeedback, submitPatternFeedback, retractPatternFeedback } from '../../../lib/patternFeedback';
 import { cn } from '../../../lib/utils';
@@ -7,8 +7,8 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../..
 import EmptyState from '../../../components/shared/EmptyState';
 
 const SEVERITY_STYLES = {
-  notice: { icon: TrendingDown, badge: 'bg-[#a8432f]/10 text-[#a8432f] ring-[#a8432f]/30' },
-  positive: { icon: TrendingUp, badge: 'bg-[#3f8f5f]/10 text-[#3f8f5f] ring-[#3f8f5f]/30' },
+  notice: { icon: TrendingDown, badge: 'bg-[#C2665A]/10 text-[#C2665A] ring-[#C2665A]/30' },
+  positive: { icon: TrendingUp, badge: 'bg-emote-accent/10 text-emote-accent ring-emote-accent/30' },
   info: { icon: Sparkles, badge: 'bg-emote-accent/10 text-emote-accent-2 ring-emote-accent/30' },
 };
 
@@ -25,7 +25,8 @@ const TYPE_LABELS = {
   activity: 'Activity',
 };
 
-const VOTE_BUTTON = 'rounded-lg p-1.5 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50';
+const VOTE_BUTTON =
+  'rounded-full border px-3 py-1 text-emote-caption font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50';
 
 /**
  * Uses the full history (not the range picker) — trend detection needs
@@ -78,11 +79,10 @@ const PatternInsights = ({ entries, user }) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Patterns</CardTitle>
+        <CardTitle>Patterns worth a look</CardTitle>
         <CardDescription>
           Statistical patterns from your own entries over time — trend, recurring themes, and timing. Each one only
-          shows once there's enough data behind it. Vote on whether an insight is useful — that's what tells us which
-          ones are actually worth surfacing.
+          shows once there's enough data behind it.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -110,37 +110,38 @@ const PatternInsights = ({ entries, user }) => {
                     <p className="mt-0.5 text-emote-muted leading-relaxed text-muted-foreground">{pattern.description}</p>
                   </div>
                   {user?.id ? (
-                    <div className="flex shrink-0 items-center gap-1" role="group" aria-label="Was this pattern useful?">
-                      <button
-                        type="button"
-                        disabled={pendingId === pattern.id}
-                        onClick={() => handleVote(pattern, 'up')}
-                        aria-pressed={verdict === 'up'}
-                        title="Useful"
-                        className={cn(
-                          VOTE_BUTTON,
-                          verdict === 'up'
-                            ? 'bg-[#3f8f5f]/15 text-[#3f8f5f]'
-                            : 'text-emote-ink-faint hover:bg-[#3f8f5f]/10 hover:text-[#3f8f5f]',
-                        )}
-                      >
-                        <ThumbsUp className="h-4 w-4" aria-hidden />
-                      </button>
-                      <button
-                        type="button"
-                        disabled={pendingId === pattern.id}
-                        onClick={() => handleVote(pattern, 'down')}
-                        aria-pressed={verdict === 'down'}
-                        title="Not useful"
-                        className={cn(
-                          VOTE_BUTTON,
-                          verdict === 'down'
-                            ? 'bg-[#a8432f]/15 text-[#a8432f]'
-                            : 'text-emote-ink-faint hover:bg-[#a8432f]/10 hover:text-[#a8432f]',
-                        )}
-                      >
-                        <ThumbsDown className="h-4 w-4" aria-hidden />
-                      </button>
+                    <div className="flex shrink-0 flex-col items-end gap-1.5" role="group" aria-label="Was this pattern useful?">
+                      <span className="text-emote-caption text-emote-ink-faint">Useful?</span>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          disabled={pendingId === pattern.id}
+                          onClick={() => handleVote(pattern, 'up')}
+                          aria-pressed={verdict === 'up'}
+                          className={cn(
+                            VOTE_BUTTON,
+                            verdict === 'up'
+                              ? 'border-emote-accent bg-emote-accent-2 text-primary-foreground'
+                              : 'border-border text-emote-ink-soft hover:border-emote-border-strong',
+                          )}
+                        >
+                          Yes
+                        </button>
+                        <button
+                          type="button"
+                          disabled={pendingId === pattern.id}
+                          onClick={() => handleVote(pattern, 'down')}
+                          aria-pressed={verdict === 'down'}
+                          className={cn(
+                            VOTE_BUTTON,
+                            verdict === 'down'
+                              ? 'border-emote-border-strong bg-emote-surface-alt text-emote-ink'
+                              : 'border-border text-emote-ink-soft hover:border-emote-border-strong',
+                          )}
+                        >
+                          Not really
+                        </button>
+                      </div>
                     </div>
                   ) : null}
                 </li>

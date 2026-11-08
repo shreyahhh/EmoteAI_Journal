@@ -8,14 +8,14 @@ import { getCreatedAtDate, toLocalDateKey } from '../../../lib/entryDates';
 import { cn } from '../../../lib/utils';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../../components/ui/card';
 
-const chartMuted = '#7a5c3e';
-const chartGrid = '#e0c9a0';
+const chartMuted = '#CDBBA3';
+const chartGrid = '#2A2A36';
 const RECENT_ENTRIES = 30; // how far back to look for entries that differ from the usual
 const SHOWN_FLAGGED = 4;
 
 const VERDICT = {
-  'lower-than-usual': { label: 'Lower than usual for this point in your cycle', className: 'bg-[#a8432f]/10 text-[#a8432f]' },
-  'higher-than-usual': { label: 'Higher than usual for this point in your cycle', className: 'bg-[#3f8f5f]/10 text-[#3f8f5f]' },
+  'lower-than-usual': { label: 'Lower than usual for this point in your cycle', className: 'bg-[#D9909A]/10 text-[#D9909A]' },
+  'higher-than-usual': { label: 'Higher than usual for this point in your cycle', className: 'bg-[#F0A35E]/10 text-[#F0A35E]' },
 };
 
 const phaseMeta = Object.fromEntries(PHASES.map((p) => [p.id, p]));
@@ -49,9 +49,9 @@ function RangeChart({ data, xKey, spans, markerX }) {
             contentStyle={{ borderRadius: '12px', border: `1px solid ${chartGrid}` }}
           />
           <ReferenceLine y={0} stroke={chartGrid} />
-          {markerX != null ? <ReferenceLine x={markerX} stroke="#a8432f" strokeDasharray="4 3" label={{ value: 'Today', fill: '#a8432f', fontSize: 11, position: 'top' }} /> : null}
-          <Area type="monotone" dataKey="band" stroke="none" fill="#a68a63" fillOpacity={0.25} isAnimationActive={false} />
-          <Line type="monotone" dataKey="expected" stroke="#7a5c3e" strokeWidth={2} dot={false} isAnimationActive={false} />
+          {markerX != null ? <ReferenceLine x={markerX} stroke="#D9909A" strokeDasharray="4 3" label={{ value: 'Today', fill: '#D9909A', fontSize: 11, position: 'top' }} /> : null}
+          <Area type="monotone" dataKey="band" stroke="none" fill="#4A3C30" fillOpacity={0.25} isAnimationActive={false} />
+          <Line type="monotone" dataKey="expected" stroke="#CDBBA3" strokeWidth={2} dot={false} isAnimationActive={false} />
         </ComposedChart>
       </ResponsiveContainer>
     </div>

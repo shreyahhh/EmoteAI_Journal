@@ -2,12 +2,16 @@
 
 export const MOOD_KEYS = ['happy', 'sad', 'angry', 'anxious', 'neutral'];
 
+// Matches the app's token palette (index.css): warm = lighter/positive,
+// cool = heavier, destructive = anger, a soft violet (shared with the Cycle
+// page's "luteal" phase color) for anxious, and muted ink for neutral — no
+// stray greens or mustard outside that set.
 export const MOOD_COLORS = {
-  happy: '#3f8f5f',
-  sad: '#5b7a9c',
-  angry: '#a8432f',
-  anxious: '#c98a1f',
-  neutral: '#a68a63',
+  happy: '#F0A35E',
+  sad: '#8FB3D9',
+  angry: '#C2665A',
+  anxious: '#A896D6',
+  neutral: '#A8957D',
 };
 
 export function getMoodColor(mood) {
@@ -27,10 +31,10 @@ export function getMoodEmoji(mood) {
 }
 
 export const MOOD_TAG_STYLES = {
-  happy: 'bg-[#3f8f5f]/10 text-[#3f8f5f] ring-[#3f8f5f]/30',
-  sad: 'bg-[#5b7a9c]/10 text-[#5b7a9c] ring-[#5b7a9c]/30',
-  angry: 'bg-[#a8432f]/10 text-[#a8432f] ring-[#a8432f]/30',
-  anxious: 'bg-[#c98a1f]/10 text-[#c98a1f] ring-[#c98a1f]/30',
+  happy: 'bg-[#F0A35E]/10 text-[#F0A35E] ring-[#F0A35E]/30',
+  sad: 'bg-[#8FB3D9]/10 text-[#8FB3D9] ring-[#8FB3D9]/30',
+  angry: 'bg-[#C2665A]/10 text-[#C2665A] ring-[#C2665A]/30',
+  anxious: 'bg-[#A896D6]/10 text-[#A896D6] ring-[#A896D6]/30',
   neutral: 'bg-emote-surface-alt text-emote-ink-soft ring-emote-border',
 };
 

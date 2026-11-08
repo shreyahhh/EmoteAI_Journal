@@ -16,6 +16,7 @@ import { getCreatedAtDate } from '../../../lib/entryDates';
 import { buildMoodBuckets, filterEntriesByRange, moodValence } from '../../../lib/moodBuckets';
 import { getWeeklySummary } from '../../../lib/gemini';
 import { getMoodColor, MOOD_COLORS, ACTIVITY_CHART_NAMES } from '../../../lib/moodMeta';
+import { useIsNarrow } from '../../../lib/useIsNarrow';
 import { cn } from '../../../lib/utils';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../../components/ui/card';
 import { Tabs, TabsList, TabsTrigger } from '../../../components/ui/tabs';
@@ -105,7 +106,7 @@ const WeeklySummary = ({ entries }) => {
             'Generate summary'
           )}
         </Button>
-        {error && <p className="mt-4 text-center text-emote-muted font-medium text-[#a8432f]">{error}</p>}
+        {error && <p className="mt-4 text-center text-emote-muted font-medium text-[#C2665A]">{error}</p>}
         {summary && (
           <div className="mt-6 space-y-6 border-t border-emote-border pt-6 animate-fade-in">
             <div>
@@ -176,9 +177,9 @@ const StackedMoodTooltip = ({ active, payload, label }) => {
  * attributes, which don't resolve CSS custom properties), so they're defined here. */
 function getChartPalette() {
   return {
-    muted: '#7a5c3e',
-    grid: '#e0c9a0',
-    legend: '#7a5c3e',
+    muted: '#CDBBA3',
+    grid: '#2A2A36',
+    legend: '#CDBBA3',
   };
 }
 
@@ -249,8 +250,8 @@ const ActivityMoodChart = ({ entries }) => {
 };
 
 const THEME_TONE_STYLES = [
-  { test: (v) => v >= 2, className: 'from-[#3f8f5f] to-[#3f8f5f]/70', label: 'text-[#3f8f5f]' },
-  { test: (v) => v <= -2, className: 'from-[#a8432f] to-[#a8432f]/70', label: 'text-[#a8432f]' },
+  { test: (v) => v >= 2, className: 'from-emote-accent to-emote-accent/70', label: 'text-emote-accent' },
+  { test: (v) => v <= -2, className: 'from-[#C2665A] to-[#C2665A]/70', label: 'text-[#C2665A]' },
 ];
 
 const ThemeBreakdown = ({ entries }) => {
@@ -326,6 +327,17 @@ const MoodTrendSection = ({ entries, range }) => {
   const scoped = useMemo(() => filterEntriesByRange(entries, range), [entries, range]);
   const buckets = useMemo(() => buildMoodBuckets(scoped, range), [scoped, range]);
   const { muted: chartMuted, grid: gridLight, legend: legendColor } = getChartPalette();
+  const isNarrow = useIsNarrow();
+  const angleTicks = isNarrow || range === 'month';
+  const xAxisProps = {
+    dataKey: 'label',
+    stroke: chartMuted,
+    tick: { fill: chartMuted, fontSize: isNarrow ? 9 : 10 },
+    interval: isNarrow ? 'preserveStartEnd' : 0,
+    angle: angleTicks ? -40 : 0,
+    textAnchor: angleTicks ? 'end' : 'middle',
+    height: angleTicks ? 56 : 32,
+  };
 
   return (
     <div className="space-y-8">
@@ -340,17 +352,9 @@ const MoodTrendSection = ({ entries, range }) => {
         <CardContent>
           <div className="h-[320px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={buckets} margin={{ top: 8, right: 12, left: -8, bottom: range === 'month' ? 48 : 8 }}>
+              <BarChart data={buckets} margin={{ top: 8, right: 8, left: -8, bottom: angleTicks ? 48 : 8 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke={gridLight} />
-                <XAxis
-                  dataKey="label"
-                  stroke={chartMuted}
-                  tick={{ fill: chartMuted, fontSize: 10 }}
-                  interval={0}
-                  angle={range === 'month' ? -18 : 0}
-                  textAnchor={range === 'month' ? 'end' : 'middle'}
-                  height={range === 'month' ? 56 : 32}
-                />
+                <XAxis {...xAxisProps} />
                 <YAxis stroke={chartMuted} tick={{ fill: chartMuted, fontSize: 11 }} allowDecimals={false} />
                 <Tooltip content={<StackedMoodTooltip />} />
                 <Legend wrapperStyle={{ fontSize: 12, color: legendColor }} />
@@ -375,17 +379,9 @@ const MoodTrendSection = ({ entries, range }) => {
         <CardContent>
           <div className="h-[280px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={buckets} margin={{ top: 8, right: 12, left: -8, bottom: range === 'month' ? 48 : 8 }}>
+              <LineChart data={buckets} margin={{ top: 8, right: 8, left: -8, bottom: angleTicks ? 48 : 8 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke={gridLight} />
-                <XAxis
-                  dataKey="label"
-                  stroke={chartMuted}
-                  tick={{ fill: chartMuted, fontSize: 10 }}
-                  interval={0}
-                  angle={range === 'month' ? -18 : 0}
-                  textAnchor={range === 'month' ? 'end' : 'middle'}
-                  height={range === 'month' ? 56 : 32}
-                />
+                <XAxis {...xAxisProps} />
                 <YAxis stroke={chartMuted} tick={{ fill: chartMuted, fontSize: 11 }} domain={[-10, 10]} />
                 <Tooltip
                   formatter={(v) => (v == null ? '—' : v)}
@@ -396,17 +392,138 @@ const MoodTrendSection = ({ entries, range }) => {
                   type="monotone"
                   dataKey="avgSentiment"
                   name="Avg tone"
-                  stroke="#b8722e"
+                  stroke="#E8B57A"
                   strokeWidth={2}
                   connectNulls
-                  dot={{ r: 4, fill: '#b8722e' }}
-                  activeDot={{ r: 7, fill: '#c9971f' }}
+                  dot={{ r: 4, fill: '#E8B57A' }}
+                  activeDot={{ r: 7, fill: '#F0A35E' }}
                 />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </CardContent>
       </Card>
+    </div>
+  );
+};
+
+const WEEKDAY_LABELS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+
+const WeekdayBreakdown = ({ entries }) => {
+  const days = useMemo(() => {
+    const buckets = Array.from({ length: 7 }, () => []);
+    entries.forEach((entry) => {
+      const d = getCreatedAtDate(entry);
+      if (!d) return;
+      buckets[d.getDay()].push(moodValence(entry));
+    });
+    return buckets.map((values, i) => ({
+      label: WEEKDAY_LABELS[i],
+      avg: values.length ? values.reduce((s, v) => s + v, 0) / values.length : null,
+      count: values.length,
+    }));
+  }, [entries]);
+
+  const withData = days.filter((d) => d.avg != null);
+  if (withData.length < 2) return null;
+
+  const maxAbs = Math.max(1, ...withData.map((d) => Math.abs(d.avg)));
+  const heaviest = withData.reduce((a, b) => (b.avg < a.avg ? b : a));
+  const lightest = withData.reduce((a, b) => (b.avg > a.avg ? b : a));
+  const dayName = (label, idx) => ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][idx];
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>By day of the week</CardTitle>
+        <CardDescription>Average tone for entries written on each weekday, across your whole history.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="flex h-32 items-end gap-3 sm:gap-4">
+          {days.map((d, i) => {
+            const height = d.avg == null ? 4 : Math.max(8, (Math.abs(d.avg) / maxAbs) * 100);
+            const positive = (d.avg ?? 0) >= 0;
+            return (
+              <div key={i} className="flex flex-1 flex-col items-center gap-2">
+                <div
+                  className={cn('w-full max-w-10 rounded-md', d.avg == null ? 'bg-emote-surface-alt' : positive ? 'bg-emote-accent' : 'bg-[#8FB3D9]')}
+                  style={{ height: `${height}px` }}
+                  title={d.avg != null ? `${dayName(d.label, i)}: ${d.avg.toFixed(1)} avg (${d.count} entries)` : 'No entries'}
+                />
+                <span className="text-emote-caption text-emote-ink-faint">{d.label}</span>
+              </div>
+            );
+          })}
+        </div>
+        <p className="mt-4 text-emote-muted text-emote-ink-faint">
+          {dayName(heaviest.label, days.indexOf(heaviest))} runs heaviest for you, {dayName(lightest.label, days.indexOf(lightest))} lightest.
+        </p>
+      </CardContent>
+    </Card>
+  );
+};
+
+const CommonTraits = ({ entries }) => {
+  const { lighter, heavier } = useMemo(() => {
+    const lighterDays = entries.filter((e) => moodValence(e) >= 0);
+    const heavierDays = entries.filter((e) => moodValence(e) < 0);
+    const tally = (list) => {
+      const counts = {};
+      list.forEach((e) => {
+        const tags = [...(e.themes || []), ...(e.activities || []).map((a) => ACTIVITY_CHART_NAMES[a] || a)];
+        new Set(tags).forEach((t) => {
+          counts[t] = (counts[t] || 0) + 1;
+        });
+      });
+      return Object.entries(counts)
+        .map(([name, count]) => ({ name, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 3);
+    };
+    return {
+      lighter: { total: lighterDays.length, rows: tally(lighterDays) },
+      heavier: { total: heavierDays.length, rows: tally(heavierDays) },
+    };
+  }, [entries]);
+
+  if (lighter.rows.length === 0 && heavier.rows.length === 0) return null;
+
+  const renderColumn = (title, data, barClass) => (
+    <Card>
+      <CardHeader>
+        <CardTitle className={barClass}>{title}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {data.rows.length === 0 ? (
+          <p className="text-emote-muted text-emote-ink-faint">Not enough entries yet.</p>
+        ) : (
+          <div className="space-y-3">
+            {data.rows.map((row) => (
+              <div key={row.name}>
+                <div className="flex items-center justify-between text-emote-muted">
+                  <span className="font-medium text-emote-ink">{row.name}</span>
+                  <span className="text-emote-ink-faint">
+                    on {row.count} of {data.total} days
+                  </span>
+                </div>
+                <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-emote-surface-alt">
+                  <div
+                    className={cn('h-full rounded-full', barClass === 'text-emote-accent' ? 'bg-emote-accent' : 'bg-[#8FB3D9]')}
+                    style={{ width: `${(row.count / data.total) * 100}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+
+  return (
+    <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+      {renderColumn('Your lighter days had in common', lighter, 'text-emote-accent')}
+      {renderColumn('Your heavier days had in common', heavier, 'text-[#8FB3D9]')}
     </div>
   );
 };
@@ -452,15 +569,13 @@ const InsightsDashboard = ({ entries, user }) => {
 
   return (
     <div className="space-y-8">
-      <PatternInsights entries={entries} user={user} />
-
       <WeeklySummary entries={entries} />
 
       <Card>
         <CardContent className="pt-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <CardTitle>Mood analytics</CardTitle>
+              <CardTitle>How the days felt</CardTitle>
               <CardDescription className="mt-1">
                 Switch the window to see week-by-day, rolling weeks, or year-by-month patterns.
               </CardDescription>
@@ -479,6 +594,12 @@ const InsightsDashboard = ({ entries, user }) => {
       </Card>
 
       <MoodTrendSection entries={entries} range={range} />
+
+      <CommonTraits entries={scopedEntries} />
+
+      <WeekdayBreakdown entries={entries} />
+
+      <PatternInsights entries={entries} user={user} />
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
         <Card>
@@ -526,10 +647,10 @@ const InsightsDashboard = ({ entries, user }) => {
                     type="monotone"
                     dataKey="score"
                     name="Sentiment"
-                    stroke="#b8722e"
+                    stroke="#E8B57A"
                     strokeWidth={2}
-                    dot={{ r: 3, fill: '#b8722e' }}
-                    activeDot={{ r: 6, fill: '#c9971f' }}
+                    dot={{ r: 3, fill: '#E8B57A' }}
+                    activeDot={{ r: 6, fill: '#F0A35E' }}
                     connectNulls
                   />
                 </LineChart>

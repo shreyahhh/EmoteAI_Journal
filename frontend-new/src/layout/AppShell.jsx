@@ -1,14 +1,13 @@
 import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import Sidebar from './Sidebar';
-import MobileHeader from './MobileHeader';
-import MobileNavSheet from './MobileNavSheet';
+import TopBar from './TopBar';
+import NavDrawer from './NavDrawer';
 
 export default function AppShell({
-  navTabs,
+  primaryTabs,
+  secondaryTabs,
   activeTab,
   onSelectTab,
-  email,
   onOpenSettings,
   onLogout,
   mobileNavOpen,
@@ -18,32 +17,15 @@ export default function AppShell({
   headerExtra,
   children,
 }) {
-  // The sidebar (lg+ only) is fixed chrome — let centered dialogs/alerts
-  // center against the remaining content area instead of the raw viewport.
-  // See the `--dialog-center-offset` rule in index.css.
-  React.useEffect(() => {
-    document.documentElement.classList.add('has-sidebar');
-    return () => document.documentElement.classList.remove('has-sidebar');
-  }, []);
-
   return (
-    <div className="relative flex h-[100dvh] max-h-[100dvh] w-full flex-col overflow-hidden bg-background text-foreground lg:flex-row">
+    <div className="relative flex h-[100dvh] max-h-[100dvh] w-full flex-col overflow-hidden bg-background text-foreground">
       <div className="emote-mesh" aria-hidden />
 
-      <Sidebar
-        navTabs={navTabs}
-        activeTab={activeTab}
-        onSelect={onSelectTab}
-        email={email}
-        onOpenSettings={onOpenSettings}
-        onLogout={onLogout}
-      />
-
-      <div className="emote-main-canvas min-w-0 pt-14 lg:pt-0">
+      <div className="emote-main-canvas min-w-0 pt-14">
         <div className="emote-main-scroll">
           <header className="mb-6 border-b border-border pb-5 lg:mb-8">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="text-emote-page font-semibold tracking-tight text-foreground">{title}</h2>
+              <h2 className="font-display text-emote-page font-semibold tracking-tight text-foreground">{title}</h2>
               {headerExtra}
             </div>
             <p className="mt-2 max-w-2xl text-emote-muted leading-relaxed text-muted-foreground">{subtitle}</p>
@@ -62,15 +44,15 @@ export default function AppShell({
         </div>
       </div>
 
-      <MobileHeader onOpenMenu={() => onMobileNavOpenChange(true)} onOpenSettings={onOpenSettings} />
+      <TopBar onOpenMenu={() => onMobileNavOpenChange(true)} onOpenSettings={onOpenSettings} label={title} />
 
-      <MobileNavSheet
+      <NavDrawer
         open={mobileNavOpen}
         onOpenChange={onMobileNavOpenChange}
-        navTabs={navTabs}
+        primaryTabs={primaryTabs}
+        secondaryTabs={secondaryTabs}
         activeTab={activeTab}
         onSelect={onSelectTab}
-        email={email}
         onOpenSettings={onOpenSettings}
         onLogout={onLogout}
       />

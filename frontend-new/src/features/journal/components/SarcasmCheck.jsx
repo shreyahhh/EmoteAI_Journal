@@ -84,7 +84,7 @@ function Questions({ entry, lines, onAnswered }) {
           type="checkbox"
           checked={share}
           onChange={(e) => toggleShare(e.target.checked)}
-          className="mt-0.5 h-3.5 w-3.5 rounded border-input"
+          className="mt-0.5 h-3.5 w-3.5 rounded border-input accent-[rgb(var(--emote-accent))]"
         />
         <span>Let my answers help improve the sarcasm detector. Off by default; your entries stay private.</span>
       </label>

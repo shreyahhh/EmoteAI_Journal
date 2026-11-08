@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent } from '../ui/card';
 import { cn } from '../../lib/utils';
 
-/** The "nothing here yet" panel repeated across Insights/Entries/Timeline/Goals. */
+/** The "nothing here yet" panel repeated across Insights/Entries/Goals. */
 export default function EmptyState({ title, description, className, children }) {
   return (
     <Card className={cn('text-center', className)}>

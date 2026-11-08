@@ -5,6 +5,7 @@ import LandingPage from './features/landing/components/LandingPage';
 import AuthPage from './features/auth/components/AuthPage';
 import Dashboard from './features/dashboard/Dashboard';
 import ResetPasswordPage from './features/auth/components/ResetPasswordPage';
+import ErrorBoundary from './components/shared/ErrorBoundary';
 
 export default function App() {
   const [user, setUser] = React.useState(null);
@@ -56,18 +57,22 @@ export default function App() {
     return <LoadingScreen />;
   }
 
-  switch (page) {
-    case 'landing':
-      return <LandingPage navigateTo={navigateTo} />;
-    case 'signup':
-      return <AuthPage isLogin={false} navigateTo={navigateTo} />;
-    case 'reset-password':
-      return <ResetPasswordPage onDone={() => navigateTo(user ? 'dashboard' : 'login')} />;
-    case 'dashboard':
-      return user ? <Dashboard user={user} /> : <AuthPage isLogin navigateTo={navigateTo} />;
-    case 'login':
-      return <AuthPage isLogin navigateTo={navigateTo} />;
-    default:
-      return <LandingPage navigateTo={navigateTo} />;
-  }
+  const renderPage = () => {
+    switch (page) {
+      case 'landing':
+        return <LandingPage navigateTo={navigateTo} />;
+      case 'signup':
+        return <AuthPage isLogin={false} navigateTo={navigateTo} />;
+      case 'reset-password':
+        return <ResetPasswordPage onDone={() => navigateTo(user ? 'dashboard' : 'login')} />;
+      case 'dashboard':
+        return user ? <Dashboard user={user} /> : <AuthPage isLogin navigateTo={navigateTo} />;
+      case 'login':
+        return <AuthPage isLogin navigateTo={navigateTo} />;
+      default:
+        return <LandingPage navigateTo={navigateTo} />;
+    }
+  };
+
+  return <ErrorBoundary resetKey={page}>{renderPage()}</ErrorBoundary>;
 }
