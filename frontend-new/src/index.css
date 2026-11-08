@@ -209,6 +209,21 @@ button {
   font-family: inherit;
 }
 
+/* Chrome/Edge paint autofilled fields with their own pale blue/yellow fill,
+   ignoring the app's background-color entirely — this is the usual reason a
+   "dark" text field still looks blue. Pushing the real background in via an
+   absurdly large inset shadow (the standard workaround; `background-color`
+   alone cannot override it) keeps autofilled inputs on-theme. */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: rgb(var(--emote-ink));
+  -webkit-box-shadow: 0 0 0px 1000px rgb(var(--emote-surface)) inset;
+  box-shadow: 0 0 0px 1000px rgb(var(--emote-surface)) inset;
+  caret-color: rgb(var(--emote-ink));
+  transition: background-color 9999s ease-in-out 0s;
+}
+
 a {
   @apply text-emote-accent no-underline transition-colors hover:text-emote-gold;
 }
