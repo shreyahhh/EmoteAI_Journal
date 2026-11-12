@@ -20,7 +20,9 @@
     "d3-scale": "^4.0.2",
     "d3-shape": "^3.2.0",
     "framer-motion": "^13.1.1",
+    "gsap": "^3.15.1",
     "jspdf": "^4.2.1",
+    "lenis": "^1.3.27",
     "lucide-react": "^1.38.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -45,7 +47,10 @@
   "jest": {
     "moduleNameMapper": {
       "^@radix-ui/primitive/is-development$": "<rootDir>/node_modules/@radix-ui/primitive/dist/internal/is-development.false.js"
-    }
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!(gsap|lenis)/)"
+    ]
   },
   "browserslist": {
     "production": [

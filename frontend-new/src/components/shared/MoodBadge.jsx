@@ -1,9 +1,9 @@
 import React from 'react';
 import { Badge } from '../ui/badge';
-import { getMoodEmoji, getMoodTagStyle } from '../../lib/moodMeta';
+import { getMoodEmoji, getMoodTagStyle } from '../../lib/models/moodMeta';
 import { cn } from '../../lib/utils';
 
-/** Mood-keyed badge — colors come from lib/moodMeta so every mood tag in the
+/** Mood-keyed badge — colors come from lib/models/moodMeta so every mood tag in the
  * app (entry cards, entries list) stays visually consistent. */
 export default function MoodBadge({ mood, showEmoji = false, className, ...props }) {
   const label = (mood || 'neutral').toLowerCase();

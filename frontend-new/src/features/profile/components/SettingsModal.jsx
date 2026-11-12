@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { getCreatedAtDate } from '../../../lib/entryDates';
+import { getCreatedAtDate } from '../../../lib/models/entryDates';
 import { supabase } from '../../../supabaseClient';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../../components/ui/dialog';
 import { Button } from '../../../components/ui/button';
 import { Switch } from '../../../components/ui/switch';
 import { Label } from '../../../components/ui/label';
 import { cn } from '../../../lib/utils';
-import { PALETTES, getStoredPalette, applyPalette } from '../../../lib/palettePreference';
+import { PALETTES, getStoredPalette, applyPalette } from '../models/profilePalettePreference';
 import ReminderPrefsFields from './ReminderPrefsFields';
+import CycleSettingsSection from '../../cycle/components/CycleSettingsSection';
 
 const SettingsModal = ({ open, onClose, user, entries, profile, onProfileUpdated }) => {
   const [palette, setPalette] = useState(getStoredPalette);
   const [remindersEnabled, setRemindersEnabled] = useState(profile?.reminderEnabled ?? false);
   const [reminderTime, setReminderTime] = useState(profile?.reminderTime || '21:00');
   const [reminderDays, setReminderDays] = useState(profile?.reminderDays || [1, 2, 3, 4, 5]);
-  const [cycleRemindersEnabled, setCycleRemindersEnabled] = useState(profile?.cycleRemindersEnabled ?? true);
+  const [planetNotificationsEnabled, setPlanetNotificationsEnabled] = useState(profile?.planetNotificationsEnabled ?? true);
   const [notificationPermission, setNotificationPermission] = useState(
     typeof Notification !== 'undefined' ? Notification.permission : 'denied',
   );
@@ -29,7 +30,7 @@ const SettingsModal = ({ open, onClose, user, entries, profile, onProfileUpdated
     setRemindersEnabled(profile.reminderEnabled ?? false);
     setReminderTime(profile.reminderTime || '21:00');
     setReminderDays(profile.reminderDays || [1, 2, 3, 4, 5]);
-    setCycleRemindersEnabled(profile.cycleRemindersEnabled ?? true);
+    setPlanetNotificationsEnabled(profile.planetNotificationsEnabled ?? true);
   }, [profile]);
 
   const saveReminderPrefs = async (patch) => {
@@ -75,14 +76,20 @@ const SettingsModal = ({ open, onClose, user, entries, profile, onProfileUpdated
     }
   };
 
+  const handleTogglePlanetNotifications = async (checked) => {
+    setPlanetNotificationsEnabled(checked);
+    if (!supabase || !user?.id) return;
+    const { error } = await supabase
+      .from('profiles')
+      .update({ planet_notifications_enabled: checked, updated_at: new Date().toISOString() })
+      .eq('id', user.id);
+    if (error) console.error('Planet notifications save:', error);
+    else onProfileUpdated?.();
+  };
+
   const handlePaletteChange = (id) => {
     setPalette(id);
     applyPalette(id);
-  };
-
-  const handleToggleCycleReminders = (checked) => {
-    setCycleRemindersEnabled(checked);
-    saveReminderPrefs({ cycle_reminders_enabled: checked });
   };
 
   const handleExportPdf = async () => {
@@ -238,16 +245,23 @@ const SettingsModal = ({ open, onClose, user, entries, profile, onProfileUpdated
                     : "Turning this on will ask your browser's permission for notifications."}
                 </p>
               )}
-              {profile?.sex === 'female' ? (
-                <div className="flex items-center justify-between gap-3 rounded-xl border border-emote-border bg-emote-surface-alt p-4">
-                  <Label htmlFor="cycle-reminder-toggle" className="mb-0 text-emote-muted font-medium normal-case tracking-normal text-emote-ink">
-                    Cycle check-in reminders
-                  </Label>
-                  <Switch id="cycle-reminder-toggle" checked={cycleRemindersEnabled} onCheckedChange={handleToggleCycleReminders} />
-                </div>
-              ) : null}
             </div>
           </section>
+
+          <section>
+            <h3 className="mb-3 text-emote-caption font-semibold uppercase tracking-wide text-emote-ink-faint">Galaxy</h3>
+            <div className="flex items-center justify-between gap-3">
+              <Label htmlFor="planet-notifications" className="mb-0 normal-case tracking-normal text-emote-ink">
+                Planet notifications
+              </Label>
+              <Switch id="planet-notifications" checked={planetNotificationsEnabled} onCheckedChange={handleTogglePlanetNotifications} />
+            </div>
+            <p className="mt-2 text-emote-caption text-emote-ink-faint">
+              A short in-app message when an entry joins a planet, or a planet first appears.
+            </p>
+          </section>
+
+          {profile?.sex === 'female' ? <CycleSettingsSection user={user} /> : null}
 
           <section>
             <h3 className="mb-3 text-emote-caption font-semibold uppercase tracking-wide text-emote-ink-faint">Appearance</h3>
@@ -259,11 +273,11 @@ const SettingsModal = ({ open, onClose, user, entries, profile, onProfileUpdated
                   onClick={() => handlePaletteChange(p.id)}
                   aria-pressed={palette === p.id}
                   className={cn(
-                    'rounded-xl border p-3 text-left transition',
+                    'rounded-none border p-3 text-left transition',
                     palette === p.id ? 'border-emote-accent ring-1 ring-emote-accent' : 'border-emote-border hover:border-emote-border-strong',
                   )}
                 >
-                  <span className="flex h-12 items-center gap-1.5 rounded-lg px-2.5" style={{ backgroundColor: p.canvas }}>
+                  <span className="flex h-12 items-center gap-1.5 rounded-none px-2.5" style={{ backgroundColor: p.canvas }}>
                     {p.dots.map((dot, i) => (
                       <span key={i} className="h-2 w-2 rounded-full" style={{ backgroundColor: dot }} />
                     ))}

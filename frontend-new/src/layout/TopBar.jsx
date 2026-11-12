@@ -19,14 +19,9 @@ export default function TopBar({ onOpenMenu, onOpenSettings, label }) {
       </span>
       <span className="flex items-center gap-3">
         {label ? <span className="hidden text-emote-caption text-emote-ink-faint sm:inline">{label}</span> : null}
-        <button
-          type="button"
-          onClick={onOpenSettings}
-          aria-label="Account"
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-emote-border text-emote-ink-soft transition hover:text-emote-ink"
-        >
+        <Button type="button" variant="icon" size="icon" onClick={onOpenSettings} aria-label="Account">
           <User className="h-4 w-4" />
-        </button>
+        </Button>
       </span>
     </header>
   );

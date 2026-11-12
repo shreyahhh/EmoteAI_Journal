@@ -19,8 +19,11 @@ safe to re-run the whole folder if something fails partway through.
 | `20260920000001_journal_entries_replica_identity_full.sql` | Sets `REPLICA IDENTITY FULL` on `journal_entries` so Realtime DELETE events actually reach the client (fixes deleted entries lingering in the UI until reload) |
 | `20261008000001_llm_rate_limit.sql` | `public.llm_usage` + `public.llm_rate_limit()`: per-user, per-minute and per-day request counters for the `llm-proxy` function (service role only) |
 | `20261007000001_sarcasm_check.sql` | `journal_entries.analysis` (per-line model results) + `public.sarcasm_feedback` (answers to "did you mean that sarcastically?", RLS, opt-in flag for retraining) |
-| `20261108000001_profile_reminder_prefs.sql` | `profiles.reminder_enabled` / `reminder_time` / `reminder_days` / `cycle_reminders_enabled` — evening journal reminder + cycle check-in reminder opt-in, set during onboarding and in Settings |
-| `20261108000002_cycle_daily_logs_table.sql` | `public.cycle_daily_logs` — one row per day's cycle check-in (flow/pain/symptoms/mood/energy/cravings/products), RLS |
+| `20261108000001_profile_reminder_prefs.sql` | `profiles.reminder_enabled` / `reminder_time` / `reminder_days` / `cycle_reminders_enabled` — evening journal reminder + (superseded) cycle check-in opt-in, set during onboarding and in Settings. `cycle_reminders_enabled` is no longer read anywhere — the Cycle v2 redesign replaced it with `cycle_settings.period_reminder_enabled` / `daily_reminder_enabled`; the column is harmless to leave in place |
+| `20261108000002_cycle_daily_logs_table.sql` | `public.cycle_daily_logs` — one row per day's cycle check-in (flow/pain/mood/symptoms/sleep/cravings/discharge/products), RLS. Field set is for the Cycle v2 redesign — edited in place since never applied live |
+| `20261109000001_goals_target_per_week.sql` | `goals.target_per_week` — weekly target (1–7) for the "X of N this week" habit progress ring on the Streak & habits page |
+| `20261109000002_cycle_settings_table.sql` | `public.cycle_settings` — one row per user: avg cycle/period length, irregular flag, enabled flag, period/daily reminder prefs for the Cycle v2 mini-app |
+| `20261113000001_planets_tables.sql` | `public.planet_assignments` (which entries joined which planet), `public.planet_state` (one row per user/planet — size, visibility, avg mood, last entry), `public.planet_corrections` (audit log for manual re-assignments), plus `goals.planet` and `profiles.planet_notifications_enabled` — Stars and Planets PRD Part B |
 
 ## How to run
 

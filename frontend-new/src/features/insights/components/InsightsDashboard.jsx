@@ -12,11 +12,11 @@ import {
   Line,
   Cell,
 } from 'recharts';
-import { getCreatedAtDate } from '../../../lib/entryDates';
-import { buildMoodBuckets, filterEntriesByRange, moodValence } from '../../../lib/moodBuckets';
-import { getWeeklySummary } from '../../../lib/gemini';
-import { getMoodColor, MOOD_COLORS, ACTIVITY_CHART_NAMES } from '../../../lib/moodMeta';
-import { useIsNarrow } from '../../../lib/useIsNarrow';
+import { getCreatedAtDate } from '../../../lib/models/entryDates';
+import { buildMoodBuckets, filterEntriesByRange, moodValence } from '../../../lib/models/moodBuckets';
+import { getWeeklySummary } from '../../../lib/services/gemini';
+import { getMoodColor, MOOD_COLORS, ACTIVITY_CHART_NAMES } from '../../../lib/models/moodMeta';
+import { useIsNarrow } from '../../../lib/hooks/useIsNarrow';
 import { cn } from '../../../lib/utils';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../../components/ui/card';
 import { Tabs, TabsList, TabsTrigger } from '../../../components/ui/tabs';
@@ -106,7 +106,7 @@ const WeeklySummary = ({ entries }) => {
             'Generate summary'
           )}
         </Button>
-        {error && <p className="mt-4 text-center text-emote-muted font-medium text-[#C2665A]">{error}</p>}
+        {error && <p className="mt-4 text-center text-emote-muted font-medium text-destructive">{error}</p>}
         {summary && (
           <div className="mt-6 space-y-6 border-t border-emote-border pt-6 animate-fade-in">
             <div>
@@ -117,7 +117,7 @@ const WeeklySummary = ({ entries }) => {
               <h4 className="mb-2 text-emote-caption font-semibold uppercase tracking-wide text-emote-accent">Key themes</h4>
               <div className="flex flex-wrap gap-2">
                 {summary.keyThemes?.map((theme, index) => (
-                  <span key={index} className="rounded-lg bg-emote-gold/10 px-3 py-1 text-emote-muted font-medium text-emote-accent-2 ring-1 ring-emote-gold/30">
+                  <span key={index} className="rounded-none bg-emote-accent/10 px-3 py-1 text-emote-muted font-medium text-emote-accent-2 ring-1 ring-emote-accent/30">
                     {theme}
                   </span>
                 ))}
@@ -141,7 +141,7 @@ const WeeklySummary = ({ entries }) => {
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="rounded-xl border border-border bg-card p-3 shadow-emote">
+      <div className="rounded-none border border-border bg-card p-3 shadow-emote">
         <p className="text-emote-card-title font-semibold text-foreground">{`${label}`}</p>
         <p className="text-emote-muted font-medium text-emote-accent">{`${payload[0].name}: ${payload[0].value}`}</p>
       </div>
@@ -155,7 +155,7 @@ const StackedMoodTooltip = ({ active, payload, label }) => {
   const rows = payload.filter((p) => p.value > 0);
   const total = rows.reduce((s, p) => s + p.value, 0);
   return (
-    <div className="rounded-xl border border-border bg-card p-3 shadow-emote text-emote-muted text-foreground">
+    <div className="rounded-none border border-border bg-card p-3 shadow-emote text-emote-muted text-foreground">
       <p className="text-emote-card-title font-semibold text-foreground">{label}</p>
       {total === 0 ? (
         <p className="mt-1">No entries in this bucket.</p>
@@ -232,9 +232,9 @@ const ActivityMoodChart = ({ entries }) => {
             return (
               <div key={item.name} className="flex items-center gap-4 text-emote-muted">
                 <span className="w-28 text-right font-medium text-emote-ink-soft">{item.name}</span>
-                <div className="h-7 flex-1 overflow-hidden rounded-full bg-emote-surface-alt ring-1 ring-emote-border">
+                <div className="h-7 flex-1 overflow-hidden rounded-none bg-emote-surface-alt ring-1 ring-emote-border">
                   <div
-                    className="flex h-full items-center justify-end rounded-full bg-gradient-to-r from-emote-accent-2 via-emote-accent to-emote-gold px-2 transition-all duration-500"
+                    className="flex h-full items-center justify-end rounded-none bg-gradient-to-r from-emote-accent-2 to-emote-accent px-2 transition-all duration-500"
                     style={{ width: barWidth }}
                   >
                     <span className="text-emote-caption font-bold text-emote-surface">{item.count}</span>
@@ -251,7 +251,7 @@ const ActivityMoodChart = ({ entries }) => {
 
 const THEME_TONE_STYLES = [
   { test: (v) => v >= 2, className: 'from-emote-accent to-emote-accent/70', label: 'text-emote-accent' },
-  { test: (v) => v <= -2, className: 'from-[#C2665A] to-[#C2665A]/70', label: 'text-[#C2665A]' },
+  { test: (v) => v <= -2, className: 'from-destructive to-destructive/70', label: 'text-destructive' },
 ];
 
 const ThemeBreakdown = ({ entries }) => {
@@ -299,11 +299,11 @@ const ThemeBreakdown = ({ entries }) => {
                 <span className="w-32 shrink-0 truncate text-right font-medium text-emote-ink-soft" title={row.name}>
                   {row.name}
                 </span>
-                <div className="h-7 flex-1 overflow-hidden rounded-full bg-emote-surface-alt ring-1 ring-emote-border">
+                <div className="h-7 flex-1 overflow-hidden rounded-none bg-emote-surface-alt ring-1 ring-emote-border">
                   <div
                     className={cn(
-                      'flex h-full items-center justify-end rounded-full bg-gradient-to-r px-2 transition-all duration-500',
-                      tone ? tone.className : 'from-emote-accent-2 via-emote-accent to-emote-gold',
+                      'flex h-full items-center justify-end rounded-none bg-gradient-to-r px-2 transition-all duration-500',
+                      tone ? tone.className : 'from-emote-accent-2 to-emote-accent',
                     )}
                     style={{ width: barWidth }}
                   >
@@ -386,16 +386,16 @@ const MoodTrendSection = ({ entries, range }) => {
                 <Tooltip
                   formatter={(v) => (v == null ? '—' : v)}
                   labelFormatter={(l) => l}
-                  contentStyle={{ borderRadius: '12px', border: `1px solid ${gridLight}` }}
+                  contentStyle={{ borderRadius: '0px', border: `1px solid ${gridLight}` }}
                 />
                 <Line
                   type="monotone"
                   dataKey="avgSentiment"
                   name="Avg tone"
-                  stroke="#E8B57A"
+                  stroke="#F0A35E"
                   strokeWidth={2}
                   connectNulls
-                  dot={{ r: 4, fill: '#E8B57A' }}
+                  dot={{ r: 4, fill: '#F0A35E' }}
                   activeDot={{ r: 7, fill: '#F0A35E' }}
                 />
               </LineChart>
@@ -446,7 +446,7 @@ const WeekdayBreakdown = ({ entries }) => {
             return (
               <div key={i} className="flex flex-1 flex-col items-center gap-2">
                 <div
-                  className={cn('w-full max-w-10 rounded-md', d.avg == null ? 'bg-emote-surface-alt' : positive ? 'bg-emote-accent' : 'bg-[#8FB3D9]')}
+                  className={cn('w-full max-w-10 rounded-none', d.avg == null ? 'bg-emote-surface-alt' : positive ? 'bg-emote-accent' : 'bg-emote-cool')}
                   style={{ height: `${height}px` }}
                   title={d.avg != null ? `${dayName(d.label, i)}: ${d.avg.toFixed(1)} avg (${d.count} entries)` : 'No entries'}
                 />
@@ -506,9 +506,9 @@ const CommonTraits = ({ entries }) => {
                     on {row.count} of {data.total} days
                   </span>
                 </div>
-                <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-emote-surface-alt">
+                <div className="mt-1 h-1.5 overflow-hidden rounded-none bg-emote-surface-alt">
                   <div
-                    className={cn('h-full rounded-full', barClass === 'text-emote-accent' ? 'bg-emote-accent' : 'bg-[#8FB3D9]')}
+                    className={cn('h-full rounded-none', barClass === 'text-emote-accent' ? 'bg-emote-accent' : 'bg-emote-cool')}
                     style={{ width: `${(row.count / data.total) * 100}%` }}
                   />
                 </div>
@@ -523,7 +523,7 @@ const CommonTraits = ({ entries }) => {
   return (
     <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
       {renderColumn('Your lighter days had in common', lighter, 'text-emote-accent')}
-      {renderColumn('Your heavier days had in common', heavier, 'text-[#8FB3D9]')}
+      {renderColumn('Your heavier days had in common', heavier, 'text-emote-cool')}
     </div>
   );
 };
@@ -647,9 +647,9 @@ const InsightsDashboard = ({ entries, user }) => {
                     type="monotone"
                     dataKey="score"
                     name="Sentiment"
-                    stroke="#E8B57A"
+                    stroke="#F0A35E"
                     strokeWidth={2}
-                    dot={{ r: 3, fill: '#E8B57A' }}
+                    dot={{ r: 3, fill: '#F0A35E' }}
                     activeDot={{ r: 6, fill: '#F0A35E' }}
                     connectNulls
                   />

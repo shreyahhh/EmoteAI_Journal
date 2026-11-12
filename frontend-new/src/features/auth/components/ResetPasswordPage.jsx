@@ -45,7 +45,7 @@ const ResetPasswordPage = ({ onDone }) => {
           initial={{ opacity: 0, y: 20, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="relative overflow-hidden rounded-2xl border border-border bg-card p-8 shadow-emote"
+          className="relative overflow-hidden rounded-none border border-border bg-card p-8 shadow-emote"
         >
           <h1 className="text-center text-emote-section font-semibold text-foreground">Set a new password</h1>
           <p className="mb-6 mt-1.5 text-center text-emote-muted text-muted-foreground">

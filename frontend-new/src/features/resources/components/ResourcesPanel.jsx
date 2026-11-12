@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Heart, ArrowRight, ArrowLeft } from 'lucide-react';
-import { RESOURCES, RESOURCE_TYPES, getResourceById } from '../../../lib/resourceLibrary';
+import { RESOURCES, RESOURCE_TYPES, getResourceById } from '../models/resourcesLibrary';
 import { cn } from '../../../lib/utils';
 import { Button } from '../../../components/ui/button';
 
@@ -36,7 +36,7 @@ const ResourceDetail = ({ resource, onBack, onWriteEntry, reason }) => {
       </div>
 
       {resource.exercise ? (
-        <div className="mt-8 rounded-2xl border border-border bg-card p-6">
+        <div className="mt-8 rounded-none border border-border bg-card p-6">
           <p className="text-emote-caption font-semibold uppercase tracking-wide text-emote-accent">
             Try it tonight &middot; {resource.exercise.minutes} minutes
           </p>
@@ -64,7 +64,7 @@ const ResourceDetail = ({ resource, onBack, onWriteEntry, reason }) => {
           type="button"
           onClick={() => setVote('yes')}
           className={cn(
-            'rounded-full border px-4 py-1.5 text-emote-caption font-semibold transition',
+            'rounded-none border px-4 py-1.5 text-emote-caption font-semibold transition',
             vote === 'yes' ? 'border-emote-accent bg-emote-accent-2 text-primary-foreground' : 'border-border text-emote-ink-soft',
           )}
         >
@@ -74,7 +74,7 @@ const ResourceDetail = ({ resource, onBack, onWriteEntry, reason }) => {
           type="button"
           onClick={() => setVote('no')}
           className={cn(
-            'rounded-full border px-4 py-1.5 text-emote-caption font-semibold transition',
+            'rounded-none border px-4 py-1.5 text-emote-caption font-semibold transition',
             vote === 'no' ? 'border-emote-border-strong bg-emote-surface-alt text-emote-ink' : 'border-border text-emote-ink-soft',
           )}
         >
@@ -125,7 +125,7 @@ const ResourcesPanel = ({ entries, onWriteEntry }) => {
                 key={resource.id}
                 type="button"
                 onClick={() => setSelectedId(resource.id)}
-                className="flex flex-col rounded-2xl border border-border bg-card p-6 text-left shadow-emote transition hover:border-emote-border-strong"
+                className="flex flex-col rounded-none border border-border bg-card p-6 text-left shadow-emote transition hover:border-emote-border-strong"
               >
                 <p className="text-emote-caption text-emote-ink-faint">Because &ldquo;{matches[0]}&rdquo; came up this week</p>
                 <h3 className="mt-2 text-emote-section font-semibold text-emote-ink">{resource.title}</h3>
@@ -148,7 +148,7 @@ const ResourcesPanel = ({ entries, onWriteEntry }) => {
               type="button"
               onClick={() => setFilter(f)}
               className={cn(
-                'rounded-full border px-4 py-1.5 text-emote-caption font-semibold transition',
+                'rounded-none border px-4 py-1.5 text-emote-caption font-semibold transition',
                 filter === f ? 'border-emote-accent text-emote-accent' : 'border-border text-emote-ink-soft hover:border-emote-border-strong',
               )}
             >

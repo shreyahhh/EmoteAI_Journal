@@ -55,24 +55,22 @@ export default function NavDrawer({ open, onOpenChange, primaryTabs, secondaryTa
           <NavGroup tabs={primaryTabs} activeTab={activeTab} onSelect={handleSelect} />
           <div className="my-5 border-t border-border" />
           <NavGroup tabs={secondaryTabs} activeTab={activeTab} onSelect={handleSelect} />
-          <div className="mt-auto flex flex-col gap-2 border-t border-border pt-5">
-            <button
+          <div className="mt-auto flex gap-2 border-t border-border pt-5">
+            <Button
               type="button"
+              variant="gradient"
+              size="sm"
               onClick={() => {
                 onOpenSettings();
                 onOpenChange(false);
               }}
-              className="text-left text-emote-muted font-medium text-emote-ink-soft transition hover:text-emote-ink"
+              className="flex-1"
             >
               Settings
-            </button>
-            <button
-              type="button"
-              onClick={onLogout}
-              className="text-left text-emote-muted font-medium text-emote-ink-soft transition hover:text-emote-ink"
-            >
+            </Button>
+            <Button type="button" variant="gradient" size="sm" onClick={onLogout} className="flex-1">
               Log out
-            </button>
+            </Button>
           </div>
         </div>
       </SheetContent>

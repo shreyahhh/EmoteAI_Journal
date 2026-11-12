@@ -24,6 +24,45 @@ module.exports = {
           cool: 'rgb(var(--emote-cool) / <alpha-value>)',
           rose: 'rgb(var(--emote-rose) / <alpha-value>)',
         },
+        // Cycle v2 mini-app's own fixed palette (see .cycle-root in index.css)
+        // — kept out of the emote.* namespace since it never re-themes with
+        // the user's chosen Emote palette.
+        cycle: {
+          bg: 'rgb(var(--cycle-bg) / <alpha-value>)',
+          surface: 'rgb(var(--cycle-surface) / <alpha-value>)',
+          'surface-2': 'rgb(var(--cycle-surface-2) / <alpha-value>)',
+          tabbar: 'rgb(var(--cycle-tabbar) / <alpha-value>)',
+          line: 'rgb(var(--cycle-line) / <alpha-value>)',
+          'line-soft': 'rgb(var(--cycle-line-soft) / <alpha-value>)',
+          text: 'rgb(var(--cycle-text) / <alpha-value>)',
+          'text-2': 'rgb(var(--cycle-text-2) / <alpha-value>)',
+          muted: 'rgb(var(--cycle-muted) / <alpha-value>)',
+          faint: 'rgb(var(--cycle-faint) / <alpha-value>)',
+          accent: 'rgb(var(--cycle-accent) / <alpha-value>)',
+          'accent-ink': 'rgb(var(--cycle-accent-ink) / <alpha-value>)',
+          menstrual: 'rgb(var(--cycle-menstrual) / <alpha-value>)',
+          'menstrual-ink': 'rgb(var(--cycle-menstrual-ink) / <alpha-value>)',
+          follicular: 'rgb(var(--cycle-follicular) / <alpha-value>)',
+          ovulatory: 'rgb(var(--cycle-ovulatory) / <alpha-value>)',
+          luteal: 'rgb(var(--cycle-luteal) / <alpha-value>)',
+          'tone-lighter': 'rgb(var(--cycle-tone-lighter) / <alpha-value>)',
+          'tone-heavier': 'rgb(var(--cycle-tone-heavier) / <alpha-value>)',
+          'tone-neutral': 'rgb(var(--cycle-tone-neutral) / <alpha-value>)',
+        },
+        // Landing page's own fixed night-sky palette (see .landing-root in
+        // landing.css) — a marketing-page-only design, kept out of the
+        // emote.* namespace since it never re-themes with the in-app palette.
+        landing: {
+          void: 'rgb(var(--landing-void) / <alpha-value>)',
+          starlight: 'rgb(var(--landing-starlight) / <alpha-value>)',
+          body: 'rgb(var(--landing-body) / <alpha-value>)',
+          faint: 'rgb(var(--landing-faint) / <alpha-value>)',
+          violet: 'rgb(var(--landing-violet) / <alpha-value>)',
+          rose: 'rgb(var(--landing-rose) / <alpha-value>)',
+          'deep-blue': 'rgb(var(--landing-deep-blue) / <alpha-value>)',
+          gold: 'rgb(var(--landing-gold) / <alpha-value>)',
+          teal: 'rgb(var(--landing-teal) / <alpha-value>)',
+        },
         // shadcn/ui's standard token names — bridged onto the same emote-* RGB values
         // in index.css so ported shadcn component source works unmodified.
         background: 'rgb(var(--background) / <alpha-value>)',
@@ -70,6 +109,8 @@ module.exports = {
         display: ['"Instrument Serif"', 'Georgia', 'serif'],
         // Journal text only (entry titles/body in previews, composer, reflections).
         serif: ['"Newsreader"', 'Georgia', 'serif'],
+        // Matches the shadcn base-sera preset's font-mono (Geist Mono).
+        mono: ['"Geist Mono"', 'ui-monospace', 'monospace'],
       },
       fontSize: {
         'emote-display': [

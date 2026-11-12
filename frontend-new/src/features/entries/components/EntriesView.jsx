@@ -3,8 +3,8 @@ import { Pencil, Trash2, History as HistoryIcon } from 'lucide-react';
 import EntryHistoryModal from '../../journal/components/EntryHistoryModal';
 import EditEntryModal from '../../journal/components/EditEntryModal';
 import EntryDetailModal from '../../../components/shared/EntryDetailModal';
-import { getCreatedAtDate } from '../../../lib/entryDates';
-import { getMoodColor } from '../../../lib/moodMeta';
+import { getCreatedAtDate } from '../../../lib/models/entryDates';
+import { getMoodColor } from '../../../lib/models/moodMeta';
 import EmptyState from '../../../components/shared/EmptyState';
 import ConfirmDialog from '../../../components/shared/ConfirmDialog';
 import { Input } from '../../../components/ui/input';
@@ -136,7 +136,7 @@ const EntriesView = ({ entries, onDeleteEntry, onNewEntry }) => {
         ) : null}
       </div>
 
-      <div className="mb-6 rounded-2xl border border-border bg-card p-4 shadow-emote sm:p-5">
+      <div className="mb-6 rounded-none border border-border bg-card p-4 shadow-emote sm:p-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-4">
           <div className="min-w-0 flex-1">
             <Input
@@ -148,14 +148,14 @@ const EntriesView = ({ entries, onDeleteEntry, onNewEntry }) => {
               aria-label="Search entries"
             />
           </div>
-          <div className="flex items-center gap-1 rounded-full border border-border p-1">
+          <div className="flex items-center gap-1 rounded-none border border-border p-1">
             {TONE_FILTERS.map((t) => (
               <button
                 key={t.id}
                 type="button"
                 onClick={() => setTone(t.id)}
                 className={cn(
-                  'rounded-full px-3.5 py-1.5 text-emote-caption font-semibold transition',
+                  'rounded-none px-3.5 py-1.5 text-emote-caption font-semibold transition',
                   tone === t.id ? 'bg-emote-surface-alt text-emote-ink' : 'text-emote-ink-soft hover:text-emote-ink',
                 )}
               >
@@ -216,7 +216,7 @@ const EntriesView = ({ entries, onDeleteEntry, onNewEntry }) => {
       </div>
 
       {selected.size > 0 ? (
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emote-accent/30 bg-emote-accent/10 px-4 py-3">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-none border border-emote-accent/30 bg-emote-accent/10 px-4 py-3">
           <p className="text-emote-muted font-medium text-emote-ink">{selected.size} selected</p>
           <div className="flex items-center gap-2">
             <Button type="button" variant="ghost" onClick={clearSelection}>
@@ -249,15 +249,15 @@ const EntriesView = ({ entries, onDeleteEntry, onNewEntry }) => {
                 {group.entries.map((entry) => {
                   const d = getCreatedAtDate(entry);
                   return (
-                    <li key={entry.id} className="flex items-start gap-4 py-5">
+                    <li key={entry.id} className="flex items-start gap-2 sm:gap-4 py-5">
                       <input
                         type="checkbox"
                         checked={selected.has(entry.id)}
                         onChange={() => toggleSelected(entry.id)}
                         aria-label={`Select ${entry.title || 'entry'}`}
-                        className="mt-2 h-4 w-4 shrink-0 cursor-pointer rounded border-border accent-[rgb(var(--emote-accent))]"
+                        className="mt-2 h-4 w-4 shrink-0 cursor-pointer rounded-none border-border accent-[rgb(var(--emote-accent))]"
                       />
-                      <div className="w-12 shrink-0 text-center">
+                      <div className="w-9 shrink-0 text-center sm:w-12">
                         <p className="font-display text-emote-section leading-none text-emote-ink">
                           {d ? d.getDate() : '—'}
                         </p>
@@ -278,16 +278,16 @@ const EntriesView = ({ entries, onDeleteEntry, onNewEntry }) => {
                       </button>
                       <div className="hidden shrink-0 flex-wrap items-center gap-1.5 md:flex">
                         {(entry.themes || []).slice(0, 2).map((theme) => (
-                          <span key={theme} className="rounded-full border border-border px-2.5 py-0.5 text-emote-caption text-emote-ink-soft">
+                          <span key={theme} className="rounded-none border border-border px-2.5 py-0.5 text-emote-caption text-emote-ink-soft">
                             {theme}
                           </span>
                         ))}
                       </div>
-                      <div className="flex shrink-0 items-center gap-1">
+                      <div className="flex shrink-0 items-center gap-0.5 sm:gap-1">
                         <button
                           type="button"
                           onClick={() => setHistoryEntry(entry)}
-                          className="rounded-full p-2 text-emote-ink-faint transition hover:bg-accent hover:text-emote-ink"
+                          className="rounded-none p-3 sm:p-2 text-emote-ink-faint transition hover:bg-accent hover:text-emote-ink"
                           aria-label="View history"
                           title="History"
                         >
@@ -296,7 +296,7 @@ const EntriesView = ({ entries, onDeleteEntry, onNewEntry }) => {
                         <button
                           type="button"
                           onClick={() => setEditingEntry(entry)}
-                          className="rounded-full p-2 text-emote-ink-faint transition hover:bg-accent hover:text-emote-ink"
+                          className="rounded-none p-3 sm:p-2 text-emote-ink-faint transition hover:bg-accent hover:text-emote-ink"
                           aria-label="Edit entry"
                         >
                           <Pencil className="h-4 w-4" />
@@ -305,7 +305,7 @@ const EntriesView = ({ entries, onDeleteEntry, onNewEntry }) => {
                           <button
                             type="button"
                             onClick={() => setPendingDeleteId(entry.id)}
-                            className="rounded-full p-2 text-emote-ink-faint transition hover:bg-destructive/10 hover:text-destructive"
+                            className="rounded-none p-3 sm:p-2 text-emote-ink-faint transition hover:bg-destructive/10 hover:text-destructive"
                             aria-label="Delete entry"
                           >
                             <Trash2 className="h-4 w-4" />

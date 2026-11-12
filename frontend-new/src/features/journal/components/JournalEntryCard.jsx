@@ -4,8 +4,8 @@ import { Pencil, Trash2 } from 'lucide-react';
 import EntryHistoryModal from './EntryHistoryModal';
 import EditEntryModal from './EditEntryModal';
 import SarcasmCheck from './SarcasmCheck';
-import { formatCreatedAt } from '../../../lib/entryDates';
-import { MOOD_EMOJIS } from '../../../lib/moodMeta';
+import { formatCreatedAt } from '../../../lib/models/entryDates';
+import { MOOD_EMOJIS } from '../../../lib/models/moodMeta';
 import { cn } from '../../../lib/utils';
 import { Badge } from '../../../components/ui/badge';
 import EntryDetailModal from '../../../components/shared/EntryDetailModal';
@@ -20,8 +20,8 @@ const JournalEntryCard = ({
   uniformHeight = false,
 }) => {
   const formattedDate = formatCreatedAt(entry);
-  const tagChip = 'rounded-lg px-2.5 py-1 text-emote-caption font-medium ring-1 ring-inset';
-  const tagChipCompact = 'rounded-md px-1.5 py-0.5 text-[11px] font-medium ring-1 ring-inset sm:text-xs';
+  const tagChip = 'rounded-none px-2.5 py-1 text-emote-caption font-medium ring-1 ring-inset';
+  const tagChipCompact = 'rounded-none px-1.5 py-0.5 text-emote-caption font-medium ring-1 ring-inset';
   const [historyOpen, setHistoryOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
@@ -46,8 +46,8 @@ const JournalEntryCard = ({
   const chipClass = uniformHeight ? tagChipCompact : tagChip;
 
   const articleLayout = uniformHeight
-    ? 'flex h-full w-full min-h-[13rem] flex-col rounded-xl p-4 sm:min-h-[14rem]'
-    : 'rounded-2xl p-6';
+    ? 'flex h-full w-full min-h-[13rem] flex-col rounded-none p-4 sm:min-h-[14rem]'
+    : 'rounded-none p-6';
 
   const bodyClass = uniformHeight
     ? 'relative mt-2 min-h-0 flex-1 overflow-hidden font-serif text-sm leading-snug text-muted-foreground line-clamp-4'
@@ -97,8 +97,8 @@ const JournalEntryCard = ({
           <div className={cn('flex flex-wrap items-center', uniformHeight ? 'mb-1 gap-1.5' : 'mb-2 gap-2')}>
             <time
               className={cn(
-                'rounded-lg bg-emote-accent/10 font-semibold text-emote-accent-2 ring-1 ring-emote-accent/30',
-                uniformHeight ? 'px-2 py-0.5 text-[11px] sm:text-xs' : 'px-2.5 py-1 text-emote-caption',
+                'rounded-none bg-emote-accent/10 font-semibold text-emote-accent-2 ring-1 ring-emote-accent/30',
+                uniformHeight ? 'px-2 py-0.5 text-emote-caption' : 'px-2.5 py-1 text-emote-caption',
               )}
             >
               {formattedDate}
@@ -110,7 +110,7 @@ const JournalEntryCard = ({
           <h3
             className={cn(
               'font-semibold tracking-tight text-foreground',
-              uniformHeight ? 'line-clamp-2 text-sm' : 'text-emote-card-title',
+              uniformHeight ? 'line-clamp-2 text-emote-muted' : 'text-emote-card-title',
             )}
           >
             {entry.title || 'Untitled entry'}
@@ -123,8 +123,8 @@ const JournalEntryCard = ({
               type="button"
               onClick={openHistory}
               className={cn(
-                'rounded-lg font-semibold text-emote-accent-2 transition hover:bg-emote-accent/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50',
-                uniformHeight ? 'px-2 py-1 text-[11px] sm:text-xs' : 'px-3 py-1.5 text-emote-caption',
+                'rounded-none font-semibold text-emote-accent-2 transition hover:bg-emote-accent/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50',
+                uniformHeight ? 'px-2 py-2 sm:py-1 text-emote-caption' : 'px-3 py-2.5 sm:py-1.5 text-emote-caption',
               )}
             >
               History
@@ -136,8 +136,8 @@ const JournalEntryCard = ({
                 type="button"
                 onClick={handleEdit}
                 className={cn(
-                  'rounded-lg text-emote-ink-faint transition hover:bg-emote-accent/10 hover:text-emote-accent-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/40',
-                  uniformHeight ? 'p-1.5' : 'p-2',
+                  'rounded-none text-emote-ink-faint transition hover:bg-emote-accent/10 hover:text-emote-accent-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/40',
+                  uniformHeight ? 'p-3 sm:p-1.5' : 'p-3 sm:p-2',
                 )}
                 aria-label="Edit entry"
               >
@@ -149,8 +149,8 @@ const JournalEntryCard = ({
                 type="button"
                 onClick={handleDelete}
                 className={cn(
-                  'rounded-lg text-emote-ink-faint transition hover:bg-destructive/10 hover:text-destructive focus:outline-none focus-visible:ring-2 focus-visible:ring-destructive/40',
-                  uniformHeight ? 'p-1.5' : 'p-2',
+                  'rounded-none text-emote-ink-faint transition hover:bg-destructive/10 hover:text-destructive focus:outline-none focus-visible:ring-2 focus-visible:ring-destructive/40',
+                  uniformHeight ? 'p-3 sm:p-1.5' : 'p-3 sm:p-2',
                 )}
                 aria-label="Delete entry"
               >

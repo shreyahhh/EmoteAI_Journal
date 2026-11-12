@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { supabase } from '../../../supabaseClient';
-import { pendingSarcasmLines, answerSarcasm } from '../../../lib/sarcasmFeedback';
-import { normLine } from '../../../lib/sarcasmKeys';
+import { pendingSarcasmLines, answerSarcasm } from '../models/journalSarcasmFeedback';
+import { normLine } from '../models/journalSarcasmKeys';
 import { cn } from '../../../lib/utils';
 import { Button } from '../../../components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../../components/ui/dialog';
@@ -54,7 +54,7 @@ function Questions({ entry, lines, onAnswered }) {
         const locked = busyKey !== null;
         const preview = line.ifSarcastic;
         return (
-          <div key={key} className="rounded-xl border border-emote-gold/40 bg-emote-gold/10 p-3 text-emote-muted">
+          <div key={key} className="rounded-none border border-emote-gold/40 bg-emote-gold/10 p-3 text-emote-muted">
             <p className="text-foreground">
               Sounds sarcastic: <span className="font-medium">&ldquo;{line.text}&rdquo;</span>
             </p>
@@ -84,7 +84,7 @@ function Questions({ entry, lines, onAnswered }) {
           type="checkbox"
           checked={share}
           onChange={(e) => toggleShare(e.target.checked)}
-          className="mt-0.5 h-3.5 w-3.5 rounded border-input accent-[rgb(var(--emote-accent))]"
+          className="mt-0.5 h-3.5 w-3.5 rounded-none border-input accent-[rgb(var(--emote-accent))]"
         />
         <span>Let my answers help improve the sarcasm detector. Off by default; your entries stay private.</span>
       </label>
@@ -119,7 +119,7 @@ const SarcasmCheck = ({ entry, compact = false, className }) => {
           type="button"
           onClick={() => setOpen(true)}
           className={cn(
-            'mb-2 mt-2 rounded-md bg-emote-gold/20 px-1.5 py-0.5 text-[11px] font-medium text-foreground ring-1 ring-inset ring-emote-gold/40 sm:text-xs',
+            'mb-2 mt-2 rounded-none bg-emote-gold/20 px-1.5 py-0.5 text-emote-caption font-medium text-foreground ring-1 ring-inset ring-emote-gold/40',
             'transition hover:bg-emote-gold/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50',
           )}
         >

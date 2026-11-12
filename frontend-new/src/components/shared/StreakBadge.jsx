@@ -16,7 +16,7 @@ export default function StreakBadge({ current, longest, activeToday, className }
     <span
       title={title}
       className={cn(
-        'inline-flex shrink-0 items-center gap-1.5 overflow-hidden rounded-full bg-emote-gold/15 px-3 py-1 text-emote-caption font-semibold text-emote-accent-2 ring-1 ring-inset ring-emote-gold/40',
+        'inline-flex shrink-0 items-center gap-1.5 overflow-hidden rounded-none bg-emote-gold/15 px-3 py-1 text-emote-caption font-semibold uppercase tracking-wider text-emote-gold ring-1 ring-inset ring-emote-gold/40',
         !activeToday && 'opacity-70',
         className,
       )}

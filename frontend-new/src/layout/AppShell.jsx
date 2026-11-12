@@ -15,6 +15,7 @@ export default function AppShell({
   title,
   subtitle,
   headerExtra,
+  hideHeader = false,
   children,
 }) {
   return (
@@ -23,13 +24,15 @@ export default function AppShell({
 
       <div className="emote-main-canvas min-w-0 pt-14">
         <div className="emote-main-scroll">
-          <header className="mb-6 border-b border-border pb-5 lg:mb-8">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="font-display text-emote-page font-semibold tracking-tight text-foreground">{title}</h2>
-              {headerExtra}
-            </div>
-            <p className="mt-2 max-w-2xl text-emote-muted leading-relaxed text-muted-foreground">{subtitle}</p>
-          </header>
+          {hideHeader ? null : (
+            <header className="mb-6 border-b border-border pb-5 lg:mb-8">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h2 className="font-display text-emote-page font-semibold tracking-tight text-foreground">{title}</h2>
+                {headerExtra}
+              </div>
+              <p className="mt-2 max-w-2xl text-emote-muted leading-relaxed text-muted-foreground">{subtitle}</p>
+            </header>
+          )}
 
           <AnimatePresence mode="wait">
             <motion.main

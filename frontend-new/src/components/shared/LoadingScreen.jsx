@@ -4,7 +4,7 @@ const LoadingScreen = () => (
     <div className="relative z-10 flex flex-col items-center gap-6">
       <div className="relative">
         <div className="absolute inset-0 animate-pulse rounded-full bg-gradient-to-r from-emote-gold/40 to-emote-accent/40 blur-xl" />
-        <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl border border-emote-border bg-emote-surface shadow-emote">
+        <div className="relative flex h-16 w-16 items-center justify-center rounded-none border border-emote-border bg-emote-surface shadow-emote">
           <svg
             className="h-8 w-8 animate-spin text-emote-accent"
             xmlns="http://www.w3.org/2000/svg"

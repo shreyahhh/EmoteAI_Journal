@@ -3,7 +3,7 @@ import { supabase, getSupabaseConfigIssue } from './supabaseClient';
 import LoadingScreen from './components/shared/LoadingScreen';
 import LandingPage from './features/landing/components/LandingPage';
 import AuthPage from './features/auth/components/AuthPage';
-import Dashboard from './features/dashboard/Dashboard';
+import Dashboard from './features/dashboard/components/Dashboard';
 import ResetPasswordPage from './features/auth/components/ResetPasswordPage';
 import ErrorBoundary from './components/shared/ErrorBoundary';
 

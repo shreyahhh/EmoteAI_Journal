@@ -128,7 +128,7 @@ export function mapProfileRow(row) {
     reminderEnabled: row.reminder_enabled ?? false,
     reminderTime: row.reminder_time ?? '21:00',
     reminderDays: Array.isArray(row.reminder_days) ? row.reminder_days : [1, 2, 3, 4, 5],
-    cycleRemindersEnabled: row.cycle_reminders_enabled ?? true,
+    planetNotificationsEnabled: row.planet_notifications_enabled ?? true,
     updatedAt: row.updated_at,
   };
 }
@@ -140,7 +140,9 @@ export function mapGoalRow(row) {
     id: row.id,
     userId: row.user_id,
     title: row.title ?? '',
+    targetPerWeek: row.target_per_week != null ? Number(row.target_per_week) : 3,
     completions: row.completions && typeof row.completions === 'object' ? row.completions : {},
+    planet: row.planet ?? null,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -186,13 +188,72 @@ export function mapCycleDailyLogRow(row) {
     logDate: row.log_date,
     flow: row.flow ?? null,
     pain: row.pain ?? null,
-    symptoms: Array.isArray(row.symptoms) ? row.symptoms : [],
     mood: Array.isArray(row.mood) ? row.mood : [],
-    energy: Array.isArray(row.energy) ? row.energy : [],
+    symptoms: Array.isArray(row.symptoms) ? row.symptoms : [],
+    sleep: row.sleep ?? null,
     cravings: Array.isArray(row.cravings) ? row.cravings : [],
+    discharge: row.discharge ?? null,
     products: Array.isArray(row.products) ? row.products : [],
     notes: row.notes ?? '',
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+  };
+}
+
+/** Map a cycle_settings row — one per user, the Cycle mini-app's own prefs. */
+export function mapCycleSettingsRow(row) {
+  if (!row) {
+    return {
+      avgCycleLength: 28,
+      avgPeriodLength: 5,
+      irregular: false,
+      enabled: true,
+      periodReminderEnabled: false,
+      periodReminderDaysBefore: 2,
+      dailyReminderEnabled: false,
+      dailyReminderTime: '21:00',
+    };
+  }
+  return {
+    userId: row.user_id,
+    avgCycleLength: row.avg_cycle_length ?? 28,
+    avgPeriodLength: row.avg_period_length ?? 5,
+    irregular: row.irregular ?? false,
+    enabled: row.enabled ?? true,
+    periodReminderEnabled: row.period_reminder_enabled ?? false,
+    periodReminderDaysBefore: row.period_reminder_days_before ?? 2,
+    dailyReminderEnabled: row.daily_reminder_enabled ?? false,
+    dailyReminderTime: (row.daily_reminder_time ?? '21:00').slice(0, 5),
+    updatedAt: row.updated_at,
+  };
+}
+
+/** Map a planet_state row — one per (user, planet), maintained after every entry save/edit/delete. */
+export function mapPlanetStateRow(row) {
+  if (!row) return null;
+  return {
+    userId: row.user_id,
+    planet: row.planet,
+    entryCount: row.entry_count ?? 0,
+    sizeStage: row.size_stage ?? 0,
+    avgMood: row.avg_mood != null ? Number(row.avg_mood) : null,
+    lastEntryAt: row.last_entry_at ?? null,
+    visible: row.visible ?? false,
+    updatedAt: row.updated_at,
+  };
+}
+
+/** Map a planet_assignments row — which entry joined which planet, and why. */
+export function mapPlanetAssignmentRow(row) {
+  if (!row) return null;
+  return {
+    id: row.id,
+    userId: row.user_id,
+    entryId: row.entry_id,
+    planet: row.planet,
+    score: row.score != null ? Number(row.score) : 0,
+    isPrimary: row.is_primary ?? false,
+    source: row.source ?? 'ai',
+    createdAt: row.created_at,
   };
 }

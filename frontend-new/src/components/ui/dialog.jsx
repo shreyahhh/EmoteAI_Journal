@@ -31,7 +31,7 @@ const DialogContent = React.forwardRef(
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
-          'fixed left-[calc(50%_+_var(--dialog-center-offset,0px))] top-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 focus:outline-none',
+          'fixed left-[calc(50%_+_var(--dialog-center-offset,0px))] top-1/2 z-50 grid w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 focus:outline-none',
           className,
         )}
         {...props}
@@ -40,14 +40,14 @@ const DialogContent = React.forwardRef(
           initial={{ opacity: 0, scale: 0.97, y: 12 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-          className="relative max-h-[85vh] overflow-y-auto rounded-2xl border border-border bg-card p-6 text-card-foreground shadow-emote sm:p-8"
+          className="relative max-h-[85vh] overflow-y-auto rounded-none border border-border bg-card p-6 text-card-foreground shadow-emote sm:p-8"
         >
           {children}
           {showClose ? (
             <DialogPrimitive.Close asChild>
               <button
                 type="button"
-                className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-card text-muted-foreground shadow-sm transition hover:border-emote-border-strong hover:bg-accent hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+                className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-none border border-border bg-card text-muted-foreground shadow-sm transition hover:border-emote-border-strong hover:bg-accent hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
                 aria-label="Close"
               >
                 <X className="h-4 w-4" />
@@ -68,7 +68,7 @@ const DialogHeader = ({ className, ...props }) => (
 const DialogTitle = React.forwardRef(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={cn('font-display text-emote-card-title font-semibold text-foreground', className)}
+    className={cn('font-display text-emote-card-title font-semibold uppercase tracking-wider text-foreground', className)}
     {...props}
   />
 ));

@@ -1,7 +1,7 @@
 import React, { act } from 'react';
 import { createRoot } from 'react-dom/client';
-import fixture from '../../../lib/__fixtures__/analyze-response.json';
-import { toStoredAnalysis } from '../../../lib/entryAnalysis';
+import fixture from '../models/__fixtures__/analyze-response.json';
+import { toStoredAnalysis } from '../models/journalEntryAnalysis';
 import SarcasmCheck from './SarcasmCheck';
 
 jest.mock('../../../supabaseClient', () => ({ supabase: { marker: 'stub' } }));
@@ -18,11 +18,11 @@ jest.mock('../../../components/ui/dialog', () => {
     DialogTitle: wrap('title'),
   };
 });
-jest.mock('../../../lib/sarcasmFeedback', () => {
-  const actual = jest.requireActual('../../../lib/sarcasmFeedback');
+jest.mock('../models/journalSarcasmFeedback', () => {
+  const actual = jest.requireActual('../models/journalSarcasmFeedback');
   return { ...actual, answerSarcasm: jest.fn() };
 });
-const { answerSarcasm } = require('../../../lib/sarcasmFeedback');
+const { answerSarcasm } = require('../models/journalSarcasmFeedback');
 
 global.IS_REACT_ACT_ENVIRONMENT = true;
 

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { getCreatedAtDate } from '../../lib/entryDates';
+import { getCreatedAtDate } from '../../lib/models/entryDates';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 
 /** Read-only "open a card to read the full entry" view. */

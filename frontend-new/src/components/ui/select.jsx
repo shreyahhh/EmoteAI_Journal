@@ -11,7 +11,7 @@ const SelectTrigger = React.forwardRef(({ className, children, ...props }, ref) 
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      'flex w-full items-center justify-between gap-2 rounded-xl border border-input bg-card px-3.5 py-3 font-sans text-emote-body text-foreground shadow-sm transition focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/25 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
+      'flex w-full items-center justify-between gap-2 rounded-none border border-transparent border-b-input bg-transparent px-0 py-3 font-sans text-emote-body text-foreground transition-colors focus:border-b-ring focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
       className,
     )}
     {...props}
@@ -30,7 +30,7 @@ const SelectContent = React.forwardRef(({ className, children, position = 'poppe
       ref={ref}
       position={position}
       className={cn(
-        'relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-xl border border-border bg-popover text-popover-foreground shadow-emote',
+        'relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-none border border-border bg-popover text-popover-foreground shadow-emote',
         position === 'popper' && 'translate-y-1',
         className,
       )}
@@ -48,7 +48,7 @@ const SelectItem = React.forwardRef(({ className, children, ...props }, ref) => 
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      'relative flex w-full cursor-pointer select-none items-center rounded-lg py-2 pl-8 pr-3 text-emote-muted text-foreground outline-none transition data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      'relative flex w-full cursor-pointer select-none items-center rounded-none py-2 pl-8 pr-3 text-emote-muted text-foreground outline-none transition data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
       className,
     )}
     {...props}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { getCreatedAtDate } from '../../../lib/entryDates';
-import { getChatResponse } from '../../../lib/gemini';
+import { getCreatedAtDate } from '../../../lib/models/entryDates';
+import { getChatResponse } from '../../../lib/services/gemini';
 import { Input } from '../../../components/ui/input';
 import { Button } from '../../../components/ui/button';
 
@@ -59,12 +59,12 @@ const ChatView = ({ entries }) => {
           <div key={index} className={`flex items-end gap-3 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
             {msg.sender === 'ai' && (
               <div
-                className="h-9 w-9 shrink-0 rounded-xl bg-gradient-to-br from-emote-accent-2 via-emote-accent to-emote-gold ring-1 ring-emote-border/80"
+                className="h-9 w-9 shrink-0 rounded-none bg-gradient-to-br from-emote-accent-2 to-emote-accent ring-1 ring-emote-border/80"
                 aria-hidden
               />
             )}
             <div
-              className={`max-w-[min(100%,32rem)] rounded-2xl px-4 py-3 text-emote-body leading-relaxed shadow-sm ${
+              className={`max-w-[min(100%,32rem)] rounded-none px-4 py-3 text-emote-body leading-relaxed shadow-sm ${
                 msg.sender === 'user'
                   ? 'bg-emote-surface-alt text-emote-ink'
                   : 'border border-border bg-card text-emote-ink'
@@ -76,8 +76,8 @@ const ChatView = ({ entries }) => {
         ))}
         {isLoading && (
           <div className="flex items-end gap-3 justify-start">
-            <div className="h-9 w-9 shrink-0 rounded-xl bg-gradient-to-br from-emote-accent-2 via-emote-accent to-emote-gold opacity-90 ring-1 ring-emote-border/80" aria-hidden />
-            <div className="rounded-2xl border border-border bg-card px-4 py-3">
+            <div className="h-9 w-9 shrink-0 rounded-none bg-gradient-to-br from-emote-accent-2 to-emote-accent opacity-90 ring-1 ring-emote-border/80" aria-hidden />
+            <div className="rounded-none border border-border bg-card px-4 py-3">
               <div className="flex items-center gap-1.5">
                 <div className="h-2 w-2 animate-pulse rounded-full bg-emote-accent" />
                 <div className="h-2 w-2 animate-pulse rounded-full bg-emote-gold [animation-delay:150ms]" />
@@ -97,14 +97,14 @@ const ChatView = ({ entries }) => {
                 key={q}
                 type="button"
                 onClick={() => ask(q)}
-                className="rounded-full border border-border px-4 py-2 text-emote-muted text-emote-ink-soft transition hover:border-emote-border-strong hover:text-emote-ink"
+                className="rounded-none border border-border px-4 py-2 text-emote-muted text-emote-ink-soft transition hover:border-emote-border-strong hover:text-emote-ink"
               >
                 {q}
               </button>
             ))}
           </div>
         ) : null}
-        <form onSubmit={handleSendMessage} className="flex items-center gap-3 rounded-full border border-border bg-card px-2 py-2 shadow-emote">
+        <form onSubmit={handleSendMessage} className="flex items-center gap-3 rounded-none border border-border bg-card px-2 py-2 shadow-emote">
           <Input
             type="text"
             value={input}

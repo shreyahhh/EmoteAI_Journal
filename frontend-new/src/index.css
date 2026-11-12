@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Instrument+Serif:ital@0;1&family=Newsreader:ital,wght@0,400;0,500;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Instrument+Serif:ital@0;1&family=Newsreader:ital,wght@0,400;0,500;1,400&family=Geist+Mono:wght@400;500;600&display=swap');
 @import './styles/globals.css';
 @tailwind base;
 @tailwind components;
@@ -22,9 +22,9 @@
   --emote-ink-soft: 205 187 163; /* --text-2 #CDBBA3 */
   --emote-ink-faint: 168 149 125; /* --muted #A8957D */
   --emote-ink-faintest: 125 108 89; /* --faint #7D6C59 */
-  --emote-accent: 232 181 122; /* --accent #E8B57A */
-  --emote-accent-2: 232 181 122; /* single accent family — same as --accent */
-  --emote-accent-ink: 42 26 12; /* --accent-ink #2A1A0C — text ON accent, never white */
+  --emote-accent: 93 14 192; /* --accent #5D0EC0 — base-sera preset's violet, dark-mode value */
+  --emote-accent-2: 93 14 192; /* single accent family — same as --accent */
+  --emote-accent-ink: 245 243 255; /* --accent-ink #F5F3FF — text ON accent, from the same preset pairing (light-on-violet, unlike the gold's dark-on-gold) */
   --emote-gold: 240 163 94; /* reuse as warm highlight / hover tone */
   --emote-warm: 240 163 94; /* --warm #F0A35E — lighter days */
   --emote-cool: 143 179 217; /* --cool #8FB3D9 — heavier days */
@@ -62,7 +62,39 @@
   --border: var(--emote-border);
   --input: var(--emote-border);
   --ring: var(--emote-accent);
-  --radius: 1rem;
+  --radius: 0.625rem; /* base-sera preset's radius scale */
+}
+
+/**
+ * Cycle v2 mini-app tokens — aliased onto Emote's own --emote-* tokens above
+ * so the Cycle page always matches whichever base theme the rest of the app
+ * is using (previously a frozen copy of the pre-Galaxy warm-black palette,
+ * which is why Cycle looked like a different app after the Galaxy reskin).
+ * Scoped to .cycle-root, set on the Cycle feature's own wrapper. The handful
+ * of phase-specific hues below (menstrual/follicular/ovulatory/luteal, and
+ * their "ink" pairs) have no Emote equivalent and stay as fixed literals.
+ */
+.cycle-root {
+  --cycle-bg: var(--emote-canvas);
+  --cycle-surface: var(--emote-surface);
+  --cycle-surface-2: var(--emote-surface-alt);
+  --cycle-tabbar: var(--emote-band);
+  --cycle-line: var(--emote-border);
+  --cycle-line-soft: var(--emote-line-soft);
+  --cycle-text: var(--emote-ink);
+  --cycle-text-2: var(--emote-ink-soft);
+  --cycle-muted: var(--emote-ink-faint);
+  --cycle-faint: var(--emote-ink-faintest);
+  --cycle-accent: var(--emote-accent);
+  --cycle-accent-ink: var(--emote-accent-ink);
+  --cycle-menstrual: var(--emote-rose); /* #D9909A */
+  --cycle-menstrual-ink: 42 20 22; /* #2A1416 — text on menstrual */
+  --cycle-follicular: 156 195 166; /* #9CC3A6 */
+  --cycle-ovulatory: 240 184 102; /* #F0B866 */
+  --cycle-luteal: 183 166 222; /* #B7A6DE */
+  --cycle-tone-lighter: var(--emote-warm);
+  --cycle-tone-heavier: var(--emote-cool);
+  --cycle-tone-neutral: var(--emote-ink-faint);
 }
 
 /**
@@ -168,11 +200,11 @@
 
   /* Alert / banner base */
   .emote-banner-info {
-    @apply rounded-2xl border border-emote-accent/30 bg-emote-accent/10 px-4 py-3 text-emote-muted text-emote-ink shadow-sm;
+    @apply rounded-none border border-emote-accent/30 bg-emote-accent/10 px-4 py-3 text-emote-muted text-emote-ink shadow-sm;
   }
 
   .emote-banner-warn {
-    @apply rounded-2xl border border-rose-800/30 bg-rose-800/10 px-4 py-3 text-emote-muted text-emote-ink shadow-sm;
+    @apply rounded-none border border-destructive/30 bg-destructive/10 px-4 py-3 text-emote-muted text-emote-ink shadow-sm;
   }
 
   /* Main column in dashboard: fills space; scroll lives on .emote-main-scroll only.

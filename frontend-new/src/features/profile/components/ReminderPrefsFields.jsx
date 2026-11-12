@@ -17,7 +17,7 @@ const ReminderPrefsFields = ({ enabled, onEnabledChange, time, onTimeChange, day
   };
 
   return (
-    <div className="rounded-xl border border-emote-border bg-emote-surface-alt p-4">
+    <div className="rounded-none border border-emote-border bg-emote-surface-alt p-4">
       <div className="flex items-center justify-between gap-3">
         <Label htmlFor={`${idPrefix}-toggle`} className="mb-0 text-emote-muted font-medium normal-case tracking-normal text-emote-ink">
           Evening reminder
@@ -38,7 +38,7 @@ const ReminderPrefsFields = ({ enabled, onEnabledChange, time, onTimeChange, day
             className="w-auto"
           />
         </div>
-        <div className="flex items-center gap-1.5" role="group" aria-label="Reminder days">
+        <div className="flex items-center gap-1" role="group" aria-label="Reminder days">
           {DAY_LABELS.map((label, i) => {
             const active = days.includes(i);
             return (
@@ -49,9 +49,9 @@ const ReminderPrefsFields = ({ enabled, onEnabledChange, time, onTimeChange, day
                 aria-pressed={active}
                 disabled={!enabled}
                 className={cn(
-                  'flex h-8 w-8 items-center justify-center rounded-full text-emote-caption font-semibold transition',
+                  'flex h-10 w-10 items-center justify-center rounded-full text-emote-caption font-semibold transition',
                   active
-                    ? 'bg-emote-accent text-[rgb(32_20_10)]'
+                    ? 'bg-emote-accent text-emote-accent-ink'
                     : 'border border-emote-border text-emote-ink-faint hover:border-emote-border-strong',
                 )}
               >

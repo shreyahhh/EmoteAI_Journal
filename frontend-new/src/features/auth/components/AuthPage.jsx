@@ -167,7 +167,7 @@ const AuthPage = ({ isLogin, navigateTo }) => {
                     type="button"
                     onClick={handleForgotPassword}
                     disabled={isSendingReset}
-                    className="text-emote-caption font-medium text-emote-accent hover:text-emote-gold disabled:cursor-not-allowed disabled:opacity-60"
+                    className="text-emote-caption font-medium text-emote-accent hover:text-emote-ink disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {isSendingReset ? 'Sending…' : 'Forgot password?'}
                   </button>

@@ -1,6 +1,6 @@
 import React from 'react';
-import { getCreatedAtDate } from '../../../lib/entryDates';
-import { getMoodColor } from '../../../lib/moodMeta';
+import { getCreatedAtDate } from '../../../lib/models/entryDates';
+import { getMoodColor } from '../../../lib/models/moodMeta';
 
 const getSentimentY = (score) => {
     // Map sentiment score (-5 to +5) to y position (higher = more positive)
@@ -41,7 +41,7 @@ const DotRepresentation = ({ entries }) => {
                 <text x={10} y={75} fontSize={12} fill="rgb(var(--emote-ink-faint))">Negative</text>
                 <text x={width-60} y={75} fontSize={12} fill="rgb(var(--emote-ink-faint))">Positive</text>
             </svg>
-            <div className="text-xs text-emote-ink-faint mt-2">Each dot represents a journal entry. Higher dots = more positive sentiment. Color = mood.</div>
+            <div className="text-emote-caption text-emote-ink-faint mt-2">Each dot represents a journal entry. Higher dots = more positive sentiment. Color = mood.</div>
         </div>
     );
 };

@@ -1,13 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { TrendingUp, TrendingDown, Sparkles } from 'lucide-react';
-import { detectPatterns } from '../../../lib/patternAnalysis';
-import { fetchPatternFeedback, submitPatternFeedback, retractPatternFeedback } from '../../../lib/patternFeedback';
+import { detectPatterns } from '../models/insightsPatternAnalysis';
+import { fetchPatternFeedback, submitPatternFeedback, retractPatternFeedback } from '../models/insightsPatternFeedback';
 import { cn } from '../../../lib/utils';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../../components/ui/card';
 import EmptyState from '../../../components/shared/EmptyState';
 
 const SEVERITY_STYLES = {
-  notice: { icon: TrendingDown, badge: 'bg-[#C2665A]/10 text-[#C2665A] ring-[#C2665A]/30' },
+  notice: { icon: TrendingDown, badge: 'bg-destructive/10 text-destructive ring-destructive/30' },
   positive: { icon: TrendingUp, badge: 'bg-emote-accent/10 text-emote-accent ring-emote-accent/30' },
   info: { icon: Sparkles, badge: 'bg-emote-accent/10 text-emote-accent-2 ring-emote-accent/30' },
 };
@@ -26,7 +26,7 @@ const TYPE_LABELS = {
 };
 
 const VOTE_BUTTON =
-  'rounded-full border px-3 py-1 text-emote-caption font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50';
+  'rounded-none border px-3 py-1 text-emote-caption font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50';
 
 /**
  * Uses the full history (not the range picker) — trend detection needs
@@ -98,12 +98,12 @@ const PatternInsights = ({ entries, user }) => {
               const Icon = style.icon;
               const verdict = feedback[pattern.id]?.verdict;
               return (
-                <li key={pattern.id} className="flex items-start gap-3 rounded-xl border border-border bg-emote-surface-alt/40 p-3.5">
-                  <span className={cn('mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ring-1 ring-inset', style.badge)}>
+                <li key={pattern.id} className="flex items-start gap-3 rounded-none border border-border bg-emote-surface-alt/40 p-3.5">
+                  <span className={cn('mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-none ring-1 ring-inset', style.badge)}>
                     <Icon className="h-4 w-4" aria-hidden />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="text-[11px] font-semibold uppercase tracking-wide text-emote-ink-faint">
+                    <p className="text-emote-caption font-semibold uppercase tracking-wide text-emote-ink-faint">
                       {TYPE_LABELS[pattern.type] || pattern.type}
                     </p>
                     <p className="mt-0.5 font-semibold text-foreground">{pattern.title}</p>

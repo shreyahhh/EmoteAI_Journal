@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { supabase } from '../../../supabaseClient';
-import { analyzeEntry } from '../../../lib/entryAnalysis';
-import { updateEntryRow } from '../../../lib/entryUpdate';
-import { ACTIVITY_OPTIONS } from '../../../lib/moodMeta';
+import { analyzeEntry } from '../models/journalEntryAnalysis';
+import { updateEntryRow } from '../models/journalEntryUpdate';
+import { assignPlanetsForEntry } from '../../galaxy/models/galaxyPlanetState';
+import { ACTIVITY_OPTIONS } from '../../../lib/models/moodMeta';
 import { cn } from '../../../lib/utils';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../../components/ui/dialog';
 import { Input } from '../../../components/ui/input';
@@ -68,6 +69,13 @@ const EditEntryModal = ({ entry, onClose }) => {
       setStatusMessage('');
       return;
     }
+    // Re-score and update planet state, but no notification on edit (PRD
+    // section 17: "Entry edited: ... planets update; no new notification").
+    if (analysis.planetScores && entry.userId) {
+      assignPlanetsForEntry(supabase, entry.userId, entry.id, analysis.planetScores, analysis.sentimentScore).catch((err) =>
+        console.error('Planet assignment error:', err),
+      );
+    }
     onClose();
   };
 
@@ -115,9 +123,9 @@ const EditEntryModal = ({ entry, onClose }) => {
                     whileTap={{ scale: 0.96 }}
                     onClick={() => handleToggleActivity(activity.key)}
                     className={cn(
-                      'rounded-full px-3.5 py-1.5 text-emote-muted font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/60',
+                      'rounded-none px-3.5 py-1.5 text-emote-muted font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/60',
                       isSelected
-                        ? 'bg-gradient-to-r from-emote-accent-2/20 to-emote-gold/20 text-foreground ring-1 ring-emote-accent/30'
+                        ? 'bg-gradient-to-r from-emote-accent-2/20 to-emote-accent/20 text-foreground ring-1 ring-emote-accent/30'
                         : 'border border-border bg-secondary text-secondary-foreground hover:border-emote-border-strong hover:bg-card',
                     )}
                   >

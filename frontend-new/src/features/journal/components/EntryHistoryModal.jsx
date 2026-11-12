@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase, mapHistoryRow } from '../../../supabaseClient';
-import { formatCreatedAt } from '../../../lib/entryDates';
+import { formatCreatedAt } from '../../../lib/models/entryDates';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../../../components/ui/dialog';
 import { Badge } from '../../../components/ui/badge';
 
@@ -52,12 +52,12 @@ const EntryHistoryModal = ({ entryId, entryTitle, onClose }) => {
         </DialogHeader>
         <div className="max-h-[65vh] space-y-4 overflow-y-auto">
           {loading && <p className="text-center text-emote-muted text-emote-ink-faint">Loading history…</p>}
-          {err && <p className="text-center text-emote-muted text-rose-800">{err}</p>}
+          {err && <p className="text-center text-emote-muted text-destructive">{err}</p>}
           {!loading && !err && rows.length === 0 && (
             <p className="text-center text-emote-muted text-emote-ink-faint">No history yet for this entry.</p>
           )}
           {rows.map((h) => (
-            <div key={h.id} className="space-y-3 rounded-xl border border-border bg-secondary/80 p-4 shadow-sm">
+            <div key={h.id} className="space-y-3 rounded-none border border-border bg-secondary/80 p-4 shadow-sm">
               <div className="flex flex-wrap items-center gap-2 text-emote-muted">
                 <Badge className="bg-emote-accent/15 text-emote-accent-2 ring-emote-accent/30">
                   {eventLabel[h.eventType] || h.eventType}

@@ -2,20 +2,24 @@ import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check, Mic, MicOff, Tag } from 'lucide-react';
 import { supabase } from '../../../supabaseClient';
-import { analyzeEntry } from '../../../lib/entryAnalysis';
-import { updateEntryRow } from '../../../lib/entryUpdate';
-import { ACTIVITY_OPTIONS } from '../../../lib/moodMeta';
-import { useSpeechToText } from '../../../lib/useSpeechToText';
+import { analyzeEntry } from '../models/journalEntryAnalysis';
+import { updateEntryRow } from '../models/journalEntryUpdate';
+import { ACTIVITY_OPTIONS } from '../../../lib/models/moodMeta';
+import { useSpeechToText } from '../../../lib/hooks/useSpeechToText';
 import { cn } from '../../../lib/utils';
 import { Button } from '../../../components/ui/button';
+import Toast from '../../../components/shared/Toast';
+import { assignPlanetsForEntry } from '../../galaxy/models/galaxyPlanetState';
+import { planetNotificationMessage } from '../../galaxy/models/galaxyNotify';
 
-const JournalView = ({ user }) => {
+const JournalView = ({ user, profile }) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [justSaved, setJustSaved] = useState(false);
   const [selectedActivities, setSelectedActivities] = useState([]);
   const [tagsOpen, setTagsOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState(null);
   const titleRef = useRef(null);
   const textareaRef = useRef(null);
   const savedTimeoutRef = useRef(null);
@@ -97,6 +101,15 @@ const JournalView = ({ user }) => {
         .then(({ error: updateError }) => {
           if (updateError) console.error('Analysis update error:', updateError);
         });
+
+      if (analysis.planetScores) {
+        assignPlanetsForEntry(supabase, user.id, data.id, analysis.planetScores, analysis.sentimentScore)
+          .then((result) => {
+            const message = planetNotificationMessage(result, profile?.planetNotificationsEnabled ?? true);
+            if (message) setToastMessage(message);
+          })
+          .catch((e) => console.error('Planet assignment error:', e));
+      }
     });
   };
 
@@ -163,7 +176,7 @@ const JournalView = ({ user }) => {
                     key={activity.key}
                     onClick={() => handleToggleActivity(activity.key)}
                     className={cn(
-                      'rounded-full px-3 py-1.5 text-emote-muted font-medium transition',
+                      'rounded-none px-3 py-1.5 text-emote-muted font-medium transition',
                       isSelected
                         ? 'bg-emote-accent/15 text-emote-accent-2 ring-1 ring-emote-accent/30'
                         : 'border border-border bg-secondary text-secondary-foreground hover:border-emote-border-strong',
@@ -239,6 +252,7 @@ const JournalView = ({ user }) => {
           </AnimatePresence>
         </Button>
       </div>
+      <Toast message={toastMessage} onDismiss={() => setToastMessage(null)} />
     </div>
   );
 };

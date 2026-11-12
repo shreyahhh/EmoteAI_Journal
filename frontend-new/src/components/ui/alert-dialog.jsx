@@ -23,7 +23,7 @@ const AlertDialogContent = React.forwardRef(({ className, children, ...props }, 
     <AlertDialogPrimitive.Content
       ref={ref}
       className={cn(
-        'fixed left-[calc(50%_+_var(--dialog-center-offset,0px))] top-1/2 z-50 grid w-full max-w-sm -translate-x-1/2 -translate-y-1/2 gap-4 focus:outline-none',
+        'fixed left-[calc(50%_+_var(--dialog-center-offset,0px))] top-1/2 z-50 grid w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 -translate-y-1/2 gap-4 focus:outline-none',
         className,
       )}
       {...props}
@@ -32,7 +32,7 @@ const AlertDialogContent = React.forwardRef(({ className, children, ...props }, 
         initial={{ opacity: 0, scale: 0.97, y: 12 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-        className="rounded-2xl border border-border bg-card p-6 text-card-foreground shadow-emote"
+        className="rounded-none border border-border bg-card p-6 text-card-foreground shadow-emote"
       >
         {children}
       </motion.div>
@@ -52,7 +52,7 @@ const AlertDialogFooter = ({ className, ...props }) => (
 const AlertDialogTitle = React.forwardRef(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Title
     ref={ref}
-    className={cn('text-emote-card-title font-semibold text-foreground', className)}
+    className={cn('text-emote-card-title font-semibold uppercase tracking-wider text-foreground', className)}
     {...props}
   />
 ));
